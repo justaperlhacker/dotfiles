@@ -1,4 +1,5 @@
 # ~/.bash_profile
 
-[[ -f ~/.config/bash/env ]] && source ~/.config/bash/env
-[[ -f ~/.bashrc ]] && source ~/.bashrc
+[[ -f "$HOME/.config/bash/profile" ]] && \
+    source "$HOME/.config/bash/profile"
+

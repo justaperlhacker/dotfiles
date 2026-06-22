@@ -2,3 +2,10 @@ mkcd() {
     mkdir -p "$1"
     cd "$1"
 }
+
+extract() {
+    case "$1" in
+        *.tar.gz) tar xf "$1" ;;
+        *.zip) unzip "$1" ;;
+    esac
+}

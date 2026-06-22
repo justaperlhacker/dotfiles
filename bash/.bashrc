@@ -1,3 +1,3 @@
-# ~/.bash_profile
+# ~/.bashrc
 
-[[ -f ~/.config/bash/bashrc ]] && source ~/.config/bash/bashrc
+[[ -f $HOME/.config/bash/bashrc ]] && source $HOME/.config/bash/bashrc

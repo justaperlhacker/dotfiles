@@ -1,4 +1,6 @@
-# only interactive shells
+#!/usr/bin/env bash
+
+# Don't run interactive stuff in non-interactive shells.
 [[ $- != *i* ]] && return
 
 source ~/.config/bash/aliases

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+[[ -f $HOME/.config/bash/env ]] && source $HOME/.config/bash/env
+[[ -f $HOME/.config/bash/bashrc ]] && source $HOME/.config/bashrc
+

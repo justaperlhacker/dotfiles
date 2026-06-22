@@ -11,8 +11,5 @@ shopt -s autocd
 shopt -s checkwinsize
 shopt -s histappend
 
-HISTSIZE=10000
-HISTFILESIZE=20000
-
 # machine-specific overrides
 [[ -f ~/.config/bash/local ]] && source ~/.config/bash/local

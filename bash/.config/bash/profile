@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
-[[ -f $HOME/.config/bash/env ]] && source $HOME/.config/bash/env
-[[ -f $HOME/.config/bash/bashrc ]] && source $HOME/.config/bashrc
+# load environment variables
+[[ -f "$HOME/.config/bash/env" ]] && source "$HOME/.config/bash/env"
+
+# ensure state dir exists
+[[ -d "$XDG_STATE_HOME/bash" ]] || mkdir -p "$XDG_STATE_HOME/bash"
+# mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/bash"
+
+# load bashrc
+[[ -f "$HOME/.config/bash/bashrc" ]] && source "$HOME/.config/bash/bashrc"
 

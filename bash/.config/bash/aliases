@@ -1,6 +1,69 @@
-alias ll='ls -lh'
-alias la='ls -A'
-alias l='ls -CF'
-alias grep='grep --color=auto'
-alias diff='diff --color=auto'
+# vim: syntax=sh
+# -*- mode: sh -*-
 
+# keep things safe
+alias cp='cp -i'
+alias rm='rm -i'
+alias mv='mv -i'
+alias ln='ln -i'
+
+# navigation
+alias ..="cd .."
+#alias ll='ls -alF'
+alias ls='ls --group-directories-first --color=auto -F -h -v'
+alias l='ls'
+alias ll='ls -l'
+alias lla='ls -lA'
+alias la='ls -A'
+
+alias cat="bat --style=plain"
+alias diff='diff --color=auto'
+alias man='man -P "bat -p"'
+
+#colorize grep
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+alias dd='dd status=progress'
+
+# human readable output
+alias df='df -h'
+alias free='free -mt'
+
+#ps
+alias ps="ps auxf"
+alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+
+#hardware info --short
+alias hw="hwinfo --short"
+
+#youtube
+alias ytm="youtube-dl --extract-audio --audio-format mp3"
+alias ytv="youtube-dl -f bestvideo+bestaudio"
+
+alias n='nvim'
+alias v='vim'
+alias vim='nvim'
+
+alias t='tmux'
+
+#merge new settings
+alias xmerge='xrdb -merge ~/.Xresources'
+
+# mounting the folder Public for exchange betsweeh host and guest on virtualbox
+alias vbm="sudo mount -t vboxsf -o rw,uid=1000,gid=1000 Public /home/$USER/Public"
+
+# fix obvious typos
+alias cd..='cd ..'
+alias pdw="pwd"
+
+# emacs
+alias em='emacs -nw'
+alias dem='emacs -nw --with-profile doom'
+alias doomemacs="emacs --with-profile doom --name Doom-Emacs"
+alias gnuemacs="emacs --with-profile vanilla"
+alias spacemacs="emacs --with-profile spacemacs --name Spacemacs"
+
+# random
+alias op='opencode'

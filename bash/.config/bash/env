@@ -1,3 +1,8 @@
+#!/usr/bin/env bash
+# vim: syntax=sh
+
+export DOTFILES="$HOME/.dotfiles"
+
 export EDITOR=nvim
 export VISUAL=nvim
 export PAGER=less
@@ -8,15 +13,38 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
 # XDG-compliant history location
 export HISTFILE="$XDG_STATE_HOME/bash/history"
 
-HISTSIZE=10000
-HISTFILESIZE=20000
+# set history length
+export HISTSIZE=10000
+export HISTFILESIZE=20000
 
-# avoid duplicates + ignore simple commands
-HISTCONTROL=ignoreboth
+# colorize LESS
+export LESS_TERMCAP_mb=$'\e[1;36m'
+export LESS_TERMCAP_md=$'\e[1;36m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[01;33m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;4;31m'
 
-# append instead of overwrite
-shopt -s histappend
+export SSH_ASKPASS="/usr/bin/ksshaskpass"
+
+# man pages
+export MANROFFOPT="-c"
+export PAGER="less -R"
+export MANPAGER="less -R"
+# add this alias
+#alias man="bat -l man -p"
+
+# Rust/Cargo
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+# source perlbrew
+[[ -f "$HOME/perl5/perlbrew/etc/bashrc" ]] && source $HOME/perl5/perlbrew/etc/bashrc
+
+# source rakubrew
+[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"

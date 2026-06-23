@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# vim: syntax=sh
+
 # Don't run interactive stuff in non-interactive shells.
 [[ $- != *i* ]] && return
 
@@ -7,9 +9,43 @@ source ~/.config/bash/aliases
 source ~/.config/bash/functions
 source ~/.config/bash/prompt
 
-shopt -s autocd
-shopt -s checkwinsize
+# Load shell completions
+[[ -f "$HOME/.config/bash/completion" ]] && source "$HOME/.config/bash/completion"
+
+# shopt
+shopt -s autocd         # change to named directory
+shopt -s cdspell        # autocorrects cd misspellings
+shopt -s cmdhist        # save multi-line commands in history as single line
+shopt -s dotglob
+shopt -s expand_aliases # expand aliases
+shopt -s checkwinsize   # updates LINES and COLUMNS on window resize
+shopt -s globstar       # allows pattern "**" expands to recursively match all files and subdirectories
+shopt -s histappend     # do not overwrite history
+
+# avoid duplicates + ignore simple commands
+HISTCONTROL=ignoreboth
+
+# append instead of overwrite
 shopt -s histappend
+
+# I'm just used to this mode
+set -o emacs
+
+# disable Ctrl-S and Ctrl-Q because I keep pressing them by accident
+stty stop ''
+stty start ''
+stty -ixon
+stty -ixoff
+
+# display system information
+if [[ -f /usr/bin/fastfetch ]]; then
+    fastfetch
+fi
+
+# fzf history on Ctrl+R (override default reverse search)
+#bind -x '"\C-r": fh'
+
+bind -x '"\C-r": _fzf_history'
 
 # machine-specific overrides
 [[ -f ~/.config/bash/local ]] && source ~/.config/bash/local

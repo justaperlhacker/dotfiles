@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# vim: syntax=sh
+
 mkcd() {
     mkdir -p "$1"
     cd "$1"
@@ -8,4 +11,161 @@ extract() {
         *.tar.gz) tar xf "$1" ;;
         *.zip) unzip "$1" ;;
     esac
+}
+
+gco() {
+    local branch
+
+    branch=$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes \
+        | sed 's|origin/||' \
+        | sort -u \
+        | fzf --height 50% --reverse \
+              --prompt="git checkout > " \
+              --preview 'git log --oneline --graph --color=always {} -n 20')
+
+    [[ -n "$branch" ]] && git checkout "$branch"
+}
+
+gadd() {
+    git status --porcelain \
+        | awk '{print $2}' \
+        | fzf -m --height 40% --reverse \
+              --prompt="git add > " \
+        | xargs -r git add
+}
+
+glog() {
+    git log --oneline --graph --decorate --color=always \
+        | fzf --height 60% --reverse \
+              --ansi \
+              --prompt="git log > "
+}
+
+
+# -----------------------------
+# fzf bash history search
+# -----------------------------
+
+fh() {
+    local cmd
+
+    cmd=$(history \
+        | sed 's/^[ ]*[0-9]\+[ ]*//' \
+        | fzf --height 60% --reverse \
+              --prompt="history > " \
+              --tac)
+
+    if [[ -n "$cmd" ]]; then
+        READLINE_LINE="$cmd"
+        READLINE_POINT=${#cmd}
+    fi
+}
+
+# fuzzy history (better Ctrl+R)
+_fzf_history() {
+  local cmd
+  cmd=$(history | fzf --height 40% --reverse --tac | sed 's/ *[0-9]* *//')
+  if [ -n "$cmd" ]; then
+    READLINE_LINE="$cmd"
+    READLINE_POINT=${#cmd}
+  fi
+}
+
+# fuzzy directory jump (fzf + zoxide hybrid)
+zz() {
+    local dir
+    dir=$(zoxide query -l | fzf --height 40% --reverse) || return
+    cd "$dir"
+}
+
+# smart jump (zoxide + fzf + project awareness)
+jj() {
+    local dir
+    dir=$(zoxide query -l | fzf --height 40% --reverse) || return
+    cd "$dir"
+}
+
+# ----------------------------
+# Perl project context helper
+# ----------------------------
+
+_perl_project_root() {
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/Makefile.PL" || -f "$dir/cpanfile" || -f "$dir/dist.ini" ]]; then
+            echo "$dir"
+            return
+        fi
+        dir=$(dirname "$dir")
+    done
+}
+
+
+dev() {
+    local root
+    root=$(_perl_project_root)
+
+    if [[ -z "$root" ]]; then
+        echo "Not in a Perl project"
+        return 1
+    fi
+
+    cd "$root"
+
+    echo "📦 Project: $root"
+
+    PS3="dev> "
+
+    select opt in \
+        "Run tests (prove)" \
+        "Fuzzy test picker (pf)" \
+        "Switch perl (psw)" \
+        "Open shell here" \
+        "Exit"
+    do
+        case $REPLY in
+            1) prove -l ;;
+            2) pf ;;
+            3) psw ;;
+            4) $SHELL ;;
+            5) break ;;
+        esac
+    done
+}
+
+pf() {
+    local root test
+
+    root=$(_perl_project_root)
+    [[ -n "$root" ]] && cd "$root"
+
+    test=$(find . -type f -name "*.t" 2>/dev/null | fzf --height 50% --reverse) || return
+
+    prove -l "$test"
+}
+
+# fuzzy perlbrew switch
+psw() {
+    local perl
+    perl=$(perlbrew list | fzf --height 40% --reverse) || return
+    perlbrew switch "$perl"
+}
+
+# fuzzy CPAN module install (basic)
+pcpan() {
+    local mod
+    read -rp "Module search: " mod
+    cpanm "$mod"
+}
+
+# ----------------------------
+# Smart prompt (Perl + git + dir)
+# ----------------------------
+
+__git_branch() {
+    git rev-parse --abbrev-ref HEAD 2>/dev/null
+}
+
+__perl_env() {
+    perl -v 2>/dev/null | head -n1 | awk '{print $4}'
 }

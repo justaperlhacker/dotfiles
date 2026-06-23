@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# vim: syntax=sh
+
+# Git completion
+[[ -f "$HOME/.config/bash/git-completion.bash" ]] && \
+    source "$HOME/.config/bash/git-completion.bash"
+
+# kubectl completion
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion bash)
+fi
+
+
+source /usr/share/fzf/key-bindings.bash
+source /usr/share/fzf/completion.bash
+
+eval "$(zoxide init bash)"

@@ -1,0 +1,60 @@
+! ic_orange
+! vim: syntax=xdefaults
+
+!            "color_01": "#000000",
+!            "color_02": "#C13900",
+!            "color_03": "#A4A900",
+!            "color_04": "#CAAF00",
+!            "color_05": "#BD6D00",
+!            "color_06": "#FC5E00",
+!            "color_07": "#F79500",
+!            "color_08": "#FFC88A",
+!            "color_09": "#6A4F2A",
+!            "color_10": "#FF8C68",
+!            "color_11": "#F6FF40",
+!            "color_12": "#FFE36E",
+!            "color_13": "#FFBE55",
+!            "color_14": "#FC874F",
+!            "color_15": "#C69752",
+!            "color_16": "#FAFAFF",
+!            "foreground": "#FFCB83",
+!            "background": "#262626",
+!            "cursor": "#FFCB83",
+!            "name": "Ic Orange Ppl",
+
+*.background:            #262626
+*.foreground:            #FFCB83
+!*.fadeColor:             #FFCB83
+*.cursorColor:           #FFCB83
+
+!! black dark/light
+*.color0:                #000000
+*.color8:                #6A4F2A
+
+!! red dark/light
+*.color1:                #C13900
+*.color9:                #FF8C68
+
+!! green dark/light
+*.color2:                #A4A900
+*.color10:               #F6FF40
+
+!! yellow dark/light
+*.color3:                #CAAF00
+*.color11:               #FFE36E
+
+!! blue dark/light
+*.color4:                #BD6D00
+*.color12:               #FFBE55
+
+!! magenta dark/light
+*.color5:                #FC5E00
+*.color13:               #FC874F
+
+!! cyan dark/light
+*.color6:                #F79500
+*.color14:               #C69752
+
+!! white dark/light
+*.color7:                #FFC88A
+*.color15:               #FAFAFF

@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
+# vim: syntax=sh
 
 # load environment variables
 [[ -f "$HOME/.config/bash/env" ]] && source "$HOME/.config/bash/env"
 
-# ensure state dir exists
+# ensure tmux socket dir exists
+[[ -d "$XDG_RUNTIME_DIR/tmux" ]] || mkdir -p "$XDG_RUNTIME_DIR/tmux"
+
+# ensure bash history state dir exists
 [[ -d "$XDG_STATE_HOME/bash" ]] || mkdir -p "$XDG_STATE_HOME/bash"
 # mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/bash"
 

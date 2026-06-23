@@ -1,1 +1,23 @@
+#!/usr/bin/env bash
+# vim: syntax=sh
+
+# default prompt
 PS1='\u@\h:\w\$ '
+
+# ----------------------------
+# Smart prompt (Perl + git + dir)
+# ----------------------------
+
+PS1='[\u@\h \W'
+
+if command -v perlbrew >/dev/null 2>&1; then
+    PS1+='$(__perl_env)'
+fi
+
+PS1+=' $(__git_branch)'
+
+PS1+=']\$ '
+
+if command -v starship &>/dev/null; then
+    eval "$(starship init bash)"
+fi

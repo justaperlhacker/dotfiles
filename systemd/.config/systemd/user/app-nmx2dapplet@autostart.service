@@ -1,0 +1,12 @@
+[Unit]
+Description=NetworkManager applet (%i)
+Documentation=man:nm-applet(1)
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.NetworkManager.Applet
+ExecStart=/usr/bin/nm-applet
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

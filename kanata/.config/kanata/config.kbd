@@ -1,0 +1,14 @@
+(defsrc
+  caps
+  ralt
+)
+
+(defalias
+  escctrl (tap-hold 100 100 esc lctl)
+  ralt-super lmet
+)
+
+(deflayer base
+  @escctrl
+  @ralt-super
+)

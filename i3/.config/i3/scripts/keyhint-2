@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# keyhint rofi tool to search used keybindings in i3wm
+
+I3_CONFIG=$HOME/.config/i3/config
+
+includes=$(sed -nre 's/^include\s+(.+)/\1/p' ${I3_CONFIG} \
+    | sed "s|~|${HOME}|g")
+
+{
+    cat ${I3_CONFIG}
+    for f in ${includes}; do
+        [ -f "${f}" ] && cat "${f}"
+    done
+} \
+    | awk '
+/^[[:space:]]*set[[:space:]]+\$[a-zA-Z_][a-zA-Z0-9_]*[[:space:]]+/ {
+    var = $2; sub(/^\$/, "", var)
+    val = $0; gsub(/^[[:space:]]*set[[:space:]]+\$[a-zA-Z_][a-zA-Z0-9_]*[[:space:]]+/, "", val)
+    gsub(/^"/, "", val); gsub(/"$/, "", val)
+    vars[var] = val
+}
+/^[[:space:]]*mode[[:space:]]+/ {
+    in_mode = 1
+    mode_name = $0
+    gsub(/^[[:space:]]*mode[[:space:]]*"/, "", mode_name)
+    gsub(/".*$/, "", mode_name)
+    next
+}
+/^[[:space:]]*}/ && in_mode { in_mode = 0; mode_name = ""; next }
+/^[[:space:]]*bindsym/ {
+    line = $0
+    gsub(/^[[:space:]]*bindsym[[:space:]]+/, "", line)
+    gsub(/--no-startup-id[[:space:]]*/, "", line)
+    gsub(/--release[[:space:]]*/, "", line)
+    gsub(/[[:space:]]+exec[[:space:]]+/, " ", line)
+    for (v in vars) gsub("\\$" v, vars[v], line)
+    split(line, parts, " ")
+    key = parts[1]; cmd = parts[2]
+    if (cmd ~ /^(sh|bash|zsh|python|perl|ruby)$/) cmd = parts[3]
+    gsub(/.*\//, "", cmd); gsub(/["\x27]/, "", cmd)
+    if (cmd != "") {
+        if (in_mode && mode_name != "")
+            print "[" mode_name "] " key " → " cmd
+        else
+            print key " → " cmd
+    }
+}' \
+    | sort -u \
+    | rofi -dmenu -i -p "󰘥 Keybindings" -theme ~/.config/i3/rofi/rofikeyhint.rasi

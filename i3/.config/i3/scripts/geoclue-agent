@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+from gi.repository import GLib
+
+AGENT_PATH = "/org/freedesktop/GeoClue2/Agent"
+AGENT_INTERFACE = "org.freedesktop.GeoClue2.Agent"
+
+class GeoClueAgent(dbus.service.Object):
+    @dbus.service.method(AGENT_INTERFACE, in_signature="ss", out_signature="")
+    def AuthorizeApp(self, app_id, description):
+        pass
+
+    @dbus.service.method(AGENT_INTERFACE, in_signature="", out_signature="")
+    def Retire(self):
+        mainloop.quit()
+
+dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+bus = dbus.SessionBus()
+agent = GeoClueAgent(bus, AGENT_PATH)
+
+manager = bus.get_object("org.freedesktop.GeoClue2",
+                         "/org/freedesktop/GeoClue2/Manager")
+manager.AddAgent(AGENT_PATH, dbus_interface="org.freedesktop.GeoClue2.Manager")
+
+mainloop = GLib.MainLoop()
+mainloop.run()

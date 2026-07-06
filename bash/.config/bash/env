@@ -44,7 +44,7 @@ export MANPAGER="less -R"
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 # source perlbrew
-[[ -f "$HOME/perl5/perlbrew/etc/bashrc" ]] && source $HOME/perl5/perlbrew/etc/bashrc
+#[[ -f "$HOME/perl5/perlbrew/etc/bashrc" ]] && source $HOME/perl5/perlbrew/etc/bashrc
 
 # source rakubrew
-[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"
+#[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"

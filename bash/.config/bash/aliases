@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # vim: syntax=sh
 # -*- mode: sh -*-
 
@@ -17,8 +18,10 @@ alias lla='ls -lA'
 alias la='ls -A'
 
 alias cat="bat --style=plain"
+
 alias diff='diff --color=auto'
-alias man='man -P "bat -p"'
+#alias man='man -P "bat -p"'
+alias man="bat -l man -p"
 
 #colorize grep
 alias grep='grep --color=auto'
@@ -42,9 +45,37 @@ alias hw="hwinfo --short"
 alias ytm="youtube-dl --extract-audio --audio-format mp3"
 alias ytv="youtube-dl -f bestvideo+bestaudio"
 
+# neovim/vim
 alias n='nvim'
 alias v='vim'
 alias vim='nvim'
+
+# Neovim config switcher
+alias nvchad="NVIM_APPNAME=NvChad nvim"
+alias lazyvim="NVIM_APPNAME=LazyVim nvim"
+
+nvims() {
+  items=("default" "NvChad" "LazyVim")
+  config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
+  if [[ -z $config ]]; then
+    echo "Nothing selected"
+    return 0
+  elif [[ $config == "default" ]]; then
+    config=""
+    alias n="nvim"
+#   elif [[ $config == "lunarvim" ]]; then
+#     config=""
+#     alias n="lvim"
+#     lvim $@
+#     return 0
+  else
+    alias n="NVIM_APPNAME=${config} nvim"
+  fi
+#  alias n="NVIM_APPNAME=${config} nvim"
+  NVIM_APPNAME=$config nvim $@
+}
+
+bind -x '"\C-s": nvims'
 
 alias t='tmux'
 

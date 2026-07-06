@@ -18,6 +18,7 @@ PS1+=' $(__git_branch)'
 
 PS1+=']\$ '
 
+# start starship if available
 if command -v starship &>/dev/null; then
     eval "$(starship init bash)"
 fi

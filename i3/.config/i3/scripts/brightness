@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# brightness control - i3blocks block and keybinding helper
+
+STEP=${2:-5}
+STEP_F=$(awk "BEGIN {printf \"%.2f\", $STEP/100}")
+STATE_FILE="${TMPDIR:-/tmp}/i3-brightness-state"
+
+get_brightness() {
+    if [ -f "$STATE_FILE" ]; then
+        cat "$STATE_FILE"
+    else
+        echo "1.0"
+    fi
+}
+
+set_brightness() {
+    local val="$1"
+    local monitors
+    monitors=$(xrandr --query | grep " connected" | grep -v " disconnected" | awk '{print $1}')
+    [ -z "$monitors" ] && return 1
+    for m in $monitors; do
+        xrandr --output "$m" --brightness "$val"
+    done
+    echo "$val" > "$STATE_FILE"
+}
+
+# Handle keybinding mode (up/down/show)
+case "${1:-}" in
+    up|down|show)
+        CUR=$(get_brightness)
+        case "$1" in
+            up)
+                NEW=$(awk "BEGIN {printf \"%.2f\", $CUR + $STEP_F}")
+                NEW=$(awk "BEGIN {if ($NEW > 1.0) print 1.0; else print $NEW}")
+                set_brightness "$NEW"
+                PCT=$(awk "BEGIN {printf \"%.0f\", $NEW * 100}")
+                #notify-send -t 1500 "Brightness" "${PCT}%"
+                ;;
+            down)
+                NEW=$(awk "BEGIN {printf \"%.2f\", $CUR - $STEP_F}")
+                NEW=$(awk "BEGIN {if ($NEW < 0.0) print 0.0; else print $NEW}")
+                set_brightness "$NEW"
+                PCT=$(awk "BEGIN {printf \"%.0f\", $NEW * 100}")
+                #notify-send -t 1500 "Brightness" "${PCT}%"
+                ;;
+            show)
+                PCT=$(awk "BEGIN {printf \"%.0f\", $CUR * 100}")
+                #notify-send -t 1500 "Brightness" "${PCT}%"
+                ;;
+        esac
+        exit 0
+        ;;
+esac
+
+# i3blocks mode
+case "$BLOCK_BUTTON" in
+    4|5)
+        CUR=$(get_brightness)
+        case "$BLOCK_BUTTON" in
+            4) NEW=$(awk "BEGIN {printf \"%.2f\", $CUR + $STEP_F}");;
+            5) NEW=$(awk "BEGIN {printf \"%.2f\", $CUR - $STEP_F}");;
+        esac
+        NEW=$(awk "BEGIN {if ($NEW > 1.0) print 1.0; else if ($NEW < 0.0) print 0.0; else print $NEW}")
+        set_brightness "$NEW"
+        PCT=$(awk "BEGIN {printf \"%.0f\", $NEW * 100}")
+        #notify-send -t 1500 "Brightness" "${PCT}%"
+        ;;
+    1)
+        CUR=$(get_brightness)
+        PCT=$(awk "BEGIN {printf \"%.0f\", $CUR * 100}")
+        notify-send -t 1500 "Brightness" "${PCT}%"
+        ;;
+esac
+
+PCT=$(awk "BEGIN {printf \"%.0f\", $(get_brightness) * 100}")
+echo "󰃟 ${PCT}%"

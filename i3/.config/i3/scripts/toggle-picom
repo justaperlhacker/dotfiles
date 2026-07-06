@@ -1,0 +1,8 @@
+#!/bin/sh
+if pgrep -x picom > /dev/null; then
+    killall picom
+    notify-send "Picom" "Compositor disabled"
+else
+    picom --config "$HOME/.config/i3/picom.conf" -b
+    notify-send "Picom" "Compositor enabled"
+fi

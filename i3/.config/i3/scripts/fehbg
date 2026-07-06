@@ -1,0 +1,4 @@
+#!/bin/sh
+STATE="${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper"
+[ -s "$STATE" ] && WALLPAPER=$(cat "$STATE") || WALLPAPER='/home/johnm/Pictures/Wallpapers/26342.jpg'
+feh --no-fehbg --bg-fill "$WALLPAPER"

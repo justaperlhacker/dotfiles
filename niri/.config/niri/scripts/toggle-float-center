@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+TOGGLE_FILE=/tmp/niri-float-toggle
+if [ -f "$TOGGLE_FILE" ]; then
+    rm "$TOGGLE_FILE"
+    niri msg action move-window-to-tiling
+else
+    touch "$TOGGLE_FILE"
+    niri msg action move-window-to-floating
+    niri msg action center-window
+fi

@@ -24,3 +24,6 @@ _darcs
 ^/README.*
 ^/LICENSE.*
 ^/COPYING
+
+# Keep systemd *.wants symlink dirs out of stow (managed locally by systemctl enable)
+\.config/systemd/user/[^/]+\.wants

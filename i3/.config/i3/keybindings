@@ -1,0 +1,92 @@
+i3 Keybindings
+==============
+
+$mod = Super/Windows key
+
+TERMINAL & APPS
+  $mod+Return           terminal (konsole)
+  $mod+Shift+Return     terminal (terminator)
+  Ctrl+$alt+t           terminal (konsole, alt)
+   $mod+d                application launcher (rofi)
+  $mod+Shift+d          dmenu desktop launcher
+  $mod+tab              window switcher (rofi)
+  $alt+space            application launcher (rofi)
+  $mod+z                categorized menu (morc_menu)
+  $mod+F1               dolphin (file manager)
+  $mod+Shift+F1         dolphin as root (pkexec)
+  $mod+F2               firefox
+  $mod+Shift+F2         firefox private window
+  $mod+F5               brave
+  $mod+F6               brave (gmail)
+  $mod+Shift+?          keybinding helper (rofi)
+  $mod+Ctrl+m           audio mixer (pavucontrol)
+
+WINDOW MANAGEMENT
+  $mod+h/j/k/l          focus left/down/up/right
+  $mod+Shift+h/j/k/l    move window left/down/up/right
+  $mod+q                kill focused window (graceful close)
+  $mod+Ctrl+x           xkill (click to kill)
+  $mod+f                fullscreen toggle
+  $mod+Shift+f          fullscreen toggle (global)
+  $mod+space            focus toggle (tiling ↔ floating)
+  $mod+t                floating toggle
+  $mod+bar              split horizontal
+  $mod+underscore        split vertical
+  $mod+Shift+=          toggle split orientation
+  $mod+e                layout toggle (split/stacked/tabbed)
+  $mod+s                layout stacking
+  $mod+w                layout tabbed
+  $mod+r                enter resize mode
+  $mod+Shift+s          sticky toggle
+  $mod+Shift+BackSpace  move to scratchpad
+  $mod+BackSpace        show scratchpad
+  $mod+a                focus parent
+
+LAZY GIT MODE
+  $mod+Shift+e          exit prompt
+  $mod+0                system menu (lock/exit/suspend/reboot/shutdown)
+  $mod+9                lock screen
+
+WORKSPACES
+  $mod+1-8              switch to workspace
+  $mod+Ctrl+1-8         move container to workspace
+  $mod+Shift+1-8        move to workspace and follow
+  $mod+b                workspace back_and_forth
+  $mod+Shift+b          move to back_and_forth
+  $mod+$alt+Right       next workspace
+  $mod+$alt+Left        previous workspace
+
+APPEARANCE
+  $mod+u                border none
+  $mod+y                border pixel 1
+  $mod+n                border normal
+  $mod+Shift+g          adjust gaps
+
+MULTIMEDIA
+  XF86AudioRaiseVolume  volume up (+5%)
+  XF86AudioLowerVolume  volume down (-5%)
+  XF86AudioMute         mute toggle
+  XF86AudioMicMute      mic mute toggle
+  XF86AudioPrev         previous track
+  XF86AudioPlay         play/pause
+  XF86AudioNext         next track
+  $mod+p                cycle audio output (speakers/headset)
+
+BRIGHTNESS
+  XF86MonBrightnessUp   brightness up
+  XF86MonBrightnessDown brightness down
+  $mod+$alt+F7          brightness up
+  $mod+$alt+F8          brightness down
+
+SCREENSHOTS
+  Print                 full screenshot
+  $mod+Print            window screenshot
+  $mod+Shift+Print      selection screenshot
+
+POWER
+  $mod+Shift+p          power profiles menu
+
+MISCELLANEOUS
+  $mod+Shift+c          reload i3 config
+  $mod+Shift+r          restart i3
+  $mod+Ctrl+p           toggle picom (on/off)

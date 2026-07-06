@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# i3-window-switch - window switcher for i3 (default: rofi)
+
+windows=$(i3-msg -t get_tree | jq -r '
+  ..
+  | select(.type? == "con" and .window? and .name? and .name != "__i3_scratch")
+  | "\(.id)  \(.name)"
+')
+
+selected=$(echo "$windows" | rofi -dmenu -i -l 20 -p "Window:") || exit 1
+#selected=$(echo "$windows" | dmenu -i -l 20 -p "Window:" -nb '#1d2021' -nf '#ebdbb2' -sb '#d65d0e' -sf '#1d2021') || exit 1
+con_id=$(echo "$selected" | awk '{print $1}')
+i3-msg "[con_id=\"$con_id\"] focus"

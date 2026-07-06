@@ -1,5 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+scan_timeout=300
 format = """
 $username$hostname\
 $all\
@@ -260,7 +261,7 @@ format = '\[[$symbol($version)]($style)\]'
 format = '\[[$symbol$environment]($style)\]'
 
 [status]
-disabled = false
+#disabled = true
 format = '\[[$symbol$status]($style)\]'
 
 [sudo]
@@ -273,7 +274,7 @@ format = '\[[$symbol($version)]($style)\]'
 format = '\[[$symbol$workspace]($style)\]'
 
 [time]
-disabled=false
+disabled = true
 format = '\[[$time]($style)\]'
 
 [typst]

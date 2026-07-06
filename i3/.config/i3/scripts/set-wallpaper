@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+STATE="${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper"
+
+if [ -n "$1" ]; then
+    echo "$1" > "$STATE"
+    feh --no-fehbg --bg-fill "$1"
+else
+    echo "Usage: $(basename "$0") <path-to-image>"
+    exit 1
+fi

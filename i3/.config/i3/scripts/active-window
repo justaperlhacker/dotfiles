@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+title=$(i3-msg -t get_tree | jq -r '.. | select(.focused?).name' | head -1)
+[ -z "$title" ] && title=""
+echo "$title"

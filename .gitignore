@@ -1,8 +1,15 @@
 .config/bash/local
+.vscode
+
+# DankMaterialShell transpient files
+DankMaterialShell/.config/DankMaterialShell/.changelog-*
+DankMaterialShell/.config/DankMaterialShell/.firstlaunch
+DankMaterialShell/.config/DankMaterialShell/firefox.css
+DankMaterialShell/.config/DankMaterialShell/plugins/
 
 # systemd user enablement state (managed locally by `systemctl --user enable`,
 # ignored by stow via .stow-local-ignore) — never commit.
 systemd/.config/systemd/user/*.wants/
 
 # embedded git repo (nvim plugin) — manage separately, not part of dotfiles
-nvim/.config/nvim/pack/plugins/start/smear-cursor.nvim
+nvim/.config/nvim/pack/

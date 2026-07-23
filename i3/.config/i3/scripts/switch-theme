@@ -1,0 +1,113 @@
+#!/usr/bin/env perl
+use v5.36;
+use Path::Tiny;
+use POSIX qw(:sys_wait_h);
+
+my $I3_DIR       = path($ENV{HOME})->child('.config/i3');
+my $THEMES_DIR   = $I3_DIR->child('themes');
+my $SYMLINK_PATH = $THEMES_DIR->child('active');
+my $ROFI_CONFIG  = $I3_DIR->child('rofi/config.rasi');
+my $DUNSTRC      = $I3_DIR->child('dunst/dunstrc');
+
+sub list_themes () {
+    say "Available themes:";
+    for my $d (sort grep { -d && -e $_->child('i3.conf') } $THEMES_DIR->children) {
+        my $name    = $d->basename;
+        my $has_rofi = -e $d->child('rofi.rasi')          ? ' rofi'  : '';
+        my $has_dst = -e $d->child('dunst.conf')          ? ' dunst' : '';
+        my $active  = (-l $SYMLINK_PATH && readlink($SYMLINK_PATH) eq $name) ? ' ◀' : '';
+        printf "  %-20s [%s]%s\n", $name, "$has_rofi$has_dst", $active;
+    }
+}
+
+sub apply_dunst ($theme_name, $theme_dir) {
+    my $theme_file = $theme_dir->child('dunst.conf');
+    return unless -f $theme_file;
+
+    my $content = $theme_file->slurp_utf8;
+    my ($frame_color) = $content =~ /^\[global\].*?frame_color\s*=\s*"([^"]+)"/ms;
+    my $urgency_block = '';
+    if ($content =~ /^(\[urgency_\w+\].+?)(?=^\[(?!urgency_)|\z)/ms) {
+        $urgency_block = $1;
+    }
+    my ($bg, $fg);
+    if ($content =~ /^\[urgency_normal\].*?background\s*=\s*"([^"]+)".*?foreground\s*=\s*"([^"]+)"/ms) {
+        ($bg, $fg) = ($1, $2);
+    }
+    die "Theme missing [global] frame_color\n"               unless $frame_color;
+    die "Theme missing urgency sections\n"                   unless $urgency_block;
+    die "Theme missing [urgency_normal] colors\n"            unless $bg && $fg;
+
+    $DUNSTRC->copy($DUNSTRC->sibling('dunstrc.bak'));
+    my $dunst_content = $DUNSTRC->slurp_utf8;
+    $dunst_content =~ s/#\s*DUNST_THEME_COLOR_START\n\s*frame_color\s*=\s*"[^"]*"\n(\s*#\s*DUNST_THEME_COLOR_END)/#\ DUNST_THEME_COLOR_START\n    frame_color = "$frame_color"\n$1/;
+    $dunst_content =~ s/#\s*DUNST_THEME_URGENCY_START\n.+?#\s*DUNST_THEME_URGENCY_END/# DUNST_THEME_URGENCY_START\n$urgency_block# DUNST_THEME_URGENCY_END/s;
+    $dunst_content =~ s{(dmenu\s*=\s*/usr/bin/dmenu -p dunst:).+}{$1 -nb '$bg' -nf '$fg' -sb '$frame_color' -sf '$bg'};
+    $DUNSTRC->spew_utf8($dunst_content);
+
+    system('killall', 'dunst') if `pidof dunst 2>/dev/null` =~ /\S/;
+    if (my $pid = fork // die "fork: $!") {
+        waitpid($pid, WNOHANG);
+    } else {
+        exec('dunst', '-config', "$DUNSTRC");
+        exit 1;
+    }
+    say "  ✓ dunst: applied $theme_name";
+}
+
+sub apply_rofi ($theme_name, $theme_dir) {
+    my $rofi_src = '~/.config/i3/themes/' . $theme_name . '/rofi.rasi';
+    if (-e $theme_dir->child('rofi.rasi')) {
+        $ROFI_CONFIG->spew_utf8(qq{\@import "$rofi_src"\n/* Rofi-only themes still available: arc_dark_colors, arc_dark_transparent_colors, deep-purple */\n});
+        say "  ✓ rofi: applied $theme_name";
+    }
+}
+
+sub apply_theme ($theme_name) {
+    my $theme_dir = $THEMES_DIR->child($theme_name);
+    unless (-d $theme_dir) {
+        say STDERR "Error: theme '$theme_name' not found";
+        list_themes();
+        exit 1;
+    }
+
+    say "Switching theme to: $theme_name";
+
+    apply_dunst($theme_name, $theme_dir);
+    apply_rofi($theme_name, $theme_dir);
+
+    # Update symlink
+    if (-l $SYMLINK_PATH) {
+        unlink $SYMLINK_PATH;
+    }
+    symlink($theme_name, $SYMLINK_PATH) or die "symlink: $!";
+    say "  ✓ symlink: active -> $theme_name";
+
+    # Reload i3
+    system('i3-msg', 'reload');
+    say "  ✓ i3: reloaded";
+}
+
+sub pick_from_rofi () {
+    my @themes = sort grep { -d && -e $_->child('i3.conf') } $THEMES_DIR->children;
+    my @names  = map { $_->basename } @themes;
+    return unless @names;
+
+    my $input = join("\n", @names);
+    my $choice = `printf '%s\n' @names | rofi -dmenu -p Theme -config $I3_DIR/rofi/rofidmenu.rasi`;
+    chomp $choice;
+    if ($choice && grep { $_ eq $choice } @names) {
+        apply_theme($choice);
+    }
+}
+
+# Main
+my $arg = $ARGV[0] // '';
+if ($arg eq '--list' || $arg eq '-l' || $arg eq '') {
+    list_themes();
+    if ($arg eq '') {
+        pick_from_rofi();
+    }
+} else {
+    apply_theme($arg);
+}

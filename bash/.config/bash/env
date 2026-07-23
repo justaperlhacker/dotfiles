@@ -7,7 +7,15 @@ export EDITOR=nvim
 export VISUAL=nvim
 export PAGER=less
 
-export PATH="$HOME/.local/bin:$PATH"
+if [[ -d "$HOME/bin" && :$PATH: != *":$HOME/bin:"* ]]; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+if [[ -d "$HOME/.local/bin" && :$PATH: != *":$HOME/.local/bin:"* ]]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+export PATH
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -42,9 +50,6 @@ export MANPAGER="less -R"
 
 # Rust/Cargo
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-
-# source perlbrew
-#[[ -f "$HOME/perl5/perlbrew/etc/bashrc" ]] && source $HOME/perl5/perlbrew/etc/bashrc
 
 # source rakubrew
 #[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"

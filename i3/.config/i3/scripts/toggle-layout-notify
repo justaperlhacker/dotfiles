@@ -1,0 +1,24 @@
+#!/bin/bash
+# Toggle layout on all workspaces between tabbed and splith, then notify
+
+STATE_FILE="$HOME/.config/i3/.layout-state"
+
+# Find the focused node's ID, then get its parent's layout
+FOCUSED_ID=$(i3-msg -t get_tree | jq -r '[.. | objects | select(.focused == true)] | last | .id')
+LAYOUT=$(i3-msg -t get_tree | jq -r --argjson fid "$FOCUSED_ID" '
+  [.. | objects | select(.nodes != null and (.nodes | map(.id) | index($fid)))] | last | .layout
+')
+
+case "$LAYOUT" in
+  tabbed)                  NEXT="splith" ;;
+  split|splith|splitv)     NEXT="tabbed" ;;
+  *)                       NEXT="tabbed" ;;
+esac
+
+# Apply layout to all visible workspaces
+for ws in $(i3-msg -t get_workspaces | jq -r '.[].name'); do
+  i3-msg "[workspace=\"$ws\"] layout $NEXT" >/dev/null
+done
+
+echo "$NEXT" > "$STATE_FILE"
+notify-send -t 2000 -h "string:x-dunst-stack-tag:layout" "Layout" "$NEXT"

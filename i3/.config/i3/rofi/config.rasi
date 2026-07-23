@@ -1,2 +1,2 @@
- @theme "~/.config/i3/rofi/themes/gruvbox.rasi"
-/*@theme "~/.config/i3/rofi/themes/arc_dark_transparent_colors.rasi"*/
+@import "~/.config/i3/themes/active/rofi.rasi"
+/* Rofi-only themes still available: arc_dark_colors, arc_dark_transparent_colors, deep-purple */

@@ -27,3 +27,9 @@ _darcs
 
 # Keep systemd *.wants symlink dirs out of stow (managed locally by systemctl enable)
 \.config/systemd/user/[^/]+\.wants
+
+# DankMaterialShell transient / managed files
+^DankMaterialShell/.config/DankMaterialShell/.changelog-.*
+^DankMaterialShell/.config/DankMaterialShell/.firstlaunch
+^DankMaterialShell/.config/DankMaterialShell/firefox\.css
+^DankMaterialShell/.config/DankMaterialShell/plugins/

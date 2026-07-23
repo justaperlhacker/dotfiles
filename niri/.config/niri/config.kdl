@@ -32,6 +32,9 @@ input {
 
         // Enable numlock on startup, omitting this setting disables it.
         numlock
+
+        repeat-delay 300
+        repeat-rate 50
     }
 
     // Next sections include libinput settings.
@@ -159,6 +162,7 @@ overview {
 // See the binds section below for more spawn examples.
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "kwalletd6"
+spawn-at-startup "discord"
 
 // XDG_CURRENT_DESKTOP=KDE:gnome so Qt apps use Plasma/Breeze dark theme and GTK portal reads color-scheme
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "XDG_CURRENT_DESKTOP=KDE:gnome" "KDE_SESSION_VERSION=6" "KDE_FULL_SESSION=true" "QT_QPA_PLATFORMTHEME=kde" "QT_STYLE_OVERRIDE=Breeze"
@@ -266,12 +270,18 @@ window-rule {
     match app-id=r#"com.danklinux.dms$"#
     open-floating true
 }
+
+// Open konsole+tmux sessions as floating by default
+window-rule {
+    match app-id=r#"^org\.kde\.konsole$"# title=r#"tmux:.*Konsole$"#
+    open-floating true
+}
 // Yakuake dropdown terminal — always floating, centered
 window-rule {
     match app-id=r#"^org\.kde\.yakuake$"#
     match app-id=r#"^yakuake$"#
     open-floating true
-    default-floating-position x=0 y=0 relative-to="top"
+    // default-floating-position x=0 y=0 relative-to="top"
 }
 // Citrix ICAClient — always floating
 window-rule {

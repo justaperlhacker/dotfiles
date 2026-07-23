@@ -1,0 +1,127 @@
+#!/usr/bin/env perl
+use v5.36;
+use Getopt::Long;
+use Time::HiRes qw(sleep time);
+use JSON::PP;
+
+sub niri_msg (@args) {
+    my $cmd = join(" ", "niri", "msg", @args);
+    my $out = `$cmd`;
+    return $out;
+}
+
+sub niri_action (@args) {
+    niri_msg "action", @args;
+}
+
+sub get_workspaces () {
+    my $json = niri_msg "--json", "workspaces";
+    return decode_json($json);
+}
+
+sub get_windows () {
+    my $json = niri_msg "--json", "windows";
+    return decode_json($json);
+}
+
+sub get_focused_workspace_idx () {
+    for my $ws (get_workspaces()->@*) {
+        return $ws->{idx} if $ws->{is_focused};
+    }
+    return 1;
+}
+
+sub is_target_window ($window, $wclass, $title) {
+    return 0 unless ($window->{app_id} // '') eq $wclass;
+    my $pid = $window->{pid};
+    return 0 unless $pid;
+    my $cmdline_path = "/proc/$pid/cmdline";
+    open my $fh, "<", $cmdline_path or return 0;
+    my $cmdline = do { local $/; <$fh> };
+    close $fh;
+    $cmdline =~ s/\0/ /g;
+    return index(lc($cmdline), lc($title)) >= 0;
+}
+
+sub find_target_window ($windows, $wclass, $title) {
+    for my $w ($windows->@*) {
+        return $w if is_target_window($w, $wclass, $title);
+    }
+    return undef;
+}
+
+sub spawn_app ($terminal, $session, $cmd) {
+    my @args = ($terminal, "-e", "tmux", "new-session", "-As", $session);
+    push @args, $cmd if defined $cmd;
+    if (fork == 0) {
+        exec @args;
+        die "exec failed: $!";
+    }
+}
+
+sub detach_tmux ($session) {
+    system "tmux", "detach-client", "-s", $session;
+}
+
+sub float_and_center ($win_id, $width_pct = 75) {
+    niri_action "move-window-to-floating", "--id", $win_id;
+    sleep 0.1;
+    niri_action "set-window-width", "--id", $win_id, "${width_pct}%";
+    niri_action "center-window", "--id", $win_id;
+}
+
+sub wait_for_window ($wclass, $title, $timeout = 3.0, $interval = 0.2) {
+    my $deadline = time + $timeout;
+    while (time < $deadline) {
+        my $target = find_target_window(get_windows(), $wclass, $title);
+        return $target if $target;
+        sleep $interval;
+    }
+    return undef;
+}
+
+my %opts;
+GetOptions(\%opts,
+    'terminal=s' => \my $terminal,
+    'session=s',
+    'cmd=s',
+    'class=s'    => \my $wclass,
+    'title=s',
+    'width=i',
+) or die "Usage: $0 --session NAME --class CLASS --title TITLE [--cmd CMD] [--terminal konsole] [--width 75]\n";
+
+$terminal //= 'konsole';
+
+my $session = $opts{session} // die "Error: --session is required\n";
+my $cmd     = $opts{cmd};
+$wclass     //= die "Error: --class is required\n";
+my $title   = $opts{title} // die "Error: --title is required\n";
+my $width   = $opts{width} // 75;
+
+my $windows      = get_windows();
+my $target_win   = find_target_window($windows, $wclass, $title);
+
+if ($target_win) {
+    my $win_id = $target_win->{id};
+    if ($target_win->{is_focused}) {
+        niri_action "close-window", "--id", $win_id;
+    } else {
+        my $focused_ws = get_focused_workspace_idx();
+        niri_action "move-window-to-workspace", "--window-id", $win_id, $focused_ws, "--focus=true";
+        niri_action "focus-window", "--id", $win_id;
+        float_and_center($win_id, $width);
+    }
+}
+else {
+    spawn_app($terminal, $session, $cmd);
+    $target_win = wait_for_window($wclass, $title, 3.0, 0.2);
+    if ($target_win) {
+        my $win_id = $target_win->{id};
+        niri_action "focus-window", "--id", $win_id;
+        float_and_center($win_id, $width);
+    }
+    else {
+        print STDERR "Failed to find window for " . ($cmd // $session) . "\n";
+        exit 1;
+    }
+}

@@ -1,0 +1,153 @@
+#!/usr/bin/env perl
+use v5.36;
+use FindBin qw($Bin);
+use lib "$Bin";
+use I3Connect qw(i3_connect);
+use Getopt::Long;
+use Time::HiRes qw(sleep time);
+
+my $i3 = i3_connect();
+
+sub get_leaves($node) {
+    my @leaves;
+    if ($node->{window}) {
+        push @leaves, $node;
+    }
+    for my $child (($node->{nodes} // [])->@*, ($node->{floating_nodes} // [])->@*) {
+        push @leaves, get_leaves($child);
+    }
+    return @leaves;
+}
+
+sub find_by_id($node, $id) {
+    return $node if $node->{id} && $node->{id} == $id;
+    for my $child (($node->{nodes} // [])->@*, ($node->{floating_nodes} // [])->@*) {
+        my $found = find_by_id($child, $id);
+        return $found if $found;
+    }
+    return undef;
+}
+
+sub get_focused_workspace() {
+    my $workspaces = $i3->get_workspaces->recv;
+    for my $ws ($workspaces->@*) {
+        return $ws if $ws->{focused};
+    }
+    return undef;
+}
+
+sub find_target_window($tree, $wclass, $title) {
+    for my $leaf (get_leaves($tree)) {
+        my $wprops = $leaf->{window_properties} // {};
+        my $class  = $wprops->{class} // '';
+        my $name   = $leaf->{name} // '';
+        if (lc($class) eq lc($wclass) && index(lc($name), lc($title)) >= 0) {
+            return $leaf;
+        }
+    }
+    return undef;
+}
+
+sub spawn_app($terminal, $session, $cmd) {
+    if (fork == 0) {
+        my @args = ($terminal, "-e", "tmux", "new-session", "-As", $session);
+        push @args, $cmd if defined $cmd;
+        exec(@args);
+        die "exec failed: $!";
+    }
+}
+
+sub detach_tmux($session) {
+    system("tmux", "detach-client", "-s", $session);
+}
+
+sub ensure_floating($win_id) {
+    for (1 .. 10) {
+        $i3->command(qq'[con_id="$win_id"], floating enable')->recv;
+        sleep 0.15;
+
+        my $tree = $i3->get_tree->recv;
+        my $win  = find_by_id($tree, $win_id);
+        return 1 if $win && ($win->{floating} // '') eq 'user_on';
+    }
+    return 0;
+}
+
+sub float_and_center($win_id, $width_ratio = 0.75, $height_ratio = 0.75) {
+    ensure_floating($win_id);
+
+    my $tree = $i3->get_tree->recv;
+    my $win  = find_by_id($tree, $win_id);
+    return unless $win;
+
+    my $ws = get_focused_workspace();
+    return unless $ws;
+
+    my $ws_rect = $ws->{rect};
+    my $target_w = int($ws_rect->{width}  * $width_ratio);
+    my $target_h = int($ws_rect->{height} * $height_ratio);
+
+    $i3->command(qq'[con_id="$win_id"], resize set $target_w px $target_h px')->recv;
+    sleep 0.1;
+
+    $tree = $i3->get_tree->recv;
+    $win  = find_by_id($tree, $win_id);
+    return unless $win;
+
+    my $win_rect = $win->{rect};
+    my $pos_x = $ws_rect->{x} + ($ws_rect->{width}  - $win_rect->{width})  / 2;
+    my $pos_y = $ws_rect->{y} + ($ws_rect->{height} - $win_rect->{height}) / 2;
+
+    $i3->command(qq'[con_id="$win_id"], move absolute position ${pos_x}px ${pos_y}px')->recv;
+}
+
+sub wait_for_window($wclass, $title, $timeout = 3.0, $interval = 0.2) {
+    my $deadline = time + $timeout;
+    while (time < $deadline) {
+        my $tree   = $i3->get_tree->recv;
+        my $target = find_target_window($tree, $wclass, $title);
+        return $target if $target;
+        sleep $interval;
+    }
+    return undef;
+}
+
+my %opts;
+GetOptions(\%opts,
+    'terminal=s' => \my $terminal,
+    'session=s',
+    'cmd=s',
+    'class=s'    => \my $wclass,
+    'title=s'    => \my $title,
+    'maximized',
+) or die "Usage: $0 --session NAME --class CLASS --title TITLE [--cmd CMD] [--terminal kitty] [--maximized]\n";
+
+$terminal //= 'kitty';
+
+my $session = $opts{session} // die "Error: --session is required\n";
+my $cmd     = $opts{cmd};
+$wclass     //= die "Error: --class is required\n";
+$title      //= die "Error: --title is required\n";
+
+my $tree       = $i3->get_tree->recv;
+my $target_win = find_target_window($tree, $wclass, $title);
+
+if ($target_win) {
+    my $win_id = $target_win->{id};
+    detach_tmux($session);
+    $i3->command(qq'[con_id="$win_id"], kill')->recv;
+}
+else {
+    spawn_app($terminal, $session, $cmd);
+    $target_win = wait_for_window($wclass, $title, 3.0, 0.2);
+    if ($target_win) {
+        my $win_id = $target_win->{id};
+        $i3->command(qq'[con_id="$win_id"], focus')->recv;
+        my $ratio = $opts{maximized} ? 1.0 : 0.75;
+        float_and_center($win_id, $ratio, $ratio);
+    }
+    else {
+        print STDERR "Failed to find window for " . ($cmd // $session) . "\n";
+        exit 1;
+    }
+}

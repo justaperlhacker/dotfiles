@@ -1,10 +1,19 @@
+(defcfg
+  linux-dev-names-include (
+    "AT Translated Set 2 keyboard"
+    "HID 1bcf:08a0 Keyboard"
+    "SINO WEALTH Bluetooth Keyboard"
+  )
+  process-unmapped-keys yes
+)
+
 (defsrc
   caps
   ralt
 )
 
 (defalias
-  escctrl (tap-hold 100 100 esc lctl)
+  escctrl (tap-hold 200 200 esc lctl)
   ralt-super lmet
 )
 

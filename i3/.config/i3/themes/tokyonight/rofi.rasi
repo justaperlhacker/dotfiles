@@ -1,0 +1,34 @@
+/*******************************************************
+ * ROFI Tokyo Night colors
+ * bg=#1a1b26, fg=#c0caf5, blue=#7aa2f7, red=#f7768e
+ *******************************************************/
+* {
+    selected-normal-foreground:  rgba ( 26, 27, 38, 100 % );
+    foreground:                  rgba ( 192, 202, 245, 100 % );
+    normal-foreground:           @foreground;
+    alternate-normal-background: rgba ( 36, 40, 59, 100 % );
+    red:                         rgba ( 247, 118, 142, 100 % );
+    selected-urgent-foreground:  rgba ( 192, 202, 245, 100 % );
+    blue:                        rgba ( 122, 162, 247, 100 % );
+    urgent-foreground:           rgba ( 247, 118, 142, 100 % );
+    alternate-urgent-background: rgba ( 36, 40, 59, 90 % );
+    active-foreground:           rgba ( 158, 206, 106, 100 % );
+    lightbg:                     rgba ( 59, 66, 97, 100 % );
+    selected-active-foreground:  rgba ( 192, 202, 245, 100 % );
+    alternate-active-background: rgba ( 36, 40, 59, 88 % );
+    background:                  rgba ( 26, 27, 38, 100 % );
+    alternate-normal-foreground: @foreground;
+    normal-background:           rgba ( 26, 27, 38, 100 % );
+    lightfg:                     rgba ( 86, 95, 137, 100 % );
+    selected-normal-background:  rgba ( 122, 162, 247, 100 % );
+    border-color:                rgba ( 59, 66, 97, 100 % );
+    spacing:                     2;
+    separatorcolor:              rgba ( 59, 66, 97, 100 % );
+    urgent-background:           rgba ( 247, 118, 142, 15 % );
+    selected-urgent-background:  rgba ( 190, 90, 110, 100 % );
+    alternate-urgent-foreground: @urgent-foreground;
+    background-color:            rgba ( 0, 0, 0, 0 % );
+    alternate-active-foreground: @active-foreground;
+    active-background:           rgba ( 158, 206, 106, 17 % );
+    selected-active-background:  rgba ( 158, 206, 106, 100 % );
+}

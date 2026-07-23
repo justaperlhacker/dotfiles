@@ -47,5 +47,11 @@ fi
 
 bind -x '"\C-r": _fzf_history'
 
+# source perlbrew
+[[ -f "$HOME/perl5/perlbrew/etc/bashrc" ]] && source $HOME/perl5/perlbrew/etc/bashrc
+
+# source rakubrew
+#[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"
+
 # machine-specific overrides
 [[ -f ~/.config/bash/local ]] && source ~/.config/bash/local

@@ -128,8 +128,12 @@ binds {
     Print { screenshot; }
     XF86Launch1 { screenshot; }
     Mod+Shift+E { quit; }
+    Mod+grave hotkey-overlay-title="Scratchpad" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "kitty" "--session" "work" "--class" "kitty" "--title" "work"; }
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
-    Super+F12 hotkey-overlay-title="Yakuake" { spawn "env" "ICON_THEME=breeze-dark" "yakuake"; }
+    Mod+F9 hotkey-overlay-title="OpenCode" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "opencode" "--cmd" "opencode" "--class" "org.kde.konsole" "--title" "opencode"; }
+    Mod+F10 hotkey-overlay-title="Kilo Code" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "kilo" "--cmd" "kilo" "--class" "org.kde.konsole" "--title" "kilo"; }
+    Mod+F11 hotkey-overlay-title="Monitor" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "monitor" "--cmd" "htop" "--class" "org.kde.konsole" "--title" "monitor"; }
+    Mod+F12 hotkey-overlay-title="Yakuake" { spawn "env" "ICON_THEME=breeze-dark" "yakuake"; }
     Mod+D repeat=false { toggle-overview; }
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Mod+Shift+Slash { show-hotkey-overlay; }

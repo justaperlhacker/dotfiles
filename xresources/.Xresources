@@ -44,7 +44,7 @@ UXTerm*saveLines:          99000
 UXTerm*renderFont:         true
 !XTerm*faceName:           Monospace:size=12:antialias=true
 !XTerm*faceName:           Hack:size=11:antialias=true
-!XTerm*faceName:          Liberation Mono:size=12:antialias=true
+!XTerm*faceName:           Liberation Mono:size=12:antialias=true
 UXTerm*faceName:           JetBrainsMono Nerd Font:size=12:antialias=true
 UXTerm*cursorColor:        green
 UXTerm*cursorBlink:        true

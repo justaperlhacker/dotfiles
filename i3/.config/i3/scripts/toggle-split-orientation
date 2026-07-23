@@ -1,0 +1,43 @@
+#!/usr/bin/env perl
+use v5.36;
+use FindBin qw($Bin);
+use lib "$Bin";
+use I3Connect qw(i3_connect);
+
+my $i3 = i3_connect();
+my $tree = $i3->get_tree->recv;
+
+sub find_focused($node) {
+    return $node if $node->{focused};
+    for my $child (($node->{nodes} // [])->@*, ($node->{floating_nodes} // [])->@*) {
+        my $found = find_focused($child);
+        return $found if $found;
+    }
+    return undef;
+}
+
+sub find_parent_of($node, $id) {
+    for my $child (($node->{nodes} // [])->@*) {
+        return $node if $child->{id} && $child->{id} == $id;
+        my $found = find_parent_of($child, $id);
+        return $found if $found;
+    }
+    for my $child (($node->{floating_nodes} // [])->@*) {
+        return $node if $child->{id} && $child->{id} == $id;
+    }
+    return undef;
+}
+
+my $focused = find_focused($tree);
+exit 0 unless $focused;
+
+my $parent = find_parent_of($tree, $focused->{id});
+exit 0 unless $parent;
+
+my $layout = $parent->{layout} // '';
+
+if ($layout eq 'splith' || $layout eq 'splitv') {
+    my $new = $layout eq 'splith' ? 'vertical' : 'horizontal';
+    $i3->command('split toggle')->recv;
+    system('notify-send', '-t', '2000', 'Split Orientation', "$new");
+}

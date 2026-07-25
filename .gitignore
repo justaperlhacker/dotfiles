@@ -30,4 +30,5 @@ LazyVim/.config/LazyVim/data
 # Ignore any local backups or cache state NVChad creates at runtime
 NvChad/.config/NvChad/plugin/
 
-NvChad/.config/NvChad/.git
+NvChad/.config/NvChad/.git/
+NvChad/.config/NvChad/.git*

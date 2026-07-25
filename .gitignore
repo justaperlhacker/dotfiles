@@ -15,7 +15,6 @@ systemd/.config/systemd/user/*.wants/
 nvim/.config/nvim/pack/
 
 # LazyVim — machine-specific / starter template files
-LazyVim/.config/LazyVim/lazy-lock.json
 LazyVim/.config/LazyVim/.neoconf.json
 LazyVim/.config/LazyVim/.gitignore
 LazyVim/.config/LazyVim/lua/plugins/example.lua

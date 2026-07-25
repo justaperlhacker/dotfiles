@@ -13,3 +13,17 @@ systemd/.config/systemd/user/*.wants/
 
 # embedded git repo (nvim plugin) — manage separately, not part of dotfiles
 nvim/.config/nvim/pack/
+
+# LazyVim — machine-specific / starter template files
+LazyVim/.config/LazyVim/lazy-lock.json
+LazyVim/.config/LazyVim/.neoconf.json
+LazyVim/.config/LazyVim/.gitignore
+LazyVim/.config/LazyVim/lua/plugins/example.lua
+LazyVim/.config/LazyVim/tt.*
+LazyVim/.config/LazyVim/.tests
+LazyVim/.config/LazyVim/doc/tags
+LazyVim/.config/LazyVim/debug
+LazyVim/.config/LazyVim/.repro
+LazyVim/.config/LazyVim/foo.*
+LazyVim/.config/LazyVim/*.log
+LazyVim/.config/LazyVim/data

@@ -11,3 +11,6 @@ if [[ ! -z "$ACTIVESTATE_ACTIVATED" && -f "$ACTIVESTATE_ACTIVATED/activestate.ya
   echo "State Tool is operating on project $ACTIVESTATE_ACTIVATED_NAMESPACE, located at $ACTIVESTATE_ACTIVATED"
 fi
 # -- STOP ACTIVESTATE DEFAULT RUNTIME ENVIRONMENT
+
+# kimi-code
+export PATH="/home/johnm/.kimi-code/bin:$PATH"

@@ -50,6 +50,8 @@ alias n='nvim'
 alias v='vim'
 alias vim='nvim'
 
+alias nvchad-pull="git --git-dir=\$HOME/.cache/nvchad-git/.git --work-tree=\$HOME/.dotfiles/NvChad/.config/NvChad pull"
+
 # Neovim config switcher
 alias nvchad="NVIM_APPNAME=NvChad nvim"
 alias lazyvim="NVIM_APPNAME=LazyVim nvim"

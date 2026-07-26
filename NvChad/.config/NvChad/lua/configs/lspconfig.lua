@@ -35,6 +35,14 @@ add_server("perllsp", {
   cmd = { "perllsp", "--stdio" },
   filetypes = { "perl" },
   root_markers = { "cpanfile", "Makefile.PL", "Build.PL", ".git" },
+  on_attach = function(client, bufnr)
+    nvf.on_attach(client, bufnr)
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentRangeFormattingProvider = false
+    if client.server_capabilities.textDocumentSync then
+      client.server_capabilities.textDocumentSync.willSaveWaitUntil = false
+    end
+  end,
 })
 
 

@@ -43,11 +43,11 @@ return {
       ------------------------------------------------------------------
       -- Perl Debugging via native `perl-lsp` / `perllsp` DAP engine
       ------------------------------------------------------------------
-      dap.adapters.perl = {
-        type = "executable",
-        command = "perllsp", -- or 'perl-dap' depending on your binary build
-        args = { "dap" },
-      }
+       dap.adapters.perl = {
+         type = "executable",
+         command = "perl",
+         args = { "-MPerl::LanguageServer" },
+       }
 
       dap.configurations.perl = {
         {

@@ -65,12 +65,8 @@ nvims() {
   elif [[ $config == "default" ]]; then
     config=""
     alias n="nvim"
-#   elif [[ $config == "lunarvim" ]]; then
-#     config=""
-#     alias n="lvim"
-#     lvim $@
-#     return 0
   else
+    export NVIM_APPNAME=${config}
     alias n="NVIM_APPNAME=${config} nvim"
   fi
 #  alias n="NVIM_APPNAME=${config} nvim"

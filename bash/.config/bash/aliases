@@ -46,7 +46,6 @@ alias ytm="youtube-dl --extract-audio --audio-format mp3"
 alias ytv="youtube-dl -f bestvideo+bestaudio"
 
 # neovim/vim
-alias n='nvim'
 alias v='vim'
 alias vim='nvim'
 
@@ -55,25 +54,62 @@ alias nvchad-pull="git --git-dir=\$HOME/.cache/nvchad-git/.git --work-tree=\$HOM
 # Neovim config switcher
 alias nvchad="NVIM_APPNAME=NvChad nvim"
 alias lazyvim="NVIM_APPNAME=LazyVim nvim"
+alias lunarvim="~/.local/bin/LunarVim"
+alias astronvim="NVIM_APPNAME=AstroVim nvim"
+alias lvim="~/.local/bin/LunarVim"
 
-nvims() {
-  items=("default" "NvChad" "LazyVim")
-  config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
+# Neovim config switcher with persistent state
+NVIM_STATE_FILE="${HOME}/.config/bash/.nvim-state"
+
+_nvims_apply() {
+  local config="$1"
+  if [[ "$config" == "default" || -z "$config" ]]; then
+    unset NVIM_APPNAME
+    alias n="nvim"
+  elif [[ "$config" == "LunarVim" ]]; then
+    alias n="~/.local/bin/LunarVim"
+  else
+    export NVIM_APPNAME="${config}"
+    alias n="NVIM_APPNAME=${config} nvim"
+  fi
+}
+
+_nvims_save() {
+  local config="$1"
+  echo "$config" > "${NVIM_STATE_FILE}"
+}
+
+# Restore saved neovim selection on shell start
+if [[ -f "${NVIM_STATE_FILE}" ]]; then
+  _nvims_apply "$(cat "${NVIM_STATE_FILE}")"
+else
+  alias n='nvim'
+fi
+
+nvim_select() {
+  items=("default" "NvChad" "LazyVim" "LunarVim" "AstroVim")
+  config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
   if [[ -z $config ]]; then
     echo "Nothing selected"
     return 0
-  elif [[ $config == "default" ]]; then
-    config=""
-    alias n="nvim"
-  else
-    export NVIM_APPNAME=${config}
-    alias n="NVIM_APPNAME=${config} nvim"
   fi
-#  alias n="NVIM_APPNAME=${config} nvim"
-  NVIM_APPNAME=$config nvim $@
+  _nvims_save "$config"
+  _nvims_apply "$config"
+  if [[ "$config" == "LunarVim" ]]; then
+    ~/.local/bin/LunarVim "$@"
+  else
+    NVIM_APPNAME="${config}" nvim "$@"
+  fi
 }
 
-bind -x '"\C-s": nvims'
+nvim_reset() {
+  rm -f "${NVIM_STATE_FILE}"
+  unset NVIM_APPNAME
+  alias n='nvim'
+  echo "Neovim config reset to default"
+}
+
+bind -x '"\C-s": nvim_select'
 
 alias t='tmux'
 
@@ -89,10 +125,55 @@ alias pdw="pwd"
 
 # emacs
 alias em='emacs -nw'
-alias dem='emacs -nw --with-profile doom'
 alias doomemacs="emacs --with-profile doom --name Doom-Emacs"
-alias gnuemacs="emacs --with-profile vanilla"
 alias spacemacs="emacs --with-profile spacemacs --name Spacemacs"
+alias gnuemacs="emacs --with-profile vanilla"
+
+# Emacs profile switcher with persistent state
+EMACS_STATE_FILE="${HOME}/.config/bash/.emacs-state"
+
+_emacs_apply() {
+  local profile="$1"
+  if [[ "$profile" == "default" || -z "$profile" ]]; then
+    alias em='emacs -nw'
+    unalias emacs
+  else
+    alias em="emacs -nw --with-profile ${profile}"
+    alias emacs="emacs --with-profile ${profile}"
+  fi
+}
+
+_emacs_save() {
+  local profile="$1"
+  echo "$profile" > "${EMACS_STATE_FILE}"
+}
+
+# Restore saved emacs profile on shell start
+if [[ -f "${EMACS_STATE_FILE}" ]]; then
+  _emacs_apply "$(cat "${EMACS_STATE_FILE}")"
+else
+  alias em='emacs -nw --with-profile vanilla'
+  alias emacs='emacs --with-profile vanilla'
+fi
+
+emacs_select() {
+  items=("default" "doom" "spacemacs" "vanilla")
+  profile=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Emacs Profile  " --height=~50% --layout=reverse --border --exit-0)
+  if [[ -z $profile ]]; then
+    echo "Nothing selected"
+    return 0
+  fi
+  _emacs_save "$profile"
+  _emacs_apply "$profile"
+  echo "Emacs profile set to: ${profile}"
+}
+
+emacs_reset() {
+  rm -f "${EMACS_STATE_FILE}"
+  alias em='emacs -nw'
+  unalias emacs
+  echo "Emacs profile reset to default"
+}
 
 # random
 alias op='opencode'

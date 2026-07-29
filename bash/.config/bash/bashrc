@@ -53,7 +53,5 @@ bind -x '"\C-r": _fzf_history'
 # source rakubrew
 #[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"
 
-export PATH="$HOME/.cargo/bin:$PATH"
-
 # machine-specific overrides
 [[ -f ~/.config/bash/local ]] && source ~/.config/bash/local

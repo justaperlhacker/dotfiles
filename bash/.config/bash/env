@@ -51,5 +51,9 @@ export MANPAGER="less -R"
 # Rust/Cargo
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
+if [[ -d "$HOME/.cargo/bin" && :$PATH: != *":$HOME/.cargo/bin:"* ]]; then
+    PATH="$HOME/.cargo/bin:$PATH"
+fi
+
 # source rakubrew
 #[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"

@@ -25,7 +25,7 @@ _darcs
 ^/LICENSE.*
 ^/COPYING
 
-# Keep systemd *.wants symlink dirs out of stow (managed locally by systemctl enable)
+# Keep *.wants symlink dirs out of stow (managed locally by systemctl enable)
 \.config/systemd/user/[^/]+\.wants
 
 # DankMaterialShell transient / managed files

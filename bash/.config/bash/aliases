@@ -177,3 +177,4 @@ emacs_reset() {
 
 # random
 alias op='opencode'
+alias vscode='/var/lib/snapd/snap/bin/code'

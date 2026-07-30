@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-rofi -dmenu -p "Keybindings" -font "monospace 9" -theme ~/.config/i3/rofi/themes/gruvbox.rasi -theme-str 'window { width: 900px; padding: 10px; } listview { lines: 35; spacing: 1px; padding: 0px; } element { padding: 0px; } element-text { padding: 0px; }' < ~/.config/i3/keybindings
+rofi -dmenu -p "Keybindings" -font "monospace 9" -theme ~/.config/i3/themes/active/rofi.rasi -theme-str 'window { width: 900px; padding: 10px; } listview { lines: 35; spacing: 1px; padding: 0px; } element { padding: 0px; } element-text { padding: 0px; }' < ~/.config/i3/keybindings

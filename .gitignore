@@ -10,6 +10,7 @@ DankMaterialShell/.config/DankMaterialShell/plugins/
 # systemd user enablement state (managed locally by `systemctl --user enable`,
 # ignored by stow via .stow-local-ignore) — never commit.
 systemd/.config/systemd/user/*.wants/
+kanata/.config/systemd/user/*.wants/
 
 # ignore nvim pack repos (nvim plugins) — managed manually
 nvim/.config/nvim/pack/

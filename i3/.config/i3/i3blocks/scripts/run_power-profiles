@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+declare -A tags
+tags=(
+  [performance]=""
+  [balanced]=""
+  [power-saver]=""
+)
+
+case "$BLOCK_BUTTON" in
+  1)
+    ~/.config/i3/scripts/power-profiles
+    ;;
+esac
+
+current_profile=$(/usr/bin/powerprofilesctl get 2>/dev/null)
+profile_tag=${tags[$current_profile]}
+echo "${profile_tag:-$current_profile} "

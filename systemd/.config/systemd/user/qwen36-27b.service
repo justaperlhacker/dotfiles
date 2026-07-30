@@ -1,5 +1,5 @@
 [Unit]
-Description=llama.cpp Coding Server (Qwen2.5-Coder-14B)
+Description=llama.cpp Coding Server (Qwen3.6-27B)
 After=network-online.target
 Wants=network-online.target
 
@@ -7,23 +7,23 @@ Wants=network-online.target
 Type=simple
 ExecStart=%h/opt/llamacpp/llama-server \
     --host 127.0.0.1 \
-    --port 8081 \
-    --model %h/opt/models/Qwen2.5-Coder-14B-Instruct-Q4_K_M.gguf \
-    --gpu-layers 999 \
+    --port 8083 \
+    --model %h/opt/models/Qwen3.6-27B-UD-IQ2_M.gguf \
+    --gpu-layers 99 \
     --flash-attn on \
-    --cache-type-k q8_0 \
+    --cache-type-k turbo2 \
     --cache-type-v turbo2 \
     --threads 6 \
     --no-mmap \
-    --ctx-size 32768 \
-    --batch-size 1024 \
-    --ubatch-size 1024 \
-    --parallel 1 \
     --mlock \
+    --ctx-size 131072 \
+    --batch-size 1024 \
+    --ubatch-size 512 \
+    --parallel 1 \
     --n-predict -1 \
     --cont-batching
 
-Environment=LD_LIBRARY_PATH=%h/opt/llamacpp
+Environment=LD_LIBRARY_PATH=%h/opt/llamacpp TURBO_AUTO_ASYMMETRIC=0
 Restart=on-failure
 RestartSec=5
 

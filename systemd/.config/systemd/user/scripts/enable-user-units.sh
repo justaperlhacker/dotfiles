@@ -14,7 +14,6 @@ for unit in \
     ssh-agent.service \
     ssh-add-key.service \
     kanata.service \
-    llamacpp.service \
     app-nmx2dapplet@autostart.service ; do
     if [ -e "/usr/lib/systemd/user/${unit}" ] || [ -e "${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/${unit}" ]; then
         printf '[*] Enabling %s\n' "$unit"
@@ -29,7 +28,7 @@ done
 # systemctl --user enable dms.service || true
 
 # Start services that should be running now (oneshot ssh-add-key just enables state).
-for unit in ssh-agent.service kanata.service llamacpp.service app-nmx2dapplet@autostart.service; do
+for unit in ssh-agent.service kanata.service app-nmx2dapplet@autostart.service; do
     systemctl --user start "$unit" 2>/dev/null || true
 done
 

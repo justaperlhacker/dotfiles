@@ -1,0 +1,33 @@
+[Unit]
+Description=llama.cpp Coding Server (Qwen3.6-35B-A3B)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/opt/llamacpp/llama-server \
+    --host 127.0.0.1 \
+    --port 8082 \
+    --model %h/opt/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf \
+    --gpu-layers 999 \
+    --flash-attn on \
+    --cache-type-k turbo2 \
+    --cache-type-v turbo2 \
+    --threads 6 \
+    --no-mmap \
+    --mlock \
+    --ctx-size 262144 \
+    --batch-size 1024 \
+    --ubatch-size 512 \
+    --parallel 1 \
+    --n-predict -1 \
+    --cont-batching \
+    --n-cpu-moe 999
+
+Environment=LD_LIBRARY_PATH=%h/opt/llamacpp
+Environment=TURBO_AUTO_ASYMMETRIC=0
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

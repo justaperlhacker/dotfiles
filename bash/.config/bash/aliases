@@ -178,3 +178,4 @@ emacs_reset() {
 # random
 alias op='opencode'
 alias vscode='/var/lib/snapd/snap/bin/code'
+alias spotify='GTK_MODULES= spotify'

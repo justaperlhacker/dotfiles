@@ -1,0 +1,44 @@
+# PBP .perltidyrc file
+# Uncomment #-st to fully emulate perltidy -pbp
+
+-l=78   # Max line width is 78 cols
+-i=4    # Indent level is 4 cols
+-ci=4   # Continuation indent is 4 cols
+
+#-st     # Output to STDOUT
+-se     # Errors to STDERR
+
+-vt=2   # Maximal vertical tightness
+-cti=0  # No extra indentation for closing brackets
+-pt=1   # Medium parenthesis tightness
+-bt=1   # Medium brace tightness
+-sbt=1  # Medium square bracket tightness
+-bbt=1  # Medium block brace tightness
+-nsfs   # No space before semicolons
+-nolq   # Don't outdent long quoted strings
+
+# Break before all operators
+-wbb="% + - * / x != == >= <= =~ < > | & **= += *= &= <<= &&= -= /= |= >>= ||= .= %= ^= x="
+
+# extras/overrides/deviations from PBP
+--maximum-line-length=120               # be slightly more generous
+--warning-output                        # Show warnings
+--maximum-consecutive-blank-lines=2     # default is 1
+--nohanging-side-comments               # troublesome for commented out code
+
+#--block-brace-tightness=0
+#--paren-tightness=1
+#--square-bracket-tightness=1
+#--brace-tightness=1
+#--multiple-token-tightness=1
+ 
+-isbc  # block comments may only be indented if they have some space characters before the #
+-ci=2  # Continuation indent is 2 cols
+
+# we use version control, so just rewrite the file
+-b 
+
+# for the up-tight folk :)
+#-pt=2   # High parenthesis tightness
+#-bt=2   # High brace tightness
+#-sbt=2  # High square bracket tightness

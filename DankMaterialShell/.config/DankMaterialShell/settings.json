@@ -1,11 +1,24 @@
 {
   "currentThemeName": "custom",
   "currentThemeCategory": "registry",
-  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/catppuccin/theme.json",
+  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/rosePine/theme.json",
   "registryThemeVariants": {
-    "rosePine": "rosePine"
+    "rosePine": "rosePine",
+    "catppuccin": {
+      "dark": {
+        "flavor": "frappe",
+        "accent": "red"
+      }
+    },
+    "everforest": "medium",
+    "amoledBlack": {
+      "dark": {
+        "flavor": "black",
+        "accent": "orange"
+      }
+    }
   },
-  "matugenScheme": "scheme-tonal-spot",
+  "matugenScheme": "scheme-content",
   "matugenContrast": 0,
   "runUserMatugenTemplates": true,
   "matugenTargetMonitor": "",
@@ -32,11 +45,11 @@
   "mangoLayoutBorderSize": -1,
   "mangoTrackpadNaturalScrolling": true,
   "firstDayOfWeek": -1,
-  "showWeekNumber": false,
+  "showWeekNumber": true,
   "calendarBackend": "auto",
-  "clockFormat": "auto",
+  "clockFormat": "12h",
   "showSeconds": false,
-  "padHours12Hour": false,
+  "padHours12Hour": true,
   "useFahrenheit": false,
   "windSpeedUnit": "kmh",
   "nightModeEnabled": false,
@@ -66,7 +79,7 @@
   "blurBorderColor": "outline",
   "blurBorderCustomColor": "#ffffff",
   "blurBorderOpacity": 0.35,
-  "wallpaperFillMode": "Scrolling",
+  "wallpaperFillMode": "Fill",
   "blurredWallpaperLayer": false,
   "blurWallpaperOnOverview": true,
   "wallpaperBackgroundColorMode": "black",
@@ -244,8 +257,11 @@
   "greeterFontFamily": "",
   "greeterWallpaperFillMode": "",
   "greeterPamExternallyManaged": false,
-  "greeterSyncPending": false,
-  "greeterSyncBaseline": {},
+  "greeterSyncPending": true,
+  "greeterSyncBaseline": {
+    "clockFormat": "auto",
+    "padHours12Hour": false
+  },
   "mediaSize": 1,
   "appLauncherViewMode": "list",
   "spotlightModalViewMode": "list",
@@ -302,10 +318,10 @@
   "networkPreference": "auto",
   "iconThemeDark": "System Default",
   "iconThemeLight": "System Default",
-  "iconThemePerMode": false,
-  "lastAppliedIconTheme": "",
+  "iconThemePerMode": true,
+  "lastAppliedIconTheme": "breeze-dark",
   "cursorSettings": {
-    "theme": "System Default",
+    "theme": "Qogir-Recolored-Gruvbox-Orange",
     "size": 24,
     "niri": {
       "hideWhenTyping": false,
@@ -348,7 +364,7 @@
   "notepadEdgeGap": 0,
   "soundsEnabled": true,
   "useSystemSoundTheme": false,
-  "soundLogin": false,
+  "soundLogin": true,
   "soundNewNotification": true,
   "soundVolumeChanged": true,
   "soundPluggedIn": true,
@@ -382,15 +398,10 @@
   "fadeToDpmsEnabled": true,
   "fadeToDpmsGracePeriod": 5,
   "launchPrefix": "",
-  "brightnessDevicePins": {},
-  "wifiNetworkPins": {},
-  "bluetoothDevicePins": {},
-  "audioInputDevicePins": {},
-  "audioOutputDevicePins": {},
   "gtkThemingEnabled": false,
   "qtThemingEnabled": false,
   "syncModeWithPortal": true,
-  "terminalsAlwaysDark": false,
+  "terminalsAlwaysDark": true,
   "muxType": "tmux",
   "muxUseCustomCommand": false,
   "muxCustomCommand": "",
@@ -553,7 +564,9 @@
   "niriOutputSettings": {},
   "hyprlandOutputSettings": {},
   "displayProfiles": {},
-  "activeDisplayProfile": {},
+  "activeDisplayProfile": {
+    "niri": ""
+  },
   "displayProfileAutoSelect": false,
   "displayShowDisconnected": false,
   "displaySnapToEdge": true,
@@ -703,6 +716,9 @@
   "builtInPluginSettings": {
     "dms_settings_search": {
       "trigger": "?"
+    },
+    "dms_clipboard_search": {
+      "trigger": "cb"
     }
   },
   "clipboardClickToPaste": false,
@@ -735,5 +751,5 @@
   "barInsetPaddingShared": -1,
   "barInsetPaddingSyncAll": false,
   "frameBarInsetPadding": -1,
-  "configVersion": 12
+  "configVersion": 13
 }

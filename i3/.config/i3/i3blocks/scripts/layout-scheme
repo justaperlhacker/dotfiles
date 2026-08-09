@@ -4,23 +4,12 @@ use warnings;
 no warnings 'utf8';
 use FindBin qw($Bin);
 use lib "$Bin", "$ENV{HOME}/.config/i3/scripts";
-use I3Connect qw(i3_connect);
+use I3Connect qw(i3_connect find_first_workspace);
 
 my $STATE_FILE = "$ENV{HOME}/.config/i3/.layout-state";
 
 my $i3 = i3_connect();
 my $tree = $i3->get_tree->recv;
-
-sub find_first_workspace($node) {
-    if (($node->{type} // '') eq 'workspace' && $node->{nodes} && $node->{nodes}->@*) {
-        return $node;
-    }
-    for my $child (($node->{nodes} // [])->@*) {
-        my $found = find_first_workspace($child);
-        return $found if $found;
-    }
-    return undef;
-}
 
 my $ws = find_first_workspace($tree);
 

@@ -167,6 +167,9 @@ spawn-at-startup "discord"
 // XDG_CURRENT_DESKTOP=KDE:gnome so Qt apps use Plasma/Breeze dark theme and GTK portal reads color-scheme
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "XDG_CURRENT_DESKTOP=KDE:gnome" "KDE_SESSION_VERSION=6" "KDE_FULL_SESSION=true" "QT_QPA_PLATFORMTHEME=kde" "QT_STYLE_OVERRIDE=Breeze"
 
+// VMware user tools for Wayland clipboard (clipway backend)
+spawn-at-startup "vmtoolsd" "-n" "vmusr"
+
 environment {
     // KDE:gnome so Qt apps use Plasma/Breeze dark theme and GTK portal reads color-scheme
     XDG_CURRENT_DESKTOP "KDE:gnome"

@@ -41,6 +41,8 @@ binds {
     Mod+I { focus-workspace-up; }
     Mod+Page_Down { focus-workspace-down; }
     Mod+Page_Up { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up { move-column-to-workspace-up; }
     Mod+Shift+1 { move-column-to-workspace 1; }
     Mod+Shift+2 { move-column-to-workspace 2; }
     Mod+Shift+3 { move-column-to-workspace 3; }
@@ -129,7 +131,7 @@ binds {
     XF86Launch1 { screenshot; }
     Mod+Shift+E { quit; }
     Mod+grave hotkey-overlay-title="Scratchpad" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "kitty" "--session" "work" "--class" "kitty" "--title" "work"; }
-    Mod+T hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
+    Mod+T hotkey-overlay-title="Open Terminal" { spawn "sh" "-c" "test -n \"$TERMINAL\" && exec \"$TERMINAL\" || exec konsole"; }
     Mod+F9 hotkey-overlay-title="OpenCode" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "opencode" "--cmd" "opencode" "--class" "org.kde.konsole" "--title" "opencode"; }
     Mod+F10 hotkey-overlay-title="Kilo Code" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "kilo" "--cmd" "kilo" "--class" "org.kde.konsole" "--title" "kilo"; }
     Mod+F11 hotkey-overlay-title="Monitor" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "monitor" "--cmd" "htop" "--class" "org.kde.konsole" "--title" "monitor"; }

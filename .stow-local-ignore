@@ -33,3 +33,7 @@ _darcs
 ^DankMaterialShell/.config/DankMaterialShell/.firstlaunch
 ^DankMaterialShell/.config/DankMaterialShell/firefox\.css
 ^DankMaterialShell/.config/DankMaterialShell/plugins/
+
+# Midnight Commander runtime state (rewritten each session) — never stow
+^mc/.config/mc/ini
+^mc/.config/mc/panels\.ini

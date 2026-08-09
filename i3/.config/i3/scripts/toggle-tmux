@@ -2,39 +2,11 @@
 use v5.36;
 use FindBin qw($Bin);
 use lib "$Bin";
-use I3Connect qw(i3_connect);
+use I3Connect qw(i3_connect get_leaves find_by_id focused_workspace);
 use Getopt::Long;
 use Time::HiRes qw(sleep time);
 
 my $i3 = i3_connect();
-
-sub get_leaves($node) {
-    my @leaves;
-    if ($node->{window}) {
-        push @leaves, $node;
-    }
-    for my $child (($node->{nodes} // [])->@*, ($node->{floating_nodes} // [])->@*) {
-        push @leaves, get_leaves($child);
-    }
-    return @leaves;
-}
-
-sub find_by_id($node, $id) {
-    return $node if $node->{id} && $node->{id} == $id;
-    for my $child (($node->{nodes} // [])->@*, ($node->{floating_nodes} // [])->@*) {
-        my $found = find_by_id($child, $id);
-        return $found if $found;
-    }
-    return undef;
-}
-
-sub get_focused_workspace() {
-    my $workspaces = $i3->get_workspaces->recv;
-    for my $ws ($workspaces->@*) {
-        return $ws if $ws->{focused};
-    }
-    return undef;
-}
 
 sub find_target_window($tree, $wclass, $title) {
     for my $leaf (get_leaves($tree)) {
@@ -80,7 +52,7 @@ sub float_and_center($win_id, $width_ratio = 0.75, $height_ratio = 0.75) {
     my $win  = find_by_id($tree, $win_id);
     return unless $win;
 
-    my $ws = get_focused_workspace();
+    my $ws = focused_workspace($i3);
     return unless $ws;
 
     my $ws_rect = $ws->{rect};

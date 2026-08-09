@@ -55,6 +55,8 @@ command=~/.config/i3/i3blocks/scripts/openweather-city
 interval=1800
 color=#7275b3
 
+# App Shortcuts
+# ----------------------------------------------------------------------------
 [simple-2]
 full_text=:
 color=#717171
@@ -62,10 +64,21 @@ color=#717171
 [terminal]
 full_text= 
 color=#807dfe
-#command=i3-msg -q exec xfce4-terminal
 command=i3-msg -q exec konsole
 
+[files]
+full_text= 
+color=#7f3fbf
+command=i3-msg -q exec dolphin ~/
+
+[code]
+full_text= 
+color=#807dfe
+#color=#7f3fbf
+command=i3-msg -q exec code ~/
+
 [browser]
+#full_text= 
 #full_text= 
 #full_text= 
 full_text= 
@@ -73,15 +86,16 @@ color=#ff7f81
 #command=i3-msg -q exec firefox
 command=i3-msg -q exec brave
 
-[files]
-full_text= 
-color=#7f3fbf
-command=i3-msg -q exec dolphin ~/
-
-#[mail]
+[mail]
 #full_text= 
-#color=#dbcb75
+full_text= 
+#full_text= 󰺻
+color=#dbcb75
 #command=i3-msg -q exec thunderbird
+command=i3-msg -q exec brave --profile-directory='Default' --app='https://mail.google.com'
+
+#-----------------------------------------------------------------------------
+
 
 [simple-2]
 full_text=:

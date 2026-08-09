@@ -28,3 +28,6 @@ LazyVim/.config/LazyVim/*.log
 LazyVim/.config/LazyVim/data
 
 
+
+# Python bytecode (i3-multimonitor.py, i3-workspace-buttons.py)
+i3/.config/i3/scripts/__pycache__/

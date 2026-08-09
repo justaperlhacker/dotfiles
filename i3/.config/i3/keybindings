@@ -54,10 +54,15 @@ SYSTEM
   $mod+Shift+c          reload i3 config
   $mod+Shift+r          restart i3
 
-WORKSPACES
-  $mod+1-8              switch to workspace
-  $mod+Ctrl+1-8         move container to workspace
-  $mod+Shift+1-8        move to workspace and follow
+WORKSPACES (per-monitor, niri-style via i3-multimonitor)
+  Each monitor has its own 1-8: left = 1a-8a (HDMI-A-1), right = 1b-8b
+  (DisplayPort-3). Keys are handled by the i3-multimonitor daemon and map to
+  the focused monitor's workspace set.
+  $mod+1-8              switch to workspace N on focused monitor
+  $mod+Shift+1-8        move focused window to workspace N and switch
+  $mod+Ctrl+1-8         move focused window to workspace N (stay on current)
+  $mod+Ctrl+Right       next workspace on focused monitor
+  $mod+Ctrl+Left        previous workspace on focused monitor
   $mod+b                workspace back_and_forth
   $mod+Shift+b          move container to back_and_forth
   $mod+$alt+Right       next workspace

@@ -5,6 +5,13 @@
 config-notification {
     disable-failed
 }
+// Outputs from existing configuration
+/-output "eDP-2" {
+    mode "2560x1600@239.998993"
+    position x=2560 y=0
+    variable-refresh-rate
+}
+
 
 gestures {
     hot-corners {
@@ -86,11 +93,7 @@ input {
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Outputs
 // Remember to uncomment the node by removing "/-"!
-/-output "eDP-2" {
-    mode "2560x1600@239.998993"
-    position x=2560 y=0
-    variable-refresh-rate
-}
+
 // Settings that influence how windows are positioned and sized.
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
@@ -162,13 +165,15 @@ overview {
 // See the binds section below for more spawn examples.
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "kwalletd6"
+// Unlock the wallet via the password stashed by SDDM's pam_kwallet5.so
+spawn-at-startup "/usr/lib/pam_kwallet_init"
 spawn-at-startup "discord"
 
 // XDG_CURRENT_DESKTOP=KDE:gnome so Qt apps use Plasma/Breeze dark theme and GTK portal reads color-scheme
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "XDG_CURRENT_DESKTOP=KDE:gnome" "KDE_SESSION_VERSION=6" "KDE_FULL_SESSION=true" "QT_QPA_PLATFORMTHEME=kde" "QT_STYLE_OVERRIDE=Breeze"
 
-// VMware user tools for Wayland clipboard (clipway backend)
-spawn-at-startup "vmtoolsd" "-n" "vmusr"
+// VMware user tools for Wayland clipboard (clipway backend); only spawn if installed
+spawn-at-startup "sh" "-c" "command -v vmtoolsd >/dev/null 2>&1 && vmtoolsd -n vmusr"
 
 environment {
     // KDE:gnome so Qt apps use Plasma/Breeze dark theme and GTK portal reads color-scheme
@@ -322,8 +327,6 @@ window-rule {
 }
 debug {
     honor-xdg-activation-with-invalid-serial
-    // Forces PipeWire to use standard linear modifiers for cross-device capture
-    force-pipewire-invalid-modifier
 }
 
 // Override to disable super+tab
@@ -340,9 +343,9 @@ recent-windows {
 spawn-at-startup "sh" "-c" "/home/johnm/.config/niri/scripts/niri-autostart.sh"
 
 // Include dms files
-include "dms/colors.kdl"
-include "dms/layout.kdl"
-include "dms/alttab.kdl"
-include "dms/binds.kdl"
-include "dms/outputs.kdl"
-include "dms/cursor.kdl"
+include optional=true "dms/colors.kdl"
+include optional=true "dms/layout.kdl"
+include optional=true "dms/alttab.kdl"
+include optional=true "dms/binds.kdl"
+include optional=true "dms/outputs.kdl"
+include optional=true "dms/cursor.kdl"

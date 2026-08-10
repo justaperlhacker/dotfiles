@@ -46,6 +46,7 @@ stow -D bash          # remove symlinks
 | `doom`            | `.config/doom/`                                           |
 | `i3`              | `.config/i3/`, `.xprofile`                                |
 | `kanata`          | `.config/kanata/`, `.config/systemd/user/kanata.service`  |
+| `kitty`           | `.config/kitty/`                                          |
 | `LazyVim`         | `.config/LazyVim/`                                        |
 | `nano`            | `.config/nano/`                                           |
 | `neovide`         | `.config/neovide/`                                        |

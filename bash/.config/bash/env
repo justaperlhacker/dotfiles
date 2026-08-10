@@ -41,6 +41,18 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 export SSH_ASKPASS="/usr/bin/ksshaskpass"
 
+# start ssh-agent if not already running
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+    if [[ -f "$HOME/.ssh/agent.env" ]]; then
+        source "$HOME/.ssh/agent.env" 2>/dev/null
+    fi
+    ssh-add -l >/dev/null 2>&1
+    if [[ $? -ge 2 ]]; then
+        ssh-agent > "$HOME/.ssh/agent.env"
+        source "$HOME/.ssh/agent.env"
+    fi
+fi
+
 # man pages
 export MANROFFOPT="-c"
 export PAGER="less -R"

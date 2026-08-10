@@ -205,4 +205,12 @@ return {
     lazy = false,
     priority = 800,
   },
+
+  {
+    "piyush-ppradhan/naysayer.vim",
+    name = "naysayer",
+    lazy = false,
+    priority = 1000,
+    -- vimscript theme: no Lua setup available
+  },
 }

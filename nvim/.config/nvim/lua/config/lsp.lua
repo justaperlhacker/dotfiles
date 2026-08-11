@@ -15,7 +15,7 @@ local on_attach = function(_, bufnr)
   bmap("<leader>q", vim.diagnostic.setloclist, "Diagnostics to Location List")
 end
 
-local servers = { "lua_ls", "ts_ls", "pyright" }
+local servers = { "lua_ls", "ts_ls", "basedpyright", "roslyn_ls" }
 for _, server in ipairs(servers) do
   vim.lsp.config(server, {
     on_attach = on_attach,
@@ -32,3 +32,11 @@ vim.lsp.config("perlLanguageServer", {
   filetypes = { "perl" },
 })
 vim.lsp.enable("perlLanguageServer")
+
+-- Roslyn (mason: roslyn-language-server) needs pull-based diagnostics
+-- enabled, otherwise no diagnostics are reported
+vim.lsp.config("roslyn_ls", {
+  capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), {
+    textDocument = { diagnostic = { dynamicRegistration = true } },
+  }),
+})

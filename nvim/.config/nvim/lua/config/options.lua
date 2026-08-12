@@ -123,8 +123,9 @@ opt.encoding = "UTF-8" -- Use UTF-8 encoding
 -- cursor
 opt.guicursor = {
   "n:block",          -- normal mode: block (Windows-like)
-  "i:beam",           -- insert mode: beam
-  "ci-ve:hor20",      -- command-insert, visual: horizontal bar
+  "i:ver25",          -- insert mode: vert beam
+  "ci:ver25",         -- command-insert, visual: vert beam
+  "ve:ver25",         -- visual: vert beam
   "r-cr:hor20",       -- replace, command-replace: horizontal bar
   "o:hor50",          -- operator-pending: thicker bar
 }

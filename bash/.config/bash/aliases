@@ -63,7 +63,7 @@ NVIM_STATE_FILE="${HOME}/.config/bash/.nvim-state"
 
 _nvims_apply() {
   local config="$1"
-  if [[ "$config" == "default" || -z "$config" ]]; then
+  if [[ "$config" == "default" || "$config" == "vanilla" || -z "$config" ]]; then
     unset NVIM_APPNAME
     alias n="nvim"
   elif [[ "$config" == "LunarVim" ]]; then
@@ -87,7 +87,7 @@ else
 fi
 
 nvim_select() {
-  items=("default" "NvChad" "LazyVim" "LunarVim" "AstroVim")
+  items=("vanilla" "NvChad" "LazyVim" "LunarVim" "AstroVim")
   config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
   if [[ -z $config ]]; then
     echo "Nothing selected"
@@ -97,6 +97,8 @@ nvim_select() {
   _nvims_apply "$config"
   if [[ "$config" == "LunarVim" ]]; then
     ~/.local/bin/LunarVim "$@"
+  elif [[ "$config" == "vanilla" || "$config" == "default" ]]; then
+    nvim "$@"
   else
     NVIM_APPNAME="${config}" nvim "$@"
   fi

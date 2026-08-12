@@ -69,13 +69,13 @@ command=i3-msg -q exec konsole
 [files]
 full_text= 
 color=#7f3fbf
-command=i3-msg -q exec dolphin ~/
+command=i3-msg -q exec dolphin
 
 [code]
 full_text= 
 color=#807dfe
 #color=#7f3fbf
-command=i3-msg -q exec code ~/
+command=i3-msg -q exec code
 
 [browser]
 #full_text= 

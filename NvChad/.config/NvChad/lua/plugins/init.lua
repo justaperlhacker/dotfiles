@@ -13,6 +13,11 @@ return {
     end,
   },
 
+  {
+    "gpanders/editorconfig.nvim",
+    event = "VeryLazy",
+  },
+
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },
 

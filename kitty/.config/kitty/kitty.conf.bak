@@ -48,7 +48,7 @@ tab_bar_align              left
 tab_bar_min_tabs           2
 tab_bar_margin_width       0.0
 tab_bar_margin_height      2.5 1.5
-# tab_bar_margin_color       #101418
+tab_bar_margin_color       #101418
 active_tab_font_style      bold
 inactive_tab_font_style    normal
 tab_activity_symbol        " ● "
@@ -77,6 +77,6 @@ map ctrl+shift+9 goto_tab 9
 #include dank-theme.conf
 
 # BEGIN_KITTY_THEME
-# Ayu
+# Batman
 include current-theme.conf
 # END_KITTY_THEME

@@ -5,6 +5,9 @@ local options = {
     -- css = { "prettier" },
     -- html = { "prettier" },
   },
+
+  -- disable automatic formatting on save
+  format_on_save = false,
 }
 
 return options

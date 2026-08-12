@@ -14,7 +14,7 @@ return {
           "lua_ls",
           "ts_ls",
           "basedpyright",
-          "roslyn-language-server",
+          "roslyn_ls",
         },
       })
     end,

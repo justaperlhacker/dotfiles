@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=4coder
+Name[en_US]=4coder
+Comment=4coder editing software
+Comment[en_US]=4coder editing software
+Icon=/home/johnm/.local/share/icons/4coder.png
+Exec=/home/johnm/.local/bin/4ed %F
+Terminal=false
+Categories=Development;Utility;TextEditor;
+Keywords=Editor;Text;Development;
+StartupNotify=false

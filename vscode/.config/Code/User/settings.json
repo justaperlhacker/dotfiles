@@ -1,18 +1,38 @@
 {
-    // disable telemetry
+    // General / UI
     "telemetry.telemetryLevel": "off",
     "window.zoomLevel": -1,
     "workbench.list.openMode": "doubleClick",
     "workbench.activityBar.location": "top",
     "workbench.colorTheme": "Rouge",
     "workbench.iconTheme": "file-icons-colourless",
+    "workbench.startupEditor": "none",
+    "git.enabled": false,
+    "makefile.configureOnOpen": true,
+    "chat.viewSessions.orientation": "stacked",
+    "github.copilot.enable": {
+        "*": false
+    },
+    
+    // trusted domains
+    "json.schemaDownload.trustedDomains": {
+        "https://developer.microsoft.com/json-schemas/": true,
+        "https://json-schema.org/": true,
+        "https://json.schemastore.org/": true,
+        "https://raw.githubusercontent.com": true,
+        "https://raw.githubusercontent.com/devcontainers/spec/": true,
+        "https://raw.githubusercontent.com/microsoft/vscode/": true,
+        "https://schemastore.azurewebsites.net/": true,
+        "https://www.schemastore.org/": true
+    },
+    
+    // Theme customization
     "workbench.colorCustomizations": {
         "[Fleury Theme]": {
             "sideBar.background": "#020202",
             "activityBar.background": "#020202",
             "panel.background": "#020202",
             "statusBar.background": "#020202",
-            "sideBar.border": "#7a6b5a",
             "editorGroup.border": "#7a6b5a",
             "statusBar.border": "#7a6b5a",
             "titleBar.activeBackground": "#020202",
@@ -21,30 +41,27 @@
             "editorGroupHeader.tabsBackground": "#020202",
             "editorGroupHeader.noTabsBackground": "#020202",
             "tab.activeBackground": "#1E1E1E",
-            "tab.inactiveBackground": "#020202",
+            "tab.inactiveBackground": "#020202"
+        },
+        "[Rouge]": {
+            "tab.activeBackground": "#1b1b1b",
+            "tab.activeForeground": "#f3e9da",
+            "tab.unfocusedActiveBackground": "#171717",
+            "editorGroup.border": "#7a6b5a",
+            "sideBar.border": "#7a6b5a"
         }
     },
-    //"editor.fontFamily": "HE_TERMINAL",
-    //"editor.lineHeight": 21,
-    //"editor.fontFamily": "IoskeleyMono Nerd Font",
-    //"editor.fontFamily": "JetBrainsMono Nerd Font",
-    //"editor.fontFamily": "Fira Code",
-    //"editor.fontFamily": "Liberation Mono",
-    //"editor.fontFamily": "Monaspace Radon NF", //italic
-    //"editor.fontFamily": "Monaspace neon NF",
-    //"editor.fontFamily": "Monaspace Argon NF",      
-    //"editor.lineHeight": 0,
+
+    // Editor
+    "editor.fontFamily": "JetBrainsMono Nerd Font",
     "editor.fontWeight": "600",
-    "editor.fontSize": 16,
+    // at zoom -1 fontsize 17 matches 14 (default)
+    "editor.fontSize": 17,
     "editor.fontLigatures": false,
     "editor.cursorStyle": "line",
     "editor.minimap.enabled": false,
-    "git.enabled": false,
-    "github.copilot.enable": {
-        "*": false,
-    },
-    "makefile.configureOnOpen": true,
-    "chat.viewSessions.orientation": "stacked",
+
+    // File / search behavior
     "files.watcherExclude": {
         ".git/objects/**": true,
         ".git/subtree-cache/**": true,
@@ -53,17 +70,20 @@
         "*/.git/subtree-cache/**": true,
         "*/.hg/store/**": true,
         "**/__pycache__/**": true,
-        "**/*.py[cod]": true
+        "**/*.py[cod]": true,
+        "**/blib": true,
+        "**/inc": true,
     },
     "files.exclude": {
-        "**/.vscode": true,
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "**/__pycache__/**": true,
-        "**/*.py[cod]": true
+        "**/*.py[cod]": true,
+        "**/blib": true,
+        "**/inc": true,
     },
     "files.associations": {
         "**/.bashrc": "shellscript",
@@ -72,6 +92,40 @@
         "**/.Xresources": "properties",
         "**/.Xresources.d/*": "properties",
         "config": "properties",
-        "*.toml": "properties"
-    }
+        "*.toml": "properties",
+        "*.pod": "perl"
+    },
+
+    // Perl / LSP
+    "perl-lsp.serverPath": "/home/johnm/.cargo/bin/perllsp",
+    "perl-lsp.autoDownload": true,
+    "perl-lsp.trace.server": "off",
+    "perl-lsp.enableSemanticTokens": true,
+    "perl-lsp.enableFormatting": true,
+    "perl-lsp.formatOnSave": false,
+    "perl-lsp.enableTestIntegration": true,
+    "perl-lsp.perlcritic.enabled" : false,
+    "perl-lsp.perlcritic.severity": 1,
+    "perl-lsp.includePaths": [
+        "lib",
+        ".",
+        "local/lib/perl5"
+    ],
+    "perl-lsp.perltidyConfig": "/home/johnm/.perltidyrc",
+    "perl-lsp.autoPopulateNewFiles": true,
+    "perl-lsp.featureProfile": "auto",
+    "[perl]": {
+        //"editor.defaultFormatter": "EffortlessMetrics.perl-lsp-rs",
+        "editor.formatOnSave": false,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
+    },
+
+    // powermode
+    "powermode.enabled": false,
+    "powermode.combo.location": "statusbar",
+    "powermode.shake.enabled": false,
+
+
+
 }

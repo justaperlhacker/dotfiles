@@ -70,7 +70,8 @@ default_theme_name = "theme-fleury";
 default_font_name = "liberation-mono.ttf";
 //default_font_name = "/home/johnm/.4coder/fonts/tt0596m_.ttf";
 //default_font_name = "/home/johnm/.4coder/fonts/IoskeleyMonoNL-Regular.ttf";
-default_font_size = 26;
+default_font_size = 16;
+//default_font_size = 26;
 default_font_hinting = true;
 //default_font_hinting = false;
 

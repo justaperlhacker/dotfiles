@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ~/.local/4coder-fleury/4ed -U ~/.4coder-fleury "$@"

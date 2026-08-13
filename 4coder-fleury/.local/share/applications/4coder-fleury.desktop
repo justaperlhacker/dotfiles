@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=4coder (Fleury)
+Name[en_US]=4coder (Fleury)
+Comment=4coder with the Fleury layer
+Comment[en_US]=4coder with the Fleury layer
+Icon=/home/johnm/.local/share/icons/4coder.png
+Exec=/home/johnm/.local/bin/4ed-fleury %F
+Terminal=false
+Categories=Development;Utility;TextEditor;
+Keywords=Editor;Text;Development;
+StartupNotify=false

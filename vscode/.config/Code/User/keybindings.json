@@ -1,7 +1,29 @@
 [
-    {
-        "key": "ctrl+shift+c",
-        "command": "-workbench.action.terminal.openNativeConsole",
-        "when": "!isSessionsWindow && !terminalFocus"
+  {
+    "key": "ctrl+shift+c",
+    "command": "-workbench.action.terminal.openNativeConsole",
+    "when": "!isSessionsWindow && !terminalFocus"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.togglePanel"
+  },
+  {
+    "key": "ctrl+shift+l",
+    "command": "toggle",
+    "when": "editorTextFocus",
+    "args": {
+      "id": "lineNumbers",
+      "value": [
+        {
+          "editor.lineNumbers": "on",
+          "editor.glyphMargin": true
+        },
+        {
+          "editor.lineNumbers": "off",
+          "editor.glyphMargin": false
+        }
+      ]
     }
+  }
 ]

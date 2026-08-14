@@ -10,16 +10,21 @@
     "redhat.telemetry.enabled": false,
     "extensions.ignoreRecommendations": true,
     "workbench.list.openMode": "doubleClick",
-    "workbench.activityBar.location": "top",
-    "workbench.colorTheme": "Fleury Theme",
+    "workbench.colorTheme": "Nord",
     "workbench.iconTheme": "file-icons-colourless",
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": false,
+    "workbench.activityBar.location": "top",
     "git.enabled": false,
     "makefile.configureOnOpen": true,
     "chat.viewSessions.orientation": "stacked",
     "github.copilot.enable": {
         "*": false
+    },
+    "vim.handleKeys": {
+        "<C-b>": false,
+        "<C-j>": false,
+        "<C-l>": false,
     },
     // zoom level
     "window.zoomLevel": -1,
@@ -39,6 +44,7 @@
     // Theme customization
     "workbench.colorCustomizations": {
         "[Fleury Theme]": {
+            "sideBar.border": "#7a6b5a",
             "sideBar.background": "#020202",
             "activityBar.background": "#020202",
             "panel.background": "#020202",
@@ -68,11 +74,13 @@
     // at zoom -1 fontsize 17 matches 14 (default)
     "editor.fontSize": 16,
     "editor.fontLigatures": false,
-    "editor.cursorStyle": "line",
+    "editor.glyphMargin": false,
+    "editor.lineNumbers": "off",
 
     // Terminal
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
     "terminal.integrated.fontSize": 16,
+    "terminal.integrated.fontLigatures.enabled": false,
 
     // File / search behavior
     "files.watcherExclude": {
@@ -85,7 +93,7 @@
         "**/__pycache__/**": true,
         "**/*.py[cod]": true,
         "**/blib": true,
-        "**/inc": true,
+        "**/inc": true
     },
     "files.exclude": {
         "**/.git": true,
@@ -96,7 +104,7 @@
         "**/__pycache__/**": true,
         "**/*.py[cod]": true,
         "**/blib": true,
-        "**/inc": true,
+        "**/inc": true
     },
     "files.associations": {
         "**/.bashrc": "shellscript",
@@ -140,17 +148,10 @@
     "perl.lsp.trace.server": "off",
     "perl.enable": false,
     "perl.showLocalVars": true,
-    // "[perl]": {
-    //     //"editor.defaultFormatter": "EffortlessMetrics.perl-lsp-rs",
-    //     "editor.formatOnSave": false,
-    //     "editor.tabSize": 4,
-    //     "editor.insertSpaces": true,
-    //     "editor.defaultFormatter": "richterger.perl"
-    // },
 
     // powermode
     "powermode.enabled": false,
-    "powermode.combo.location": "statusbar",
-    "powermode.shake.enabled": false,
+    // "powermode.combo.location": "statusbar",
+    // "powermode.shake.enabled": false
 
 }

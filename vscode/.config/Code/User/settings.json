@@ -100,6 +100,17 @@
         },
     },
 
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "comment",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            }
+        ]
+    },
+
     // Editor
     "editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",

@@ -10,7 +10,6 @@
     "redhat.telemetry.enabled": false,
     "extensions.ignoreRecommendations": true,
     "workbench.list.openMode": "doubleClick",
-    "workbench.colorTheme": "Nord",
     "workbench.iconTheme": "file-icons-colourless",
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": false,
@@ -43,6 +42,16 @@
     
     // Theme customization
     "workbench.colorCustomizations": {
+        // works on all dark themes
+        "[*]": {
+            "editor.lineHighlightBackground": "#ffffff10",
+            "editor.lineHighlightBorder": "#ffffff40"
+        },
+        // works on all light themes (uncomment to use)
+        // "[*]": {
+        //     "editor.lineHighlightBackground": "#00000008",
+        //     "editor.lineHighlightBorder": "#00000040"
+        // },
         "[Fleury Theme]": {
             "sideBar.border": "#7a6b5a",
             "sideBar.background": "#020202",
@@ -57,26 +66,66 @@
             "editorGroupHeader.tabsBackground": "#020202",
             "editorGroupHeader.noTabsBackground": "#020202",
             "tab.activeBackground": "#1E1E1E",
-            "tab.inactiveBackground": "#020202"
+            "tab.inactiveBackground": "#020202",
         },
         "[Rouge]": {
             "tab.activeBackground": "#1b1b1b",
             "tab.activeForeground": "#f3e9da",
             "tab.unfocusedActiveBackground": "#171717",
             "editorGroup.border": "#7a6b5a",
-            "sideBar.border": "#7a6b5a"
-        }
+            "sideBar.border": "#7a6b5a",
+        },
+        // Nord Darker with more contrast.
+        "[Nord]": {
+            "editor.background": "#242A36",
+            "editorGutter.background": "#242A36",
+            "editorLineNumber.foreground": "#5E6A7A",
+            "editorLineNumber.activeForeground": "#D8DEE9",
+            "sideBar.background": "#242A36",
+            "sideBar.border": "#4C566A",
+            "panel.background": "#242A36",
+            "panel.border": "#4C566A",
+            "activityBar.background": "#242A36",
+            "activityBar.border": "#4C566A",
+            "terminal.background": "#242A36",
+            "terminal.foreground": "#D8DEE9",
+            "tab.inactiveBackground": "#242A36",
+            "editorGroupHeader.tabsBackground": "#242A36",
+            "editorGroupHeader.noTabsBackground": "#242A36",
+            "editorGroup.border": "#4C566A",
+            "titleBar.activeBackground": "#242A36",
+            "titleBar.border": "#4C566A",
+            "statusBar.background": "#242A36",
+            "statusBar.border": "#4C566A",
+        },
     },
 
     // Editor
     "editor.fontFamily": "JetBrainsMono Nerd Font",
-    "editor.fontWeight": "600",
+    // "editor.fontFamily": "Liberation Mono",
+    // "editor.fontFamily": "IoskeleyMono Nerd Font",
+    // "editor.fontFamily": "Hack Nerd Font",
+    // "editor.fontFamily": "Monaspace Neon NF",
+    // "editor.fontFamily": "Monaspace Argon NF",
+    // "editor.fontFamily": "Monaspace Xeon NF",
+    // "editor.fontFamily": "Monaspace Radon NF",
+    // "editor.fontFamily": "Monaspace Krypton NF",
+    // "editor.fontFamily": "CommitMono Nerd Font",
+    // "editor.fontFamily": "ComicShanns Nerd Font",
+    // "editor.fontFamily": "CaskaydiaCove Nerd Font",
+    // "editor.fontFamily": "FiraCode Nerd Font Mono",
+    "editor.fontWeight": "600", 
     // at zoom -1 fontsize 17 matches 14 (default)
     "editor.fontSize": 16,
+    // "editor.lineHeight": 1.5,
     "editor.fontLigatures": false,
-    "editor.glyphMargin": false,
-    "editor.lineNumbers": "off",
-
+    "editor.glyphMargin": true,
+    "editor.lineNumbers": "on",
+    "editor.renderLineHighlight": "line",
+    // paste this in to workbench.colorCustomizations
+    // "editor.lineHighlightBackground": "#ffffff10",
+    // "editor.lineHighlightBorder": "#ffffff40",
+    
     // Terminal
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
     "terminal.integrated.fontSize": 16,
@@ -151,6 +200,8 @@
 
     // powermode
     "powermode.enabled": false,
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "Nord",
     // "powermode.combo.location": "statusbar",
     // "powermode.shake.enabled": false
 

@@ -114,6 +114,7 @@
     },
 
     // Editor
+    // "editor.fontFamily": "'Droid Sans Mono', monospace",
     // "editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",
     // "editor.fontFamily": "IoskeleyMono Nerd Font",
@@ -204,12 +205,14 @@
         //"editor.defaultFormatter": "richterger.perl"
         "editor.formatOnSave": false,
         "editor.tabSize": 4,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.inlayHints.enabled": "off",
     },
 
     // Perl / Perl::LanguageServer
     "perl.lsp.trace.server": "off",
     "perl.enable": false,
     "perl.showLocalVars": true,
+    "chat.titleBar.openInAgentsWindow.enabled": false,
 
 }

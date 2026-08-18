@@ -10,6 +10,7 @@
     "redhat.telemetry.enabled": false,
     "extensions.ignoreRecommendations": true,
     "workbench.list.openMode": "doubleClick",
+    "workbench.colorTheme": "Nord",
     "workbench.iconTheme": "file-icons-colourless",
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": false,
@@ -27,6 +28,7 @@
     },
     // zoom level
     "window.zoomLevel": -1,
+
 
     // trusted domains
     "json.schemaDownload.trustedDomains": {
@@ -112,9 +114,10 @@
     },
 
     // Editor
-    "editor.fontFamily": "JetBrainsMono Nerd Font",
+    // "editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",
     // "editor.fontFamily": "IoskeleyMono Nerd Font",
+    "editor.fontFamily": "IoskeleyMonoTerm Nerd Font",
     // "editor.fontFamily": "Hack Nerd Font",
     // "editor.fontFamily": "Monaspace Neon NF",
     // "editor.fontFamily": "Monaspace Argon NF",
@@ -125,18 +128,18 @@
     // "editor.fontFamily": "ComicShanns Nerd Font",
     // "editor.fontFamily": "CaskaydiaCove Nerd Font",
     // "editor.fontFamily": "FiraCode Nerd Font Mono",
-    "editor.fontWeight": "600", 
-    // at zoom -1 fontsize 17 matches 14 (default)
-    "editor.fontSize": 16,
+    // sometimes I like it a bit bolder
+    //"editor.fontWeight": "600", 
+    "editor.fontWeight": "500",    
+    // at zoom -1 fontsize 17 approx matches 14 (default)
+    "editor.fontSize": 17,
     // "editor.lineHeight": 1.5,
     "editor.fontLigatures": false,
-    "editor.glyphMargin": true,
-    "editor.lineNumbers": "on",
+    "editor.glyphMargin": false,
+    "editor.lineNumbers": "off",
     "editor.renderLineHighlight": "line",
-    // paste this in to workbench.colorCustomizations
-    // "editor.lineHighlightBackground": "#ffffff10",
-    // "editor.lineHighlightBorder": "#ffffff40",
-    
+    "editor.minimap.enabled": false,
+
     // Terminal
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
     "terminal.integrated.fontSize": 16,
@@ -208,12 +211,5 @@
     "perl.lsp.trace.server": "off",
     "perl.enable": false,
     "perl.showLocalVars": true,
-
-    // powermode
-    "powermode.enabled": false,
-    "editor.minimap.enabled": false,
-    "workbench.colorTheme": "Nord",
-    // "powermode.combo.location": "statusbar",
-    // "powermode.shake.enabled": false
 
 }

@@ -1,6 +1,8 @@
 local colorscheme = {}
 
-colorscheme.name = "miniwinter"
+colorscheme.name = "nord"
+--colorscheme.name = "nordic"
+-- colorscheme.name = "miniwinter"
 colorscheme.fallback = "darkblue"
 colorscheme.background = "dark"
 

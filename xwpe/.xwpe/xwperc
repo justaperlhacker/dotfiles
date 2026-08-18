@@ -1,0 +1,192 @@
+[General]
+Version : 1.6.9
+Data : 110
+Autosave : 0
+MaxColumn : 120
+Tab : 8
+MaxChanges : 999
+NumUndo : 10
+Options1 : 4200
+Options2 : 152
+InfoDir : /usr/local/share/info:/usr/share/info:/usr/local/info:/usr/info
+AutoIndent : 3
+PrintCmd : lpr
+[Color/X11]
+er : 2 7
+es : 0 5
+et : 15 7
+ez : 4 7
+ek : 3 7
+em : 6 7
+hh : 12 6
+hb : 11 2
+hm : 10 4
+db : 0 1
+dy : 7 7
+mr : 6 7
+ms : 10 7
+mt : 6 7
+mz : 10 7
+df : 6 7
+nr : 10 7
+ne : 0 7
+nt : 6 7
+nsnt : 2 7
+fr : 15 4
+fa : 15 5
+ft : 6 7
+fz : 6 5
+frft : 6 4
+fs : 0 6
+nsft : 15 6
+fsm : 15 5
+nz : 14 7
+ns : 2 7
+nm : 15 1
+of : 8 0
+ct : 6 7
+cr : 11 7
+ck : 1 7
+cp : 12 7
+cc : 1 7
+dc : 32
+ws : 7
+[Programming]
+Arguments : 
+Project : 
+Exedir : .
+IncludePath : /usr/include:/usr/local/include:/usr/include/X11
+Debugger : 0
+DAPAdapter : 0
+[Language/C]
+Compiler : gcc
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .c
+MessageString : ${?*:warning:}"${FILE}", line ${LINE}:* at or near * "${COLUMN=AFTER}"
+CompilerSwitch : 0
+Key : C
+X : 0
+[Language/C++]
+Compiler : g++
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .cxx
+FileExtension : .cpp
+FileExtension : .cc
+FileExtension : .C
+MessageString : ${?*:warning:}"${FILE}", line ${LINE}:* at or near * "${COLUMN=AFTER}"
+CompilerSwitch : 0
+Key : +
+X : 1
+[Language/Fortran]
+Compiler : gfortran
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .f08
+FileExtension : .f03
+FileExtension : .f95
+FileExtension : .f90
+FileExtension : .f
+MessageString : ${?*:warning:}"${FILE}", line ${LINE}:* at or near * "${COLUMN=AFTER}"
+CompilerSwitch : 0
+Key : F
+X : 0
+[Language/Pascal]
+Compiler : fpc
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .pp
+FileExtension : .pas
+FileExtension : .p
+MessageString : ${?*:Warning:}${FILE}(${LINE},${COLUMN})*
+CompilerSwitch : 1
+Key : P
+X : 0
+[Language/Java]
+Compiler : javac
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .java
+MessageString : ${?*:warning:}${FILE}:${LINE}:*
+CompilerSwitch : 1
+Key : J
+X : 0
+[Language/Python]
+Compiler : python3
+CompilerOptions : -m py_compile
+Libraries : 
+Executable : 
+FileExtension : .py
+MessageString : *${FILE}, line ${LINE}
+CompilerSwitch : 1
+Key : Y
+X : 0
+[Language/LaTeX]
+Compiler : pdflatex
+CompilerOptions : -interaction=nonstopmode -file-line-error
+Libraries : 
+Executable : 
+FileExtension : .tex
+MessageString : ${FILE}:${LINE}:
+CompilerSwitch : 1
+Key : L
+X : 0
+[Language/Perl]
+Compiler : perl
+CompilerOptions : -c
+Libraries : 
+Executable : 
+FileExtension : .pm
+FileExtension : .pl
+MessageString : *at ${FILE} line ${LINE}
+CompilerSwitch : 1
+Key : E
+X : 0
+[Language/COBOL]
+Compiler : cobc
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .cbl
+FileExtension : .cob
+MessageString : ${FILE}:${LINE}:*
+CompilerSwitch : 0
+Key : O
+X : 0
+[Language/Algol68]
+Compiler : a68g
+CompilerOptions : --norun
+Libraries : 
+Executable : 
+FileExtension : .alg
+FileExtension : .a68
+MessageString : *in line ${LINE}*
+CompilerSwitch : 1
+Key : A
+X : 0
+[Language/Go]
+Compiler : go
+CompilerOptions : build
+Libraries : 
+Executable : 
+FileExtension : .go
+MessageString : ${FILE}:${LINE}:*
+CompilerSwitch : 1
+Key : G
+X : 0
+[Language/Rust]
+Compiler : rustc
+CompilerOptions : -g
+Libraries : 
+Executable : 
+FileExtension : .rs
+MessageString : *--> ${FILE}:${LINE}:${COLUMN}*
+CompilerSwitch : 1
+Key : R
+X : 0

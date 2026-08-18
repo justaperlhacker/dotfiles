@@ -82,7 +82,7 @@ opt.title = true -- set the terminal title to the value of the titlestring
 opt.titlestring = "%<%F%=%l/%L - nvim" -- what the title will be set to
 
 -- highlight color column
-opt.colorcolumn = "100"
+--opt.colorcolumn = "100"
 
 -- highlight current line
 opt.cursorline = true

@@ -25,5 +25,21 @@
         }
       ]
     }
-  }
+  },
+  {
+    "key": "F3",
+    "command": "toggle",
+    "when": "editorTextFocus",
+    "args": {
+      "id": "minimap",
+      "value": [
+        {
+          "editor.minimap.enabled": true
+        },
+        {
+          "editor.minimap.enabled": false
+        }
+      ]
+    }
+  },
 ]

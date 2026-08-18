@@ -112,6 +112,25 @@ return {
   },
 
   {
+    "shaunsingh/nord.nvim",
+    name = "nord",
+    lazy = false,
+    priority = 900,
+    config = function()
+      vim.g.nord_contrast = true
+      vim.g.nord_borders = false
+      vim.g.nord_uniform_diff_background = true
+      
+      -- Set the colorscheme
+      vim.cmd.colorscheme("nord")
+      
+      -- Darken the background after colorscheme loads
+      vim.api.nvim_set_hl(0, "Normal", { bg = "#0f1419" })
+      vim.api.nvim_set_hl(0, "NormalNC", { bg = "#0f1419" })
+    end,
+  },
+
+  {
     "rose-pine/neovim",
     name = "rose-pine",
     lazy = false,

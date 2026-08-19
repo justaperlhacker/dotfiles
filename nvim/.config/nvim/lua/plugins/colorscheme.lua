@@ -1,4 +1,5 @@
 return {
+  -- Minimal / monochrome
   {
     "vague-theme/vague.nvim",
     name = "vague",
@@ -7,15 +8,54 @@ return {
     --   vim.cmd.colorscheme("vague")
     -- end,
   },
+
+  -- {
+  --   "RRethy/base16-nvim",
+  --   name = "base16",
+  --   priority = 1000,
+  --   -- config = function()
+  --   --   vim.cmd.colorscheme("base16-black-metal-gorgoroth")
+  --   -- end,
+  -- },
+
+  {
+    "metalelf0/black-metal-theme-neovim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("black-metal").setup({
+        -- optional configuration here, e.g.:
+        -- Can be one of: bathory | burzum | dark-funeral | darkthrone | emperor | gorgoroth | immortal | impaled-nazarene | khold | marduk | mayhem | nile | taake | thyrfing | venom | windir
+        theme = "gorgoroth",
+        -- Can be one of: 'light' | 'dark', or set via vim.o.background
+        variant = "dark",
+
+        trve = true, -- switch this to false if you want light variants
+        code_style = {
+          comments = "italic",
+          keywords = "italic",
+        }
+      })
+      require("black-metal").load()
+    end,
+  },
+
   {
     "idr4n/github-monochrome.nvim",
     name = "github-monochrome",
     lazy = false,
-    priority = 1000,    
+    priority = 1000,
     opts = {},
   },
 
-  { "kdheepak/monochrome.nvim" },
+  {
+    "kdheepak/monochrome.nvim",
+    name = "monochrome",
+    lazy = false,
+    priority = 1000,
+    --opts = {},
+  },
+
   {
     "nvim-mini/mini.hues",
     name = "miniwinter",
@@ -24,6 +64,15 @@ return {
     priority = 1000,
   },
 
+  {
+    "CosecSecCot/cosec-twilight.nvim",
+    name = "cosec-twilight",
+    lazy = false,
+    priority = 1000,
+    dependencies = { "rktjmp/lush.nvim" },
+  },
+
+  -- Blue / cool-toned
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -78,8 +127,30 @@ return {
     priority = 900,
     -- vimscript theme: no Lua setup available
   },
-  { "savq/melange-nvim", name = "melange" },
-	{ "AlexvZyl/nordic.nvim", name = "nordic" },
+  { "savq/melange-nvim",    name = "melange" },
+
+  { "AlexvZyl/nordic.nvim", name = "nordic" },
+
+  -- Nordic / cool-contrast
+  {
+    "shaunsingh/nord.nvim",
+    name = "nord",
+    lazy = false,
+    priority = 900,
+    config = function()
+      vim.g.nord_contrast = true
+      vim.g.nord_borders = false
+      vim.g.nord_uniform_diff_background = true
+
+      -- Set the colorscheme
+      vim.cmd.colorscheme("nord")
+
+      -- Darken the background after colorscheme loads
+      vim.api.nvim_set_hl(0, "Normal", { bg = "#0f1419" })
+      vim.api.nvim_set_hl(0, "NormalNC", { bg = "#0f1419" })
+    end,
+  },
+
   {
     "navarasu/onedark.nvim",
     name = "onedark",
@@ -93,8 +164,6 @@ return {
     end,
   },
 
-  --{ "romgrk/doom-one.vim", name = "doom-one" },
-  
   {
     "dracula/vim",
     name = "dracula",
@@ -112,24 +181,16 @@ return {
   },
 
   {
-    "shaunsingh/nord.nvim",
-    name = "nord",
+    "rebelot/kanagawa.nvim",
+    name = "kanagawa",
     lazy = false,
     priority = 900,
     config = function()
-      vim.g.nord_contrast = true
-      vim.g.nord_borders = false
-      vim.g.nord_uniform_diff_background = true
-      
-      -- Set the colorscheme
-      vim.cmd.colorscheme("nord")
-      
-      -- Darken the background after colorscheme loads
-      vim.api.nvim_set_hl(0, "Normal", { bg = "#0f1419" })
-      vim.api.nvim_set_hl(0, "NormalNC", { bg = "#0f1419" })
-    end,
+      -- config
+    end
   },
 
+  -- Warm / floral / twilight
   {
     "rose-pine/neovim",
     name = "rose-pine",
@@ -143,6 +204,7 @@ return {
     end,
   },
 
+  -- Earthy / retro / forest
   {
     "ellisonleao/gruvbox.nvim",
     name = "gruvbox",
@@ -151,18 +213,68 @@ return {
     config = function()
       local ok, mod = pcall(require, "gruvbox")
       if ok and type(mod.setup) == "function" then
-        mod.setup({})
+        mod.setup({
+          contrast = "hard",
+          transparent = false,
+          dim_inactive = false,
+        })
       end
     end,
   },
 
+  {
+    "sainnhe/gruvbox-material",
+    config = function()
+      vim.g.gruvbox_material_background = "hard"
+    end,
+  },
+
+  {
+    "xero/miasma.nvim",
+    name = "miasma",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+    config = function()
+      -- options
+    end,
+  },
+
+  {
+    "folke/zen-mode.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {}
+  },
+
+  -- Lush-based / custom handcrafted
+  {
+    "zenbones-theme/zenbones.nvim",
+    dependencies = "rktjmp/lush.nvim",
+    lazy = false,
+    priority = 1000,
+  },
+
+  {
+    "jnurmine/Zenburn",
+    name = "zenburn",
+    lazy = false,
+    priority = 1000,
+  },
+
+  { "ViViDboarder/wombat.nvim" },
+
+  -- Green / ambient / eye-friendly
   {
     "sainnhe/everforest",
     name = "everforest",
     lazy = false,
     priority = 900,
     config = function()
-      vim.g.everforest_background = vim.g.everforest_background or "medium"
+      vim.g.everforest_background = "hard"
+      vim.g.everforest_enable_italic = true
+      vim.g.everforest_disable_italic_comment = false
+      vim.g.everforest_better_performance = true
     end,
   },
 
@@ -232,4 +344,5 @@ return {
     priority = 1000,
     -- vimscript theme: no Lua setup available
   },
+
 }

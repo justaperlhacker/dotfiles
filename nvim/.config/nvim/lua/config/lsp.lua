@@ -24,14 +24,15 @@ for _, server in ipairs(servers) do
   vim.lsp.enable(server)
 end
 
--- Perl::LanguageServer (installed via CPAN, not mason)
-vim.lsp.config("perlLanguageServer", {
+-- Perl language server: Rust-backed `perllsp` (matches the NvChad setup)
+vim.lsp.config("perllsp", {
   on_attach = on_attach,
   capabilities = vim.lsp.protocol.make_client_capabilities(),
-  cmd = { "perl", "-MPerl::LanguageServer", "-e", "Perl::LanguageServer->run()" },
+  cmd = { "perllsp", "--stdio" },
   filetypes = { "perl" },
+  root_markers = { "cpanfile", "Makefile.PL", "Build.PL", ".git" },
 })
-vim.lsp.enable("perlLanguageServer")
+vim.lsp.enable("perllsp")
 
 -- Roslyn (mason: roslyn-language-server) needs pull-based diagnostics
 -- enabled, otherwise no diagnostics are reported

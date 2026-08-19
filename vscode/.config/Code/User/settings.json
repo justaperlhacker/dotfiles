@@ -18,6 +18,7 @@
     "git.enabled": false,
     "makefile.configureOnOpen": true,
     "chat.viewSessions.orientation": "stacked",
+    "chat.titleBar.openInAgentsWindow.enabled": false,
     "github.copilot.enable": {
         "*": false
     },
@@ -136,8 +137,8 @@
     "editor.fontSize": 17,
     // "editor.lineHeight": 1.5,
     "editor.fontLigatures": false,
-    "editor.glyphMargin": false,
-    "editor.lineNumbers": "off",
+    "editor.glyphMargin": true,
+    "editor.lineNumbers": "on",
     "editor.renderLineHighlight": "line",
     "editor.minimap.enabled": false,
 
@@ -191,7 +192,7 @@
     "perl-lsp.enableTestIntegration": true,
     "perl-lsp.perlcritic.enabled" : false,
     "perl-lsp.perlcritic.severity": 1,
-    "perl-lsp.diagnostics": false,
+    "perl-lsp.diagnostics": true,
     "perl-lsp.includePaths": [
         "lib",
         ".",
@@ -201,7 +202,7 @@
     "perl-lsp.autoPopulateNewFiles": true,
     "perl-lsp.featureProfile": "auto",    
     "[perl]": {
-        //"editor.defaultFormatter": "EffortlessMetrics.perl-lsp-rs",
+        "editor.defaultFormatter": "tree-sitter-perl.vscode-perl-lsp",
         //"editor.defaultFormatter": "richterger.perl"
         "editor.formatOnSave": false,
         "editor.tabSize": 4,
@@ -210,9 +211,8 @@
     },
 
     // Perl / Perl::LanguageServer
-    "perl.lsp.trace.server": "off",
-    "perl.enable": false,
-    "perl.showLocalVars": true,
-    "chat.titleBar.openInAgentsWindow.enabled": false,
-
+    // "perl.lsp.trace.server": "off",
+    // "perl.enable": false,
+    // "perl.showLocalVars": true,
+    
 }

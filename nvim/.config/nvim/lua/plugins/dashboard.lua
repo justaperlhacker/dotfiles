@@ -64,5 +64,5 @@ return {
       },
     })
   end,
-  dependencies = { {'nvim-tree/nvim-web-devicons'}}
+  dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-telescope/telescope.nvim' }
 }

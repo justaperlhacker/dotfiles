@@ -41,13 +41,13 @@ return {
       end
 
       ------------------------------------------------------------------
-      -- Perl Debugging via native `perl-lsp` / `perllsp` DAP engine
+      -- Perl Debugging via the native `perl-dap` engine
       ------------------------------------------------------------------
-       dap.adapters.perl = {
-         type = "executable",
-         command = "perl",
-         args = { "-MPerl::LanguageServer" },
-       }
+      dap.adapters.perl = {
+        type = "executable",
+        command = "perl-dap",
+        args = { "--stdio" },
+      }
 
       dap.configurations.perl = {
         {
@@ -56,7 +56,8 @@ return {
           request = "launch",
           program = "${file}",
           cwd = "${workspaceFolder}",
-          execArgs = { "-Ilib" }, -- Pass library include paths or runtime flags here
+          args = {},
+          includePaths = { "${workspaceFolder}/lib" },
           stopOnEntry = false,
         },
         {
@@ -65,7 +66,11 @@ return {
           request = "launch",
           program = "${file}",
           cwd = "${workspaceFolder}",
-          execArgs = { "-Ilib", "-It/lib" },
+          args = {},
+          includePaths = {
+            "${workspaceFolder}/lib",
+            "${workspaceFolder}/t/lib",
+          },
         },
       }
     end,

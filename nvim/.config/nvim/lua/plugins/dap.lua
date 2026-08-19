@@ -37,7 +37,15 @@ return {
       map("<leader>dt", dapui.toggle, "Toggle UI")
       map("<leader>dx", dap.terminate, "Terminate")
 
-      -- Perl debugging (perl-dap)
+      ------------------------------------------------------------------
+      -- Perl Debugging via native `perl-lsp` / `perllsp` DAP engine
+      ------------------------------------------------------------------
+      dap.adapters.perl = {
+        type = "executable",
+        command = "perl-dap",
+        args = { "--stdio" },
+      }
+
       dap.configurations.perl = {
         {
           type = "perl",
@@ -45,14 +53,17 @@ return {
           request = "launch",
           program = "${file}",
           cwd = "${workspaceFolder}",
-          runtimeArgs = { "-Ilib", "-d:ModifyNE", "-e", "use Perl::LanguageServer::Debug;" },
-          externalConsole = false,
+          execArgs = { "-Ilib" },
+          stopOnEntry = false,
         },
-      }
-      dap.adapters.perl = {
-        type = "executable",
-        command = "perl",
-        args = { "-MPerl::LanguageServer::Debug", "-e", "Perl::LanguageServer::Debug::run_debugger()" },
+        {
+          type = "perl",
+          name = "Debug test file (prove)",
+          request = "launch",
+          program = "${file}",
+          cwd = "${workspaceFolder}",
+          execArgs = { "-Ilib", "-It/lib" },
+        },
       }
     end,
   },

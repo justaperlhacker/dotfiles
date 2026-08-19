@@ -27,20 +27,26 @@ TERMINAL & APPS
   $mod+grave            toggle work (tmux session)
 
 WINDOW MANAGEMENT
-  $mod+h/j/k/l          focus left/down/up/right
+  $mod+h/j/k/l          focus left/down/up/right (within monitor)
+  $mod+arrowkeys        focus left/down/up/right (within monitor)
+  $mod+Ctrl+h/j/k/l     focus left/down/up/right (other monitor)
+  $mod+Ctrl+arrowkeys   focus left/down/up/right (other monitor)
   $mod+Shift+h/j/k/l    move window left/down/up/right
+  $mod+Shift+arrowkeys  move window left/down/up/right
+  $mod+Ctrl+Shift+h/j/k/l move window to other monitor
+  $mod+Ctrl+Shift+arrowkeys move window to other monitor
   $mod+q                kill focused window (graceful close)
   $mod+Ctrl+q           xkill (click to kill)
   $mod+f                fullscreen toggle
   $mod+Shift+f          global fullscreen toggle
   $mod+space            application launcher (rofi)
   $mod+d                dmenu desktop launcher
-  $mod+t                floating toggle (tiling ↔ floating)  
+  $mod+t                floating toggle (tiling ↔ floating)
   $mod+bar              split horizontal
   $mod+underscore       split vertical
   $mod+s                toggle split orientation (splith|splitv)
   $mod+Shift+s          sticky toggle
-  $mod+x                layout toggle (splith/tabbed)  
+  $mod+x                layout toggle (splith/tabbed)
   $mod+r                enter resize mode
   $mod+BackSpace        show scratchpad
   $mod+Shift+BackSpace  move to scratchpad
@@ -60,13 +66,13 @@ WORKSPACES (per-monitor, niri-style via i3-multimonitor)
   the focused monitor's workspace set.
   $mod+1-8              switch to workspace N on focused monitor
   $mod+Shift+1-8        move focused window to workspace N and switch
-  $mod+Ctrl+1-8         move focused window to workspace N (stay on current)
-  $mod+Ctrl+Right       next workspace on focused monitor
-  $mod+Ctrl+Left        previous workspace on focused monitor
+  $mod+Ctrl+Shift+1-8   move focused window to same-index workspace on other monitor
+  $mod+Page_Down         next workspace on focused monitor
+  $mod+Page_Up           previous workspace on focused monitor
+  $mod+Shift+Page_Down   move window to next workspace and switch
+  $mod+Shift+Page_Up     move window to previous workspace and switch
   $mod+b                workspace back_and_forth
   $mod+Shift+b          move container to back_and_forth
-  $mod+$alt+Right       next workspace
-  $mod+$alt+Left        previous workspace
 
 APPEARANCE
   $mod+y                border toggle (none → pixel 1 → normal)

@@ -11,6 +11,10 @@ my %MONITOR_SUFFIX = (
     "HDMI-A-1"      => "a",
     "DisplayPort-3" => "b",
 );
+my %OUTPUT_POSITION = (
+    "HDMI-A-1"      => "left",
+    "DisplayPort-3" => "right",
+);
 
 my $i3 = i3_connect();
 $i3->connect->recv or die "Failed to connect to i3";
@@ -36,18 +40,26 @@ sub on_binding($msg) {
             my $suffix = $MONITOR_SUFFIX{ $focused->{output} };
             return unless defined $suffix;
 
-            my $target = "$local_index$suffix";
-            return if $target eq ( $focused->{name} // '' );
-
             my $mask = $binding->{event_state_mask};
             my $command;
-            if ( has_modifier( $mask, 'ctrl' ) ) {
+            if ( has_modifier( $mask, 'ctrl' ) && has_modifier( $mask, 'shift' ) ) {
+                my $other_suffix = $suffix eq 'a' ? 'b' : 'a';
+                my $target = "$local_index$other_suffix";
+                $command = "move container to workspace $target; workspace $target";
+            }
+            elsif ( has_modifier( $mask, 'ctrl' ) ) {
+                my $target = "$local_index$suffix";
+                return if $target eq ( $focused->{name} // '' );
                 $command = "move container to workspace $target";
             }
             elsif ( has_modifier( $mask, 'shift' ) ) {
+                my $target = "$local_index$suffix";
+                return if $target eq ( $focused->{name} // '' );
                 $command = "move container to workspace $target; workspace $target";
             }
             else {
+                my $target = "$local_index$suffix";
+                return if $target eq ( $focused->{name} // '' );
                 $command = "workspace $target";
             }
             send_command( $i3, $command );

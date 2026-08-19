@@ -45,6 +45,9 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 export SSH_ASKPASS="/usr/bin/ksshaskpass"
 
+# libgit2 (gitui) doesn't read ~/.ssh/config by default
+export GIT_SSH_COMMAND="ssh"
+
 # start ssh-agent if not already running
 if [[ -z "$SSH_AUTH_SOCK" ]]; then
     if [[ -f "$HOME/.ssh/agent.env" ]]; then

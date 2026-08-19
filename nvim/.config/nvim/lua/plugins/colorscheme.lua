@@ -9,14 +9,16 @@ return {
     -- end,
   },
 
-  -- {
-  --   "RRethy/base16-nvim",
-  --   name = "base16",
-  --   priority = 1000,
-  --   -- config = function()
-  --   --   vim.cmd.colorscheme("base16-black-metal-gorgoroth")
-  --   -- end,
-  -- },
+  {
+    "webhooked/kanso.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("kanso").setup({
+        --minimal = true,
+      })
+    end,
+  },
 
   {
     "metalelf0/black-metal-theme-neovim",
@@ -96,6 +98,16 @@ return {
       if ok and type(mod.setup) == "function" then
         mod.setup({})
       end
+    end,
+  },
+
+  {
+    'uloco/bluloco.nvim',
+    lazy = false,
+    priority = 1000,
+    dependencies = { 'rktjmp/lush.nvim' },
+    config = function()
+      -- your optional config goes here, see below.
     end,
   },
 
@@ -230,6 +242,18 @@ return {
   },
 
   {
+    "kamwitsta/vinyl.nvim",
+    config = function()
+      require("vinyl").setup({
+        variant = "darker",   -- the default is "lighter"
+        overrides = {
+          ["@string"] = {fg="#00ff00"},
+        },
+      })
+    end
+  },
+
+  {
     "xero/miasma.nvim",
     name = "miasma",
     lazy = false,
@@ -245,6 +269,18 @@ return {
     lazy = false,
     priority = 1000,
     opts = {}
+  },
+
+  {
+    'ribru17/bamboo.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('bamboo').setup {
+        -- optional configuration here
+      }
+      require('bamboo').load()
+    end,
   },
 
   -- Lush-based / custom handcrafted
@@ -342,7 +378,14 @@ return {
     name = "naysayer",
     lazy = false,
     priority = 1000,
-    -- vimscript theme: no Lua setup available
   },
+
+  {
+    "NLKNguyen/papercolor-theme",
+    name = "PaperColor",
+    lazy = false,
+    priority = 1000,
+  },
+
 
 }

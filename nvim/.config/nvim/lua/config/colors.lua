@@ -12,6 +12,8 @@ local colorscheme = {}
 -- colorscheme.name = "zenburn"
 -- colorscheme.name = "chocolatier"
 -- colorscheme.name = "ayu"
+-- colorscheme.name = "bamboo"
+-- colorscheme.name = "vinyl"
 
 -- Monochrome / minimal / low-saturation
 -- colorscheme.name = "vague"
@@ -21,6 +23,7 @@ local colorscheme = {}
 -- colorscheme.name = "cosec-twilight"
 -- colorscheme.name = "github-monochrome"
 -- colorscheme.name = "naysayer"
+-- colorscheme.name = "kanso"
 
 -- Purple / moody / twilight vibes
 -- colorscheme.name = "rose-pine"
@@ -29,6 +32,7 @@ local colorscheme = {}
 -- colorscheme.name = "melange"
 -- colorscheme.name = "doom-one"
 -- colorscheme.name = "vampire"
+-- colorscheme.name = "papercolor"
 
 -- Cool / nordic / structured vibes
 -- colorscheme.name = "nord"
@@ -39,12 +43,15 @@ local colorscheme = {}
 -- colorscheme.name = "nightfly"
 -- colorscheme.name = "modus"
 -- colorscheme.name = "modus-themes"
+-- colorscheme.name = "bluloco"
 
 -- Editor utilities / focus tools
 -- colorscheme.name = "zen-mode"
 
 -- Active theme
-colorscheme.name = "vague"
+-- colorscheme.name = "vague"
+-- colorscheme.name = "monochrome"
+colorscheme.name = "kanso"
 
 colorscheme.fallback = "default"
 colorscheme.background = "dark"

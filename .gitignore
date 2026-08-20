@@ -35,5 +35,5 @@ LazyVim/.config/LazyVim/data
 i3/.config/i3/scripts/__pycache__/
 
 # Midnight Commander runtime state (rewritten each session) — never commit
-mc/.config/mc/ini
-mc/.config/mc/panels.ini
+#mc/.config/mc/ini
+#mc/.config/mc/panels.ini

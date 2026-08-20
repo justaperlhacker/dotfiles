@@ -22,3 +22,5 @@
 #                   ├── shell options
 #                   ├── prompt
 #                   └── local
+# Added by Unsloth installer
+export PATH="/home/johnm/.local/share/../bin:$PATH"

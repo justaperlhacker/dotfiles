@@ -11,6 +11,9 @@ if command -v kubectl >/dev/null 2>&1; then
     source <(kubectl completion bash)
 fi
 
+# Git completion
+[[ -f "$HOME/.config/bash/niri-completion.bash" ]] && \
+    source "$HOME/.config/bash/niri-completion.bash"
 
 source /usr/share/fzf/key-bindings.bash
 source /usr/share/fzf/completion.bash

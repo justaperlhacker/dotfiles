@@ -179,7 +179,8 @@ emacs_reset() {
 
 # random
 alias op='opencode'
-alias vscode='/var/lib/snapd/snap/bin/code'
+alias vscode='code'
+alias code='code'
 alias spotify='GTK_MODULES= spotify'
 alias whatsie='flatpak run com.ktechpit.whatsie'
 alias 4ed='4ed-fleury'

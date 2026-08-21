@@ -1,6 +1,8 @@
 
 ! vim: syntax=xdefaults
 
+!! for laptop with 2k screen we need to set dpi to 192
+!Xft.dpi: 192
 Xft.dpi:       96
 Xft.antialias: true
 Xft.hinting:   true
@@ -140,4 +142,4 @@ dmenu.selbackground: S_base02
 !#include ".Xresources.d/solarized_highcontrast"
 !#include ".Xresources.d/solarized"
 !#include ".Xresources.d/tango"
-Xft.dpi: 192
+

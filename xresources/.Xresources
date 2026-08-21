@@ -140,3 +140,4 @@ dmenu.selbackground: S_base02
 !#include ".Xresources.d/solarized_highcontrast"
 !#include ".Xresources.d/solarized"
 !#include ".Xresources.d/tango"
+Xft.dpi: 192

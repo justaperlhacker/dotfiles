@@ -1,9 +1,12 @@
 (defcfg
-  linux-dev-names-include (
-    "AT Translated Set 2 keyboard"
-    "HID 1bcf:08a0 Keyboard"
-    "SINO WEALTH Bluetooth Keyboard"
-  )
+  ;; No linux-dev-names-include: let kanata auto-grab every keyboard so this
+  ;; config is portable across machines (your Model M via PS/2, USB/Bluetooth
+  ;; SINO WEALTH, laptop keyboards, etc.) instead of failing when a specific
+  ;; device name isn't present. keyboard-only stops kanata from also grabbing
+  ;; mice/touchpads. Note: kanata matches device names by EXACT string and does
+  ;; not merge composite keyboards, so a keyboard that exposes multiple event
+  ;; interfaces may be grabbed on more than one interface.
+  linux-device-detect-mode keyboard-only
   process-unmapped-keys yes
 )
 

@@ -1,4 +1,34 @@
 #!/bin/sh
+# Set wallpaper with fallback support
+# Tries: cached wallpaper -> hostname-specific -> default -> system wallpaper -> skip
+
 STATE="${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper"
-[ -s "$STATE" ] && WALLPAPER=$(cat "$STATE") || WALLPAPER='/home/johnm/Pictures/Wallpapers/26342.jpg'
-feh --no-fehbg --bg-fill "$WALLPAPER"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+HOST="$(hostname)"
+
+# Possible wallpaper locations in order of preference
+CANDIDATES=""
+[ -s "$STATE" ] && CANDIDATES="$CANDIDATES $(cat "$STATE")"
+[ -f "$SCRIPT_DIR/../monitors/wallpaper-$HOST.jpg" ] && CANDIDATES="$CANDIDATES $SCRIPT_DIR/../monitors/wallpaper-$HOST.jpg"
+[ -f "$SCRIPT_DIR/../monitors/wallpaper.jpg" ] && CANDIDATES="$CANDIDATES $SCRIPT_DIR/../monitors/wallpaper.jpg"
+[ -f "$HOME/.config/i3/wallpapers/26342.jpg" ] && CANDIDATES="$CANDIDATES $HOME/.config/i3/wallpapers/26342.jpg"
+[ -f "$HOME/Pictures/Wallpapers/26342.jpg" ] && CANDIDATES="$CANDIDATES $HOME/Pictures/Wallpapers/26342.jpg"
+[ -f "/usr/share/wallpapers/cachyos-wallpapers/CachyOS_Moon.jpg" ] && CANDIDATES="$CANDIDATES /usr/share/wallpapers/cachyos-wallpapers/CachyOS_Moon.jpg"
+[ -f "/usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png" ] && CANDIDATES="$CANDIDATES /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png"
+
+WALLPAPER=""
+for w in $CANDIDATES; do
+    [ -f "$w" ] && WALLPAPER="$w" && break
+done
+
+[ -z "$WALLPAPER" ] && exit 0
+
+# Try feh first, then nitrogen, then skip
+if command -v feh >/dev/null 2>&1; then
+    feh --no-fehbg --bg-fill "$WALLPAPER"
+elif command -v nitrogen >/dev/null 2>&1; then
+    nitrogen --set-zoom-fill "$WALLPAPER" --save
+elif command -v swww >/dev/null 2>&1; then
+    swww init 2>/dev/null
+    swww img "$WALLPAPER"
+fi

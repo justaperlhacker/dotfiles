@@ -115,11 +115,12 @@
     },
 
     // Editor
+    "editor.fontFamily": "HE_TERMINAL Nerd Font",    
     // "editor.fontFamily": "'Droid Sans Mono', monospace",
     // "editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",
     // "editor.fontFamily": "IoskeleyMono Nerd Font",
-    "editor.fontFamily": "IoskeleyMonoTerm Nerd Font",
+    // "editor.fontFamily": "IoskeleyMonoTerm Nerd Font",
     // "editor.fontFamily": "Hack Nerd Font",
     // "editor.fontFamily": "Monaspace Neon NF",
     // "editor.fontFamily": "Monaspace Argon NF",
@@ -134,7 +135,7 @@
     //"editor.fontWeight": "600", 
     "editor.fontWeight": "500",    
     // at zoom -1 fontsize 17 approx matches 14 (default)
-    "editor.fontSize": 17,
+    "editor.fontSize": 18,
     // "editor.lineHeight": 1.5,
     "editor.fontLigatures": false,
     "editor.glyphMargin": true,

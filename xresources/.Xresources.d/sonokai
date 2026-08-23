@@ -1,0 +1,40 @@
+! sonokai
+! vim: syntax=xdefaults
+! special
+*.foreground:   #e2e2e3
+*.background:   #2c2e34
+*.cursorColor:  #e2e2e3
+*fading: 35
+*fadeColor:     #363941
+
+! black
+*.color0:       #18191d
+*.color8:       #7f8490
+
+! red
+*.color1:       #fc5d7c
+*.color9:       #fc5d7c
+
+! green
+*.color2:       #9ed072
+*.color10:      #9ed072
+
+! yellow
+*.color3:       #e7c664
+*.color11:      #e7c664
+
+! blue
+*.color4:       #76cce0
+*.color12:      #76cce0
+
+! magenta
+*.color5:       #b39df3
+*.color13:      #b39df3
+
+! cyan
+*.color6:       #f39660
+*.color14:      #f39660
+
+! white
+*.color7:       #e2e2e3
+*.color15:      #e2e2e3

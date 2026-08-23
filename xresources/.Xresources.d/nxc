@@ -1,0 +1,40 @@
+! nxc
+! vim: syntax=xdefaults
+! special
+*.foreground:   #EEFFFF
+*.background:   #263238
+*.cursorColor:  #4DB6AC
+*fading: 35
+*fadeColor:     #37474F
+
+! black
+*.color0:       #212B30
+*.color8:       #546E7A
+
+! red
+*.color1:       #EF5350
+*.color9:       #FF8A80
+
+! green
+*.color2:       #66BB6A
+*.color10:      #A5D6A7
+
+! yellow
+*.color3:       #FFCA28
+*.color11:      #FFE082
+
+! blue
+*.color4:       #42A5F5
+*.color12:      #82B1FF
+
+! magenta
+*.color5:       #AB47BC
+*.color13:      #EA80FC
+
+! cyan
+*.color6:       #26C6DA
+*.color14:      #84FFFF
+
+! white
+*.color7:       #ECEFF1
+*.color15:      #FFFFFF

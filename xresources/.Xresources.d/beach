@@ -1,0 +1,40 @@
+! beach
+! vim: syntax=xdefaults
+! special
+*.foreground:   #ece2cb
+*.background:   #0a2e34
+*.cursorColor:  #1db1b4
+*fading: 35
+*fadeColor:     #14454d
+
+! black
+*.color0:       #123c44
+*.color8:       #2e5f66
+
+! red
+*.color1:       #e06c5f
+*.color9:       #ff967f
+
+! green
+*.color2:       #6dbb74
+*.color10:      #9ad9a0
+
+! yellow
+*.color3:       #e5bf6f
+*.color11:      #f5dc9a
+
+! blue
+*.color4:       #4a9fd4
+*.color12:      #86c8ee
+
+! magenta
+*.color5:       #d47fb2
+*.color13:      #eda9d2
+
+! cyan
+*.color6:       #1db1b4
+*.color14:      #66d9d6
+
+! white
+*.color7:       #ece2cb
+*.color15:      #fffaf0

@@ -1,0 +1,40 @@
+! map
+! vim: syntax=xdefaults
+! special
+*.foreground:   #ccd1c8
+*.background:   #22262b
+*.cursorColor:  #ccd1c8
+*fading: 35
+*fadeColor:     #30353c
+
+! black
+*.color0:       #2e343b
+*.color8:       #4f575f
+
+! red
+*.color1:       #b5634e
+*.color9:       #d98a73
+
+! green
+*.color2:       #7d9a68
+*.color10:      #a3c18d
+
+! yellow
+*.color3:       #c2a35d
+*.color11:      #e0c687
+
+! blue
+*.color4:       #5f7f99
+*.color12:      #8badc4
+
+! magenta
+*.color5:       #9a7f9e
+*.color13:      #bfa5c3
+
+! cyan
+*.color6:       #6f9a94
+*.color14:      #96c2bb
+
+! white
+*.color7:       #ccd1c8
+*.color15:      #f0f2ed

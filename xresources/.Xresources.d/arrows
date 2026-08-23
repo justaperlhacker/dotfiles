@@ -1,0 +1,40 @@
+! arrows
+! vim: syntax=xdefaults
+! special
+*.foreground:   #ffffff
+*.background:   #17171f
+*.cursorColor:  #ffffff
+*fading: 35
+*fadeColor:     #2a2a36
+
+! black
+*.color0:       #26262e
+*.color8:       #4e4e58
+
+! red
+*.color1:       #cc241d
+*.color9:       #fb4934
+
+! green
+*.color2:       #9a9aa4
+*.color10:      #c4c4ce
+
+! yellow
+*.color3:       #babac2
+*.color11:      #e0e0e6
+
+! blue
+*.color4:       #888894
+*.color12:      #b2b2bc
+
+! magenta
+*.color5:       #aeaebe
+*.color13:      #d2d2da
+
+! cyan
+*.color6:       #7a7a84
+*.color14:      #a4a4ae
+
+! white
+*.color7:       #dedee4
+*.color15:      #ffffff

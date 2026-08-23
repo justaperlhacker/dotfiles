@@ -1,0 +1,40 @@
+! moonfly
+! vim: syntax=xdefaults
+! special
+*.foreground:   #b2b2b2
+*.background:   #080808
+*.cursorColor:  #9e9e9e
+*fading: 35
+*fadeColor:     #121212
+
+! black
+*.color0:       #323232
+*.color8:       #616161
+
+! red
+*.color1:       #ff5454
+*.color9:       #ff5454
+
+! green
+*.color2:       #8cc85f
+*.color10:      #8cc85f
+
+! yellow
+*.color3:       #e3c78a
+*.color11:      #e3c78a
+
+! blue
+*.color4:       #80a0ff
+*.color12:      #80a0ff
+
+! magenta
+*.color5:       #cfbaed
+*.color13:      #cfbaed
+
+! cyan
+*.color6:       #79e8fb
+*.color14:      #79e8fb
+
+! white
+*.color7:       #c6c6c6
+*.color15:      #c6c6c6

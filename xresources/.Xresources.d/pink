@@ -1,0 +1,40 @@
+! pink
+! vim: syntax=xdefaults
+! special
+*.foreground:   #f2dde8
+*.background:   #241a20
+*.cursorColor:  #ff6fa5
+*fading: 35
+*fadeColor:     #3a2a34
+
+! black
+*.color0:       #33232d
+*.color8:       #5c4252
+
+! red
+*.color1:       #ff4f7b
+*.color9:       #ff85a6
+
+! green
+*.color2:       #7fcea0
+*.color10:      #abe4c1
+
+! yellow
+*.color3:       #f5c67b
+*.color11:      #fbe0a8
+
+! blue
+*.color4:       #9a8cf2
+*.color12:      #beb4f7
+
+! magenta
+*.color5:       #ff6fa5
+*.color13:      #ffa3c6
+
+! cyan
+*.color6:       #7fd4cf
+*.color14:      #ade9e6
+
+! white
+*.color7:       #f2dde8
+*.color15:      #ffffff

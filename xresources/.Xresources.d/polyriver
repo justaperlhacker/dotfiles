@@ -1,0 +1,40 @@
+! polyriver
+! vim: syntax=xdefaults
+! special
+*.foreground:   #d6e6e0
+*.background:   #122b2a
+*.cursorColor:  #248f89
+*fading: 35
+*fadeColor:     #1c4341
+
+! black
+*.color0:       #1a3a38
+*.color8:       #345956
+
+! red
+*.color1:       #d1604f
+*.color9:       #e88f81
+
+! green
+*.color2:       #71a86b
+*.color10:      #9ccb96
+
+! yellow
+*.color3:       #cdb46a
+*.color11:      #e5d194
+
+! blue
+*.color4:       #5f8fbf
+*.color12:      #8fb8da
+
+! magenta
+*.color5:       #a97fb8
+*.color13:      #c8a5d3
+
+! cyan
+*.color6:       #248f89
+*.color14:      #5cc4bd
+
+! white
+*.color7:       #d6e6e0
+*.color15:      #f4faf7

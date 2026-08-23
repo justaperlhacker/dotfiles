@@ -1,0 +1,40 @@
+! cyberpunk
+! vim: syntax=xdefaults
+! special
+*.foreground:   #d6f6ff
+*.background:   #031320
+*.cursorColor:  #02c3ee
+*fading: 35
+*fadeColor:     #0a2438
+
+! black
+*.color0:       #0a2438
+*.color8:       #27516d
+
+! red
+*.color1:       #ff2e88
+*.color9:       #ff67ab
+
+! green
+*.color2:       #0ae782
+*.color10:      #63f5ae
+
+! yellow
+*.color3:       #fede5d
+*.color11:      #ffef96
+
+! blue
+*.color4:       #02c3ee
+*.color12:      #6fdcff
+
+! magenta
+*.color5:       #b967ff
+*.color13:      #d29aff
+
+! cyan
+*.color6:       #2ce5c8
+*.color14:      #7ff0dd
+
+! white
+*.color7:       #d6f6ff
+*.color15:      #ffffff

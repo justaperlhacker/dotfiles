@@ -1,0 +1,40 @@
+! endeavouros
+! vim: syntax=xdefaults
+! special
+*.foreground:   #ffffff
+*.background:   #08052b
+*.cursorColor:  #5294e2
+*fading: 35
+*fadeColor:     #383c4a
+
+! black
+*.color0:       #1c1f39
+*.color8:       #8b8b8b
+
+! red
+*.color1:       #e53935
+*.color9:       #ff6b67
+
+! green
+*.color2:       #66bb6a
+*.color10:      #98ee99
+
+! yellow
+*.color3:       #e1b700
+*.color11:      #ffd550
+
+! blue
+*.color4:       #5294e2
+*.color12:      #8ab9f2
+
+! magenta
+*.color5:       #e345ff
+*.color13:      #ee85ff
+
+! cyan
+*.color6:       #4dd0e1
+*.color14:      #88e5f2
+
+! white
+*.color7:       #b0b5bd
+*.color15:      #ffffff

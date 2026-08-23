@@ -1,0 +1,40 @@
+! kiss
+! vim: syntax=xdefaults
+! special
+*.foreground:   #d6d6d6
+*.background:   #101010
+*.cursorColor:  #d6d6d6
+*fading: 35
+*fadeColor:     #1f1f1f
+
+! black
+*.color0:       #191919
+*.color8:       #3d3d3d
+
+! red
+*.color1:       #7c7c7c
+*.color9:       #aaaaaa
+
+! green
+*.color2:       #8c8c8c
+*.color10:      #bababa
+
+! yellow
+*.color3:       #9c9c9c
+*.color11:      #cacaca
+
+! blue
+*.color4:       #acacac
+*.color12:      #dadada
+
+! magenta
+*.color5:       #bcbcbc
+*.color13:      #eaeaea
+
+! cyan
+*.color6:       #cccccc
+*.color14:      #f4f4f4
+
+! white
+*.color7:       #d6d6d6
+*.color15:      #ffffff

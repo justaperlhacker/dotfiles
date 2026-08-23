@@ -216,6 +216,14 @@ return {
     end,
   },
 
+  {
+    "jsit/toast.vim",
+    name = "toast",
+    lazy = false,
+    priority = 900,
+    -- vimscript theme: warm red/orange accents; automatic light/dark variants
+  },
+
   -- Earthy / retro / forest
   {
     "ellisonleao/gruvbox.nvim",
@@ -265,6 +273,14 @@ return {
   },
 
   {
+    "ptdewey/darkearth-nvim",
+    name = "darkearth",
+    lazy = false,
+    priority = 1000,
+    -- fennel-built theme: no Lua setup available
+  },
+
+  {
     "folke/zen-mode.nvim",
     lazy = false,
     priority = 1000,
@@ -281,6 +297,52 @@ return {
       }
       require('bamboo').load()
     end,
+  },
+
+  -- Red / crimson
+  {
+    -- Local port of the VS Code built-in "Red" theme (colors/vscode-red.lua)
+    -- Activate with: :colorscheme vscode-red
+    "vscode-red",
+    dir = vim.fn.stdpath("config") .. "/colors",
+    lazy = false,
+  },
+
+  {
+    "diegoulloao/neofusion.nvim",
+    name = "neofusion",
+    lazy = false,
+    priority = 900,
+    config = function()
+      local ok, mod = pcall(require, "neofusion")
+      if ok and type(mod.setup) == "function" then
+        mod.setup({})
+      end
+    end,
+  },
+
+  {
+    "AlessandroYorba/Alduin",
+    name = "alduin",
+    lazy = false,
+    priority = 900,
+    -- vimscript theme: no Lua setup available
+  },
+
+  {
+    "AlessandroYorba/Sierra",
+    name = "sierra",
+    lazy = false,
+    priority = 900,
+    -- vimscript theme: no Lua setup available
+  },
+
+  {
+    "srcery-colors/srcery-vim",
+    name = "srcery",
+    lazy = false,
+    priority = 900,
+    -- vimscript theme: no Lua setup available
   },
 
   -- Lush-based / custom handcrafted
@@ -312,6 +374,15 @@ return {
       vim.g.everforest_disable_italic_comment = false
       vim.g.everforest_better_performance = true
     end,
+  },
+
+  {
+    -- NOTE: uwu.vim actually ships Everblush (teal/green), not red
+    "Mangeshrex/uwu.vim",
+    name = "everblush",
+    lazy = false,
+    priority = 900,
+    -- vimscript theme: activate with :colorscheme everblush
   },
 
   {

@@ -8,12 +8,14 @@ local colorscheme = {}
 -- colorscheme.name = "kimbox"
 -- colorscheme.name = "miniwinter"
 -- colorscheme.name = "miasma"
+-- colorscheme.name = "darkearth"
 -- colorscheme.name = "zenbones"
 -- colorscheme.name = "zenburn"
 -- colorscheme.name = "chocolatier"
 -- colorscheme.name = "ayu"
 -- colorscheme.name = "bamboo"
 -- colorscheme.name = "vinyl"
+-- colorscheme.name = "everblush" -- from uwu.vim repo
 
 -- Monochrome / minimal / low-saturation
 -- colorscheme.name = "vague"
@@ -26,7 +28,6 @@ local colorscheme = {}
 -- colorscheme.name = "kanso"
 
 -- Purple / moody / twilight vibes
--- colorscheme.name = "rose-pine"
 -- colorscheme.name = "kanagawa"
 -- colorscheme.name = "dracula"
 -- colorscheme.name = "melange"
@@ -45,13 +46,25 @@ local colorscheme = {}
 -- colorscheme.name = "modus-themes"
 -- colorscheme.name = "bluloco"
 
+-- Red / blood / crimson vibes
+-- colorscheme.name = "vscode-red" -- local port of the VS Code built-in "Red" theme
+-- colorscheme.name = "neofusion"
+-- colorscheme.name = "alduin"
+-- colorscheme.name = "sierra"
+-- colorscheme.name = "srcery"
+
+-- Warm / floral / twilight vibes
+-- colorscheme.name = "rose-pine"
+-- colorscheme.name = "toast"
+
 -- Editor utilities / focus tools
 -- colorscheme.name = "zen-mode"
 
 -- Active theme
 -- colorscheme.name = "vague"
 -- colorscheme.name = "monochrome"
-colorscheme.name = "kanso"
+-- colorscheme.name = "kanso"
+colorscheme.name = "vscode-red"
 
 colorscheme.fallback = "default"
 colorscheme.background = "dark"

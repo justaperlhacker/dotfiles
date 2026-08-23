@@ -1,0 +1,40 @@
+! manhattan
+! vim: syntax=xdefaults
+! special
+*.foreground:   #eadfe9
+*.background:   #1c1626
+*.cursorColor:  #DB86BA
+*fading: 35
+*fadeColor:     #2e2438
+
+! black
+*.color0:       #271e33
+*.color8:       #4a3b59
+
+! red
+*.color1:       #e05c78
+*.color9:       #ff8ba3
+
+! green
+*.color2:       #74b874
+*.color10:      #a3dba3
+
+! yellow
+*.color3:       #e8c170
+*.color11:      #f7dda0
+
+! blue
+*.color4:       #6f8fc9
+*.color12:      #9db9e5
+
+! magenta
+*.color5:       #DB86BA
+*.color13:      #efb0d6
+
+! cyan
+*.color6:       #6fc0c9
+*.color14:      #a0dee5
+
+! white
+*.color7:       #eadfe9
+*.color15:      #ffffff

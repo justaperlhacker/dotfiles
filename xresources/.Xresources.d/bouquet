@@ -1,0 +1,40 @@
+! bouquet
+! vim: syntax=xdefaults
+! special
+*.foreground:   #f3e7d3
+*.background:   #251c14
+*.cursorColor:  #ffc86a
+*fading: 35
+*fadeColor:     #40301e
+
+! black
+*.color0:       #38291a
+*.color8:       #5f4a30
+
+! red
+*.color1:       #d95763
+*.color9:       #f08490
+
+! green
+*.color2:       #93b56f
+*.color10:      #b8d79a
+
+! yellow
+*.color3:       #ffc86a
+*.color11:      #ffe09e
+
+! blue
+*.color4:       #6f9fc8
+*.color12:      #9cc4e5
+
+! magenta
+*.color5:       #c77fb3
+*.color13:      #e3a6d4
+
+! cyan
+*.color6:       #64b8a8
+*.color14:      #93d8ca
+
+! white
+*.color7:       #f3e7d3
+*.color15:      #fdf6ea

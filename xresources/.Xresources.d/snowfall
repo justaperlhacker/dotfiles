@@ -1,0 +1,40 @@
+! snowfall
+! vim: syntax=xdefaults
+! special
+*.foreground:   #D9D6C4
+*.background:   #08263a
+*.cursorColor:  #D9D6C4
+*fading: 35
+*fadeColor:     #123951
+
+! black
+*.color0:       #10334a
+*.color8:       #3a5a74
+
+! red
+*.color1:       #c97b8b
+*.color9:       #e39aab
+
+! green
+*.color2:       #8fbf9f
+*.color10:      #b3d9c2
+
+! yellow
+*.color3:       #dcc694
+*.color11:      #efe0b4
+
+! blue
+*.color4:       #7aa6c9
+*.color12:      #a5c8e3
+
+! magenta
+*.color5:       #ab9ed1
+*.color13:      #c9bee4
+
+! cyan
+*.color6:       #7fb8c9
+*.color14:      #a8d6e2
+
+! white
+*.color7:       #ccd8e4
+*.color15:      #eef4f9

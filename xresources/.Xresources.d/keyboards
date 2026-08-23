@@ -1,0 +1,40 @@
+! keyboards
+! vim: syntax=xdefaults
+! special
+*.foreground:   #e8def8
+*.background:   #150b2e
+*.cursorColor:  #8701f6
+*fading: 35
+*fadeColor:     #24124a
+
+! black
+*.color0:       #1e1240
+*.color8:       #3c2a6e
+
+! red
+*.color1:       #ff4f79
+*.color9:       #ff85a1
+
+! green
+*.color2:       #3ddc84
+*.color10:      #7dedab
+
+! yellow
+*.color3:       #facc15
+*.color11:      #ffe066
+
+! blue
+*.color4:       #60a5fa
+*.color12:      #93c5fd
+
+! magenta
+*.color5:       #8701f6
+*.color13:      #b567ff
+
+! cyan
+*.color6:       #22d3ee
+*.color14:      #67e8f9
+
+! white
+*.color7:       #e8def8
+*.color15:      #ffffff

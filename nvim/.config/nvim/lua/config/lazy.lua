@@ -15,7 +15,8 @@ local colors = require("config.colors")
 
 require("lazy").setup("plugins", {})
 
-local ok, _ = pcall(vim.cmd.colorscheme, colors.name)
+local ok, err = pcall(vim.cmd.colorscheme, colors.name)
 if not ok then
+  vim.notify("[lazy.lua] colorscheme '" .. tostring(colors.name) .. "' failed: " .. tostring(err))
   vim.cmd.colorscheme(colors.fallback)
 end

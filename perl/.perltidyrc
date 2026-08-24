@@ -1,8 +1,6 @@
 # PBP .perltidyrc file
 # Uncomment #-st to fully emulate perltidy -pbp
 
--ole=unix # force unix line endings
-
 -l=78   # Max line width is 78 cols, (override below)
 -i=4    # Indent level is 4 cols
 -ci=4   # Continuation indent is 4 cols
@@ -23,6 +21,8 @@
 -wbb="% + - * / x != == >= <= =~ < > | & **= += *= &= <<= &&= -= /= |= >>= ||= .= %= ^= x="
 
 # extras/overrides/deviations from PBP
+-ole=unix # force unix line endings
+
 --maximum-line-length=120               # be slightly more generous
 --warning-output                        # Show warnings
 --maximum-consecutive-blank-lines=2     # default is 1
@@ -35,7 +35,6 @@
 #--multiple-token-tightness=1
  
 -isbc  # block comments may only be indented if they have some space characters before the #
--ci=2  # Continuation indent is 2 cols
 
 # we use version control, so just rewrite the file
 -b 

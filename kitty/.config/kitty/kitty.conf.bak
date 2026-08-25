@@ -1,22 +1,23 @@
 
 # BEGIN_KITTY_FONTS
-font_family      family="BerkeleyMono Nerd Font"
+font_family family="Berkeley Mono Nerd Font"
+#font_family      family="HE_TERMINAL NL"
 bold_font        auto
 italic_font      auto
 bold_italic_font auto
 # END_KITTY_FONTS
 
 # Font Configuration
-# font_family family="JetBrainsMono Nerd Font"
+#font_family family="HE_TERMINAL NL"
+#font_family family="JetBrainsMono Nerd Font"
+#font_family family="Berkeley Mono Nerd Font"
 font_size   12.0
 disable_ligatures always
 # enable alternate zero and oddstyle numerals, need to use postscript name
 #font_features FiraCode-Retina +zero +onum
 
 # decrease height just a bit HE_TERMINAL, good for 12 and up
-# size 11,12,13
 #modify_font cell_height -1px
-# size 14
 #modify_font cell_height -2px
 
 # Window Configuration
@@ -67,12 +68,13 @@ tab_bar_style              powerline
 tab_bar_align              left
 tab_bar_min_tabs           2
 tab_bar_margin_width       0.0
-tab_bar_margin_height      2.5 1.5
+#tab_bar_margin_height      2.5 1.5
+tab_bar_margin_height      0.0 0.0
 # tab_bar_margin_color       #101418
 active_tab_font_style      bold
 inactive_tab_font_style    normal
 tab_activity_symbol        " ● "
-tab_numbers_style          1
+#tab_numbers_style          1
 tab_title_template         "{fmt.fg.red}{bell_symbol}{activity_symbol}{fmt.fg.tab}{title[:40]}{title[40:] and '…'} [{index}]"
 active_tab_title_template  "{fmt.fg.red}{bell_symbol}{activity_symbol}{fmt.fg.tab}{title[:40]}{title[40:] and '…'} [{index}]"
 

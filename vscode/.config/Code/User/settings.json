@@ -115,7 +115,8 @@
     },
 
     // Editor
-    "editor.fontFamily": "HE_TERMINAL Nerd Font",    
+    "editor.fontFamily": "BerkeleyMono Nerd Font",
+    //"editor.fontFamily": "HE_TERMINAL Nerd Font",
     // "editor.fontFamily": "'Droid Sans Mono', monospace",
     // "editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",
@@ -210,6 +211,7 @@
         "editor.insertSpaces": true,
         "editor.inlayHints.enabled": "off",
     },
+    "files.trimTrailingWhitespace": true,
 
     // Perl / Perl::LanguageServer
     // "perl.lsp.trace.server": "off",

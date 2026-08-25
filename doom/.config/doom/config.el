@@ -26,7 +26,12 @@
 
 ;;(setq doom-font (font-spec :family "JetBrains Mono Nerd Font" :size 14 :weight 'medium)
 ;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
-(setq doom-font (font-spec :family "IoskeleyMonoTerm Nerd Font" :size 14 :weight 'medium)
+;;(setq doom-font (font-spec :family "IoskeleyMonoTerm Nerd Font" :size 14 :weight 'medium)
+;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
+
+;;(setq doom-font (font-spec :family "HE_TERMINAL NL Nerd Font" :size 14)
+;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
+(setq doom-font (font-spec :family "BerkeleyMono Nerd Font" :size 14)
     doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them

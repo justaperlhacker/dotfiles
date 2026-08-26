@@ -129,15 +129,15 @@ alias pdw="pwd"
 alias em='emacs -nw'
 alias doomemacs="emacs --init-dir=\"$HOME/.config/doom-emacs\" --name=\"doom-emacs\""
 alias spacemacs="emacs --init-dir=\"$HOME/.config/spacemacs\" --name=\"spacemacs\""
-alias gnuemacs="emacs --init-dir=\"$HOME/.config/emacs\""
+alias gnuemacs="emacs --init-dir=\"$HOME/.config/gnuemacs\" --name="gnuemacs""
 
 # Emacs profile switcher with persistent state
 EMACS_STATE_FILE="${HOME}/.config/bash/.emacs-state"
 
 _emacs_apply() {
   local profile="$1"
-  if [[ "$profile" == "default" || "$profile" == "vanilla" || -z "$profile" ]]; then
-    alias em="emacs -nw --init-dir=\"$HOME/.config/emacs\""
+  if [[ "$profile" == "default" || "$profile" == "gnuemacs" || -z "$profile" ]]; then
+    alias em="emacs -nw --init-dir=\"$HOME/.config/gnuemacs\" --name=gnuemacs"
     unalias emacs
   else
     alias em="emacs -nw --init-dir=\"$HOME/.config/${profile}\" --name=\"${profile}\""
@@ -154,12 +154,13 @@ _emacs_save() {
 if [[ -f "${EMACS_STATE_FILE}" ]]; then
   _emacs_apply "$(cat "${EMACS_STATE_FILE}")"
 else
-  alias em="emacs -nw --init-dir=\"$HOME/.config/emacs\""
-  alias emacs="emacs ---init-dir=\"$HOME/.config/emacs\""
+  profile=gnuemacs
+  alias em="emacs -nw --init-dir=\"$HOME/.config/${profile}\" --name=\"${profile}\""
+  alias emacs="emacs --init-dir=\"$HOME/.config/${profile}\" --name=\"${profile}\""
 fi
 
 emacs_select() {
-  items=("default" "doom-emacs" "spacemacs" "vanilla")
+  items=("default" "doom-emacs" "spacemacs" "gnuemacs")
   profile=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Emacs Profile  " --height=~50% --layout=reverse --border --exit-0)
   if [[ -z $profile ]]; then
     echo "Nothing selected"

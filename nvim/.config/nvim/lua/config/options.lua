@@ -68,7 +68,8 @@ opt.cmdheight = 1 -- command line height
 
 
 -- spell checking
-opt.spell = true -- enable spell checking
+opt.spell = false -- enable spell checking
+-- opt.spell = true -- enable spell checking
 opt.spelllang = "en" -- set spell check language
 opt.iskeyword:append("-") -- treat dashes as part of words
 

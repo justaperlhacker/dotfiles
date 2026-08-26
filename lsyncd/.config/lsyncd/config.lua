@@ -4,11 +4,11 @@ settings {
     nodaemon   = true,
 }
 
--- Primary -> Shared (laptop -> drive)
+-- Backup: laptop -> drive (one-way)
 sync {
     default.rsync,
-    source = os.getenv("HOME") .. "/Projects",
-    target = os.getenv("HOME") .. "/shared/Projects",
+    source = os.getenv("HOME") .. "/shared",
+    target = os.getenv("HOME") .. "/.shared_backup",
     delay  = 2,
     rsync  = {
         archive  = true,
@@ -30,28 +30,4 @@ sync {
     },
 }
 
--- Shared -> Primary (drive -> laptop)
-sync {
-    default.rsync,
-    source = os.getenv("HOME") .. "/shared/Projects",
-    target = os.getenv("HOME") .. "/Projects",
-    delay  = 2,
-    rsync  = {
-        archive  = true,
-        compress = false,
-        acls     = true,
-        xattrs   = true,
-    },
-    exclude = {
-        ".git/",
-        "node_modules/",
-        "venv/",
-        "__pycache__/",
-        "*.pyc",
-        "*.swp",
-        "*.swo",
-        "*~",
-        ".DS_Store",
-        "Thumbs.db",
-    },
-}
+

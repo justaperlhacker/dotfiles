@@ -1,0 +1,12 @@
+[Unit]
+Description=lsyncd bidirectional sync
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/lsyncd/start.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

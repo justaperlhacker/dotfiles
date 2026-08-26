@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DATE=$(date +%Y%m%d)
+TARBALL="Projects_Backup_${DATE}.tar.gz"
+SOURCE="$HOME/Projects"
+TARGETS=("$HOME/.backups" "$HOME/shared/.backups")
+RETENTION=7
+
+for TARGET in "${TARGETS[@]}"; do
+    if [ ! -d "$TARGET" ]; then
+        echo "Skipping $TARGET (not mounted or not a directory)"
+        continue
+    fi
+
+    DEST="$TARGET/$TARBALL"
+
+    if [ -f "$DEST" ]; then
+        echo "Backup already exists for today in $TARGET, overwriting: $DEST"
+        rm -f "$DEST"
+    fi
+
+    echo "Backing up $SOURCE to $DEST ..."
+    tar -czf "$DEST" -C "$HOME" Projects
+    echo "Backup saved: $DEST"
+
+    # Retention: remove all .tar.gz files except the latest RETENTION
+    COUNT=0
+    for F in $(ls -t "$TARGET"/Projects_Backup_*.tar.gz 2>/dev/null); do
+        COUNT=$((COUNT + 1))
+        if [ "$COUNT" -gt "$RETENTION" ]; then
+            echo "Removing old backup: $F"
+            rm -f "$F"
+        fi
+    done
+done
+
+echo "Done."

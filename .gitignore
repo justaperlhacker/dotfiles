@@ -40,3 +40,6 @@ fonts/.fonts/*/.uuid
 # Midnight Commander runtime state (rewritten each session) — never commit
 #mc/.config/mc/ini
 #mc/.config/mc/panels.ini
+# trayxeyes compiled binaries (built via make)
+i3/.config/i3/scripts/trayxeyes
+i3/.config/i3/trayxeyes/trayxeyes

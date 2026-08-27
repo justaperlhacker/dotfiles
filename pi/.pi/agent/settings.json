@@ -2,6 +2,7 @@
   "lastChangelogVersion": "0.84.3",
   "theme": "light",
   "packages": [
-    "npm:pi-permission-system"
+    "npm:pi-permission-system",
+    "npm:pi-undo-redo"
   ]
 }

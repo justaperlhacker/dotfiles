@@ -116,8 +116,8 @@ sub on_binding($msg) {
     my $binding = $msg->{binding} or return;
     return unless $binding->{command} eq 'nop';
     my $local_index = $KEYS{ $binding->{symbol} };
-    return unless defined $local_index;
     return if $pending;
+    return unless defined $local_index || $binding->{symbol} eq 'b';
 
     $pending = 1;
     $i3->get_workspaces->cb(
@@ -131,27 +131,40 @@ sub on_binding($msg) {
             my $suffix = $MONITOR_SUFFIX{ $focused->{output} };
             return unless defined $suffix;
 
-            my $target = "$local_index$suffix";
-            return if $target eq ( $focused->{name} // '' );
-
             my $mask = $binding->{event_state_mask};
             my $command;
-            if ( has_modifier( $mask, 'ctrl' ) && has_modifier( $mask, 'shift' ) ) {
+
+            if ( $binding->{symbol} eq 'b' ) {
+                # $mod+Shift+b: move the focused window to the same-index
+                # workspace on the other monitor
+                return unless has_modifier( $mask, 'shift' );
+                my ($index) = $focused->{name} =~ /(\d+)/;
+                return unless defined $index;
                 my $other_suffix = $suffix eq 'a' ? 'b' : 'a';
-                my $target = "$local_index$other_suffix";
-                $command = "move container to workspace $target; workspace $target";
-            }
-            elsif ( has_modifier( $mask, 'ctrl' ) ) {
-                my $target = "$local_index$suffix";
-                $command = "move container to workspace $target";
-            }
-            elsif ( has_modifier( $mask, 'shift' ) ) {
-                my $target = "$local_index$suffix";
+                my $target       = "$index$other_suffix";
                 $command = "move container to workspace $target; workspace $target";
             }
             else {
                 my $target = "$local_index$suffix";
-                $command = "workspace $target";
+                return if $target eq ( $focused->{name} // '' );
+
+                if ( has_modifier( $mask, 'ctrl' ) && has_modifier( $mask, 'shift' ) ) {
+                    my $other_suffix = $suffix eq 'a' ? 'b' : 'a';
+                    my $target = "$local_index$other_suffix";
+                    $command = "move container to workspace $target; workspace $target";
+                }
+                elsif ( has_modifier( $mask, 'ctrl' ) ) {
+                    my $target = "$local_index$suffix";
+                    $command = "move container to workspace $target";
+                }
+                elsif ( has_modifier( $mask, 'shift' ) ) {
+                    my $target = "$local_index$suffix";
+                    $command = "move container to workspace $target; workspace $target";
+                }
+                else {
+                    my $target = "$local_index$suffix";
+                    $command = "workspace $target";
+                }
             }
             warn "CMD: $command\n";
             send_command( $i3, $command );

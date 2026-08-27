@@ -54,4 +54,4 @@ bind -x '"\C-r": _fzf_history'
 #[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"
 
 # machine-specific overrides
-[[ -f ~/.config/bash/local ]] && source ~/.config/bash/local
+[[ -f ~/.config/bash/$(hostname).local ]] && source ~/.config/bash/$(hostname).local

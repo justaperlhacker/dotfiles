@@ -71,8 +71,7 @@ WORKSPACES (per-monitor, niri-style via i3-multimonitor)
   $mod+Page_Up           previous workspace on focused monitor
   $mod+Shift+Page_Down   move window to next workspace and switch
   $mod+Shift+Page_Up     move window to previous workspace and switch
-  $mod+b                workspace back_and_forth
-  $mod+Shift+b          move container to back_and_forth
+  $mod+Shift+b          move focused window to other monitor (same-index workspace)
 
 APPEARANCE
   $mod+y                border toggle (none → pixel 1 → normal)

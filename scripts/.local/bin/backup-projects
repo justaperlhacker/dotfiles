@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+OVERWRITE=false
+for arg in "$@"; do
+    case "$arg" in
+        --overwrite) OVERWRITE=true ;;
+        *) echo "Unknown argument: $arg"; exit 1 ;;
+    esac
+done
+
 DATE=$(date +%Y%m%d)
 TARBALL="Projects_Backup_${DATE}.tar.gz"
 SOURCE="$HOME/Projects"
-TARGETS=("$HOME/.backups" "$HOME/shared/.backups")
+TARGETS=("$HOME/.backups" "$HOME/OneDrive/Dump/Backups" "$HOME/shared/HUB/backups" "$HOME/shared/UGREEN/backups")
 RETENTION=7
 
 for TARGET in "${TARGETS[@]}"; do
@@ -16,8 +24,13 @@ for TARGET in "${TARGETS[@]}"; do
     DEST="$TARGET/$TARBALL"
 
     if [ -f "$DEST" ]; then
-        echo "Backup already exists for today in $TARGET, overwriting: $DEST"
-        rm -f "$DEST"
+        if [ "$OVERWRITE" = true ]; then
+            echo "Backup already exists for today in $TARGET, overwriting: $DEST"
+            rm -f "$DEST"
+        else
+            echo "Backup already exists for today in $TARGET, skipping: $DEST"
+            continue
+        fi
     fi
 
     echo "Backing up $SOURCE to $DEST ..."

@@ -35,5 +35,9 @@ _darcs
 ^DankMaterialShell/.config/DankMaterialShell/plugins/
 
 # Midnight Commander runtime state (rewritten each session) — never stow
-^mc/.config/mc/ini
-^mc/.config/mc/panels\.ini
+#^mc/.config/mc/ini
+#^mc/.config/mc/panels\.ini
+
+# pi runtime / downloaded state
+^pi/.pi/agent/npm
+^pi/.pi/agent/sessions

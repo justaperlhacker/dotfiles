@@ -15,10 +15,13 @@
 #define _DEFAULT_SOURCE
 
 #include <X11/Xlib.h>
+#include <fcntl.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/file.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #define SYSTEM_TRAY_REQUEST_DOCK 0
@@ -31,12 +34,22 @@ static GC gc;
 static Pixmap buf;
 static int buf_w = 0, buf_h = 0;
 static int win_w = 22, win_h = 22;
-static int docked = 0;
-static Window last_tray = 0;
 static Atom xembed_info, net_op, net_tray_s0;
 
 /* gruvbox bar background */
 static unsigned long bg_pixel = 0x1d2021;
+
+/* Only one instance may run (exec_always respawns on every i3 restart).
+ * flock is released automatically if the holder dies, so no stale locks. */
+static int acquire_single_instance(void)
+{
+    int fd = open("/tmp/trayxeyes.lock", O_CREAT | O_RDWR, 0600);
+    if (fd < 0)
+        return 1; /* can't lock; allow the instance anyway */
+    if (flock(fd, LOCK_EX | LOCK_NB) != 0)
+        return 0; /* another instance holds the lock */
+    return 1;     /* lock held; fd intentionally left open for lifetime */
+}
 
 static int xerr_handler(Display *d, XErrorEvent *e)
 {
@@ -68,7 +81,6 @@ static void create_icon(void)
                     PropModeReplace, (unsigned char *)info, 2);
 
     gc = XCreateGC(dpy, win, 0, NULL);
-    docked = 0;
 }
 
 static void destroy_icon(void)
@@ -86,7 +98,6 @@ static void destroy_icon(void)
         XDestroyWindow(dpy, win);
         win = 0;
     }
-    docked = 0;
 }
 
 static void draw(Drawable d)
@@ -159,15 +170,38 @@ static void draw(Drawable d)
     XFlush(dpy);
 }
 
+/* true if our window is currently a child of the tray selection owner */
+static int is_embedded(Window tray)
+{
+    Window root, parent, *children = NULL;
+    unsigned int n = 0;
+    if (!XQueryTree(dpy, win, &root, &parent, &children, &n))
+        return 0;
+    if (children)
+        XFree(children);
+    return parent == tray;
+}
+
+/*
+ * Keep the icon docked: if we are not embedded in the current tray
+ * selection owner (i3bar restart may hand the same window ID to a new
+ * tray), re-send the dock request, at most once per second.
+ */
 static void try_dock(void)
 {
     Window tray = XGetSelectionOwner(dpy, net_tray_s0);
-    if (tray != last_tray) {
-        last_tray = tray;
-        docked = 0;
-    }
-    if (tray == None || docked)
+    if (tray == None)
         return;
+    if (is_embedded(tray))
+        return;
+
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    unsigned long now = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    static unsigned long last_attempt = 0;
+    if (last_attempt && now - last_attempt < 1000)
+        return;
+    last_attempt = now;
 
     XEvent ev;
     memset(&ev, 0, sizeof(ev));
@@ -180,11 +214,15 @@ static void try_dock(void)
     ev.xclient.data.l[2] = win;
     XSendEvent(dpy, tray, False, NoEventMask, &ev);
     XSync(dpy, False);
-    docked = 1;
 }
 
 int main(void)
 {
+    if (!acquire_single_instance()) {
+        fprintf(stderr, "trayxeyes: another instance is already running\n");
+        return 0;
+    }
+
     dpy = XOpenDisplay(NULL);
     if (!dpy) {
         fprintf(stderr, "trayxeyes: cannot open display\n");

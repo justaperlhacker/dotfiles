@@ -22,7 +22,10 @@
 #include <string.h>
 #include <sys/file.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 
 #define SYSTEM_TRAY_REQUEST_DOCK 0
 #define XEMBED_MAPPED (1L << 0)
@@ -39,16 +42,45 @@ static Atom xembed_info, net_op, net_tray_s0;
 /* gruvbox bar background */
 static unsigned long bg_pixel = 0x1d2021;
 
-/* Only one instance may run (exec_always respawns on every i3 restart).
- * flock is released automatically if the holder dies, so no stale locks. */
+static int lock_fd = -1;
+
+/* Only one instance may run. Uses a PID file + flock for robustness:
+ * flock prevents the race where two instances start simultaneously,
+ * and the PID file lets us detect stale locks from dead processes. */
 static int acquire_single_instance(void)
 {
-    int fd = open("/tmp/trayxeyes.lock", O_CREAT | O_RDWR, 0600);
+    const char *path = "/tmp/trayxeyes.lock";
+    int fd = open(path, O_CREAT | O_RDWR, 0600);
     if (fd < 0)
-        return 1; /* can't lock; allow the instance anyway */
-    if (flock(fd, LOCK_EX | LOCK_NB) != 0)
-        return 0; /* another instance holds the lock */
-    return 1;     /* lock held; fd intentionally left open for lifetime */
+        return 1;
+
+    if (flock(fd, LOCK_EX | LOCK_NB) != 0) {
+        /* lock held — check if the holder is alive */
+        char pidbuf[16] = { 0 };
+        pid_t holder = 0;
+        lseek(fd, 0, SEEK_SET);
+        if (read(fd, pidbuf, sizeof(pidbuf) - 1) > 0)
+            holder = atoi(pidbuf);
+        if (holder > 0 && kill(holder, 0) == 0) {
+            close(fd);
+            return 0; /* valid instance running */
+        }
+        /* stale lock — another flock should succeed now */
+        if (flock(fd, LOCK_EX | LOCK_NB) != 0) {
+            close(fd);
+            return 0;
+        }
+    }
+
+    /* write our PID so future instances can detect stale locks */
+    char pidbuf[16];
+    int len = snprintf(pidbuf, sizeof(pidbuf), "%d\n", getpid());
+    ftruncate(fd, 0);
+    lseek(fd, 0, SEEK_SET);
+    write(fd, pidbuf, len);
+
+    lock_fd = fd;
+    return 1;
 }
 
 static int xerr_handler(Display *d, XErrorEvent *e)
@@ -69,13 +101,14 @@ static int win_alive(void)
 
 static void create_icon(void)
 {
-    win = XCreateSimpleWindow(dpy, RootWindow(dpy, screen), 0, 0,
-                              win_w, win_h, 0,
-                              XBlackPixel(dpy, screen),
-                              XWhitePixel(dpy, screen));
+    XSetWindowAttributes swa;
+    swa.override_redirect = True;
+    win = XCreateWindow(dpy, RootWindow(dpy, screen), 0, 0,
+                        win_w, win_h, 0,
+                        CopyFromParent, CopyFromParent, CopyFromParent,
+                        CWOverrideRedirect, &swa);
     XSelectInput(dpy, win, ExposureMask | StructureNotifyMask | ButtonPressMask);
 
-    /* advertise XEMBED capabilities; the tray host maps us */
     unsigned long info[2] = { 0, XEMBED_MAPPED };
     XChangeProperty(dpy, win, xembed_info, xembed_info, 32,
                     PropModeReplace, (unsigned char *)info, 2);
@@ -100,27 +133,42 @@ static void destroy_icon(void)
     }
 }
 
-static void draw(Drawable d)
+static void get_pupil_offset(double *out_dx, double *out_dy)
 {
     Window root = RootWindow(dpy, screen);
     Window root_ret, child_ret, trans;
     int rx, ry, win_x, win_y, px = 0, py = 0;
     unsigned int mask;
 
+    XTranslateCoordinates(dpy, win, root, 0, 0, &px, &py, &trans);
+    XQueryPointer(dpy, root, &root_ret, &child_ret, &rx, &ry,
+                   &win_x, &win_y, &mask);
+
+    double cx = win_w / 2.0, cy = win_h / 2.0;
+    double rx_eye = win_w * 0.19;
+    double ry_eye = win_h * 0.38;
+    double pupil_r = (rx_eye < ry_eye ? rx_eye : ry_eye) * 0.45;
+
+    double dx = rx - (px + cx);
+    double dy = ry - (py + cy);
+    double len = hypot(dx, dy);
+    double maxr = (rx_eye < ry_eye ? rx_eye : ry_eye) - pupil_r;
+    if (len > maxr && len > 0.0001) {
+        dx *= maxr / len;
+        dy *= maxr / len;
+    }
+
+    *out_dx = dx;
+    *out_dy = dy;
+}
+
+static void draw(Drawable d, double dx, double dy)
+{
     unsigned long white = XWhitePixel(dpy, screen);
     unsigned long black = XBlackPixel(dpy, screen);
 
     if (win_w < 4 || win_h < 4)
         return;
-
-    XTranslateCoordinates(dpy, win, root, 0, 0, &px, &py, &trans);
-    XQueryPointer(dpy, root, &root_ret, &child_ret, &rx, &ry,
-                   &win_x, &win_y, &mask);
-    (void)root_ret;
-    (void)child_ret;
-    (void)win_x;
-    (void)win_y;
-    (void)trans;
 
     if (!buf || buf_w != win_w || buf_h != win_h) {
         if (buf)
@@ -131,26 +179,15 @@ static void draw(Drawable d)
         buf_h = win_h;
     }
 
-    double cx = win_w / 2.0, cy = win_h / 2.0;
+    double cy = win_h / 2.0;
     double ex[2] = { win_w * 0.27, win_w * 0.73 };
     double rx_eye = win_w * 0.19;
     double ry_eye = win_h * 0.38;
     double pupil_r = (rx_eye < ry_eye ? rx_eye : ry_eye) * 0.45;
 
-    /* pointer direction relative to the center of this window */
-    double dx = rx - (px + cx);
-    double dy = ry - (py + cy);
-    double len = hypot(dx, dy);
-    double maxr = (rx_eye < ry_eye ? rx_eye : ry_eye) - pupil_r;
-    if (len > maxr && len > 0.0001) {
-        dx *= maxr / len;
-        dy *= maxr / len;
-    }
-
     XSetForeground(dpy, gc, bg_pixel);
     XFillRectangle(dpy, buf, gc, 0, 0, win_w, win_h);
 
-    /* eye whites and outlines */
     XSetForeground(dpy, gc, white);
     for (int i = 0; i < 2; i++)
         XFillArc(dpy, buf, gc, (int)(ex[i] - rx_eye), (int)(cy - ry_eye),
@@ -160,7 +197,6 @@ static void draw(Drawable d)
         XDrawArc(dpy, buf, gc, (int)(ex[i] - rx_eye), (int)(cy - ry_eye),
                  (int)(2 * rx_eye), (int)(2 * ry_eye), 0, 360 * 64);
 
-    /* pupils */
     for (int i = 0; i < 2; i++)
         XFillArc(dpy, buf, gc, (int)(ex[i] + dx) - (int)pupil_r,
                  (int)(cy + dy) - (int)pupil_r, (int)(2 * pupil_r),
@@ -170,8 +206,14 @@ static void draw(Drawable d)
     XFlush(dpy);
 }
 
-/* true if our window is currently a child of the tray selection owner */
-static int is_embedded(Window tray)
+/* true if our window has been reparented out of the root, i.e. it is
+ * embedded in a system-tray host. NOTE: we must not compare against the
+ * _NET_SYSTEM_TRAY_S0 selection owner here: i3bar owns that selection with
+ * a separate 1x1 window and reparents docked icons under its *bar* window,
+ * so `parent == owner` never holds. Re-sending the dock request in that
+ * case makes i3bar re-parent/map the icon and append a duplicate to its
+ * tray list every second, which shows up as flicker. */
+static int is_embedded(void)
 {
     Window root, parent, *children = NULL;
     unsigned int n = 0;
@@ -179,20 +221,20 @@ static int is_embedded(Window tray)
         return 0;
     if (children)
         XFree(children);
-    return parent == tray;
+    return parent != root;
 }
 
 /*
- * Keep the icon docked: if we are not embedded in the current tray
- * selection owner (i3bar restart may hand the same window ID to a new
- * tray), re-send the dock request, at most once per second.
+ * Keep the icon docked: if we are not embedded in a tray host (e.g. i3bar
+ * restart may hand the same window ID to a new tray), re-send the dock
+ * request, at most once per second.
  */
 static void try_dock(void)
 {
     Window tray = XGetSelectionOwner(dpy, net_tray_s0);
     if (tray == None)
         return;
-    if (is_embedded(tray))
+    if (is_embedded())
         return;
 
     struct timeval tv;
@@ -239,6 +281,9 @@ int main(void)
     create_icon();
     try_dock();
 
+    int last_px = 0, last_py = 0;
+    int have_last = 0;
+
     for (;;) {
         while (XPending(dpy)) {
             XEvent ev;
@@ -249,26 +294,40 @@ int main(void)
                 win_h = ev.xconfigure.height;
                 break;
             case Expose:
-                if (ev.xexpose.count == 0)
-                    draw(ev.xexpose.window);
+                if (ev.xexpose.count == 0) {
+                    double dx, dy;
+                    get_pupil_offset(&dx, &dy);
+                    draw(ev.xexpose.window, dx, dy);
+                    last_px = (int)dx;
+                    last_py = (int)dy;
+                    have_last = 1;
+                }
                 break;
             case ButtonPress:
             case ButtonRelease:
-                /* clicks are a no-op: the icon must never vanish */
                 break;
             }
         }
 
-        /* if the tray destroyed our window, rebuild and re-dock */
         if (win && !win_alive()) {
             destroy_icon();
             create_icon();
         }
 
-        if (win)
-            draw(win);
+        if (win) {
+            double dx, dy;
+            get_pupil_offset(&dx, &dy);
+            int px = (int)dx;
+            int py = (int)dy;
+            if (!have_last || px != last_px || py != last_py) {
+                draw(win, dx, dy);
+                last_px = px;
+                last_py = py;
+                have_last = 1;
+            }
+        }
 
-        usleep(30000); /* ~33 fps */
+        usleep(30000);
         try_dock();
     }
 }

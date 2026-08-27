@@ -47,6 +47,7 @@ stow -D bash          # remove symlinks
 | `i3`              | `.config/i3/`, `.xprofile`                                |
 | `kanata`          | `.config/kanata/`, `.config/systemd/user/kanata.service`  |
 | `kitty`           | `.config/kitty/`                                          |
+| `kilo`            | `.config/kilo/`                                           |
 | `LazyVim`         | `.config/LazyVim/`                                        |
 | `nano`            | `.config/nano/`                                           |
 | `neovide`         | `.config/neovide/`                                        |
@@ -54,6 +55,7 @@ stow -D bash          # remove symlinks
 | `NvChad`          | `.config/NvChad/`                                         |
 | `nvim`            | `.config/nvim/`                                           |
 | `perl`            | `.perltidyrc`                                             |
+| `pi`              | `.pi/agent/settings.json`, `.pi/agent/auth.json`, `.pi/agent/models-store.json` |
 | `redshift`        | `.config/redshift/`                                       |
 | `starship`        | `.config/starship.toml`                                   |
 | `tmux`            | `.config/tmux/`                                           |

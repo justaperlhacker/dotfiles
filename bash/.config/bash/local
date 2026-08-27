@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# vim: syntax=sh
-
-# machine specific config. 
-# put this in ~/.gitignore

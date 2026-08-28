@@ -47,4 +47,4 @@ includes=$(sed -nre 's/^include\s+(.+)/\1/p' ${I3_CONFIG} \
     }
 }' \
     | sort -u \
-    | rofi -dmenu -i -p "󰘥 Keybindings" -theme ~/.config/i3/rofi/rofikeyhint.rasi
+    | ~/.config/i3/scripts/rofi -dmenu -i -p "󰘥 Keybindings" -theme ~/.config/i3/rofi/rofikeyhint.rasi

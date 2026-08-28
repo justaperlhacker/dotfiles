@@ -94,7 +94,7 @@ sub pick_from_rofi () {
     return unless @names;
 
     my $input = join("\n", @names);
-    my $choice = `printf '%s\n' @names | rofi -dmenu -p Theme -config $I3_DIR/rofi/rofidmenu.rasi`;
+    my $choice = `printf '%s\n' @names | ~/.config/i3/scripts/rofi -dmenu -p Theme -config $I3_DIR/rofi/rofidmenu.rasi`;
     chomp $choice;
     if ($choice && grep { $_ eq $choice } @names) {
         apply_theme($choice);

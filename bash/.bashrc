@@ -17,3 +17,5 @@ export PATH="/home/johnm/.kimi-code/bin:$PATH"
 
 # Added by Unsloth installer
 export PATH="/home/johnm/.local/share/../bin:$PATH"
+
+export PATH="$HOME/.npm-packages/node_modules/.bin:$PATH"

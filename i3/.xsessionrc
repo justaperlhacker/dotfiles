@@ -1,0 +1,7 @@
+# Sourced by the display manager (SDDM Xsession) AFTER ~/.Xresources is merged
+# and BEFORE the window manager starts. Whatever is set here runs at 96 DPI for
+# apps like i3bar that read Xft.dpi once at startup.
+#
+# Per-host overrides: merge ~/.Xresources.d/<hostname> if present
+# (e.g. blackslate -> HiDPI Xft.dpi 192), overriding the default from ~/.Xresources.
+[ -f "$HOME/.Xresources.d/$(hostname)" ] && xrdb -merge "$HOME/.Xresources.d/$(hostname)"

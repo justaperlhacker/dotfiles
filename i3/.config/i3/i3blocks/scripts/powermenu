@@ -53,7 +53,7 @@ else
     options="$chancel\n$logout\n$reboot\n$shutdown\n$suspend\n$hibernate"
 fi
 
-chosen="$(echo -e "$options" | rofi -dmenu -i -p "Power Menu" \
+chosen="$(echo -e "$options" | ~/.config/i3/scripts/rofi -dmenu -i -p "Power Menu" \
     -theme $ROFI_THEME)"
 
 case $chosen in

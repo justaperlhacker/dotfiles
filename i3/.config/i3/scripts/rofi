@@ -1,0 +1,14 @@
+#!/bin/sh
+# Rofi HiDPI wrapper.
+#
+# Rofi ignores Xft.dpi / Xresources and defaults to 96 DPI, so per-host DPI has
+# to be injected explicitly here. Only the blackslate 2k laptop gets 192; every
+# other host (e.g. destro) runs rofi unchanged at the default 96.
+#
+# Symlinked ahead of /usr/bin/rofi in ~/.local/bin, so every rofi call
+# (launchers, powermenu, keyhint, layout) picks up the right DPI automatically.
+if [ "$(hostname)" = "blackslate" ]; then
+    exec /usr/bin/rofi -dpi 192 "$@"
+else
+    exec /usr/bin/rofi "$@"
+fi

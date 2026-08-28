@@ -40,7 +40,7 @@ if powerprofilesctl list | grep -q "power-saver"; then
 fi
 
 # Show menu
-chosen="$(echo -e "$options" | rofi "${ROFI_ARGS[@]}")"
+chosen="$(echo -e "$options" | ~/.config/i3/scripts/rofi "${ROFI_ARGS[@]}")"
 
 # Run selection
 case $chosen in

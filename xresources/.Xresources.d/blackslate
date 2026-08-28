@@ -1,0 +1,4 @@
+! Host-specific overrides for the blackslate 2k laptop.
+! Merged on login only when hostname == blackslate (see i3/autostart.conf).
+
+Xft.dpi:       192

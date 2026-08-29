@@ -9,6 +9,21 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
+-- Ensure tabs don't get converted to spaces in Makefiles.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "make",
+  callback = function(args)
+    vim.bo[args.buf].expandtab = false
+  end,
+})
+
+-- allow '-' to open the parent directory in netrw
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "netrw",
+	callback = function(args)
+		vim.keymap.set("n", "-", "<cmd>edit %:h<CR>", { buffer = args.buf, silent = true })
+	end,
+})
 
 -- -- auto-format on save
 -- local lsp_fmt_group = vim.api.nvim_create_augroup("LspFormattingGroup", {})

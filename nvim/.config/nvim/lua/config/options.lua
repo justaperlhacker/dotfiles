@@ -5,6 +5,7 @@ opt.tabstop = 4
 opt.shiftwidth = 4
 opt.softtabstop = 4
 opt.expandtab = true  -- use spaces instead of tabs
+opt.smarttab = true
 opt.smartindent = true  -- autoindent new lines
 opt.autoindent = true -- copy indent from current line when starting a new line
 
@@ -13,14 +14,26 @@ opt.breakindent = true
 
 -- line numbers
 opt.number = true -- show line numbers
-opt.relativenumber = true -- show relative line numbers
+opt.relativenumber = false -- show relative line numbers
 opt.numberwidth = 2 -- set number column width to 2 {default 4}
 opt.ruler = true -- show the cursor position all the time
 
 -- sign column
 --opt.signcolumn = "auto" -- only show signcolumn when needed
-opt.signcolumn = "yes" -- always show the signcolumn to prevent shifting
+--opt.signcolumn = "yes" -- always show the signcolumn to prevent shifting
+opt.signcolumn = "number" -- only show sign on linenumber column
 
+-- displays tabs, line-ends and displays when a line runs off-screen
+opt.listchars = {
+  tab = ">-",
+  eol = "$",
+  trail = "-",
+  precedes = "<",
+  extends = ">",
+  nbsp = "+",
+}
+-- From vim-sensible:
+-- opt.listchars = { tab = "> ", eol = "$", trail = "-", precedes = "<", extends = ">", nbsp = "+" }
 
 -- disable line wrap
 opt.wrap = false
@@ -29,6 +42,9 @@ opt.wrap = false
 -- Better buffer navigation
 opt.scrolloff = 8 -- minimum number of lines to keep above and below the cursor
 opt.sidescrolloff = 4 -- minimum number of columns to keep to the left and right of the cursor
+
+-- for faster scrolling
+opt.ttyfast = true
 
 -- Enable mouse mode
 opt.mouse = 'a'
@@ -49,10 +65,11 @@ opt.smartcase = true -- case-sensitive if uppercase in search expression
 opt.grepprg = "rg --vimgrep" -- Use ripgrep if available
 opt.grepformat = "%f:%l:%c:%m" -- filename, line number, column, content
 
-
-
 -- show matching braces
 opt.showmatch = true
+
+-- Use % to jump between pairs
+opt.matchpairs:append("<:>")
 
 -- show the status line all the time
 opt.laststatus=2
@@ -61,6 +78,8 @@ opt.wildmenu = true -- Enable command-line completion menu
 opt.wildmode = "list:longest"
 --opt.wildmode = "longest:full,full" -- Completion mode for command-line
 opt.wildignorecase = true -- Case-insensitive tab completion in commands
+-- ignore python crud
+opt.wildignore:append({ "*.pyc", "*.pyo", "__pychache__" })
 
 
 opt.cmdheight = 1 -- command line height
@@ -143,11 +162,13 @@ opt.splitbelow = true -- horizontal splits will automatically be below
 
 -- don't change the working directory when opening a file
 opt.autochdir = false
-opt.path:append("**") -- Search into subfolders with `gf`
+opt.path = { ".", "**" } -- Search local and sub-directories with `gf`
 
 -- Set completeopt to have a better completion experience
 --opt.completeopt = 'menuone,noselect'
-opt.completeopt = 'menuone,noinsert,noselect'
+-- opt.completeopt = 'menuone,noinsert,noselect'
+-- Match VS Code more closely by showing a completion menu with an active suggestion.
+opt.completeopt = "menu,menuone"
 
 opt.pumheight = 10 -- Popup menu height
 opt.pumblend = 10 -- Popup menu transparency
@@ -160,4 +181,16 @@ opt.foldlevel = 99 -- start with all folds open
 opt.foldlevelstart = 99 -- start with all folds open
 
 
+
+-- This leaves a nice underline
+-- vim.api.nvim_set_hl(0, "CursorLine", {})
+-- vim.api.nvim_set_hl(0, "CursorLine", { underline = true })
+
+-- Make all comments italic.
+vim.api.nvim_set_hl(0, "Comment", { italic = true })
+
+vim.api.nvim_set_hl(0, "VertSplit", {})
+
+-- Delete comment character when joining commented lines
+opt.formatoptions:append("j")
 

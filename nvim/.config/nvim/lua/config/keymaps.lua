@@ -52,21 +52,41 @@ vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position"
 --cmap OF <end>
 --imap OF <end>
 
-
---" move cursor one more char to right in normal mode
---nmap OF <end>l
---cmap OF <end>
---imap OF <end>
-
 -- Insert mode: emacs-like navigation (Ctrl-A, Ctrl-E)
 --imap('<c-a>', '<c-o>^', { silent = true })  -- beginning-of-line
 --imap('<c-e>', '<c-o>$', { silent = true })  -- end-of-line
-
 --imap('<c-b>', '<c-o>B', { silent = true })  -- words backward
 --imap('<c-f>', '<c-o>W', { silent = true })  -- words forward
 
--- Quick map to normal mode from insert mode
---vim.keymap.set('i', ';;', '<Esc>')
+-- Ctrl-A moves cursor to beginning of line
+vim.keymap.set("i", "<C-a>", "<C-o>^", { silent = true })
+
+-- Ctrl-E closes Blink's completion menu when visible; otherwise it moves to the line end.
+vim.keymap.set("i", "<C-e>", function()
+	local blink = require("blink.cmp")
+
+	if blink.is_visible() then
+		blink.hide()
+		return ""
+	end
+
+	return "<C-o>$"
+end, { expr = true, silent = true })
+
+-- Ctrl-A moves cursor by words forwards
+vim.keymap.set("i", "<C-f>", "<C-o>W", { silent = true })
+
+-- Ctrl-B moves cursor by words backwards
+vim.keymap.set("i", "<C-b>", "<C-o>B", { silent = true })
+-- end of Insert mode: emacs-line navigation
+
+-- Prevent x and the delete key from overriding what's in the clipboard.
+vim.keymap.set({ "n", "x", "s", "o" }, "x", '"_x')
+vim.keymap.set({ "n", "x", "s", "o" }, "X", '"_x')
+vim.keymap.set({ "n", "x", "s", "o" }, "<Del>", '"_x')
+
+-- Prevent selecting and pasting from overwriting what you originally copied.
+vim.keymap.set("x", "p", "pgvy")
 
 -- Keep navigation centered while searching
 vim.keymap.set('n', 'n', 'nzzzv')
@@ -112,10 +132,6 @@ vim.keymap.set("v", ">", ">gv", { desc = 'Indent right and reselect' })
 -- uses a comments plugin
 vim.keymap.set({"n", "v"}, "<C-_>", "gcc", { noremap = false })
 
--- allow '-' to open the parent directory in netrw
---nnoremap <silent> - :e %:h<cr>
-vim.keymap.set("n", "-", ":e %:h<CR>", { noremap = true, silent = true })
-
 -- Use Shift H and Shift L to move to beginning and end of line
 vim.keymap.set("n", "<s-h>", "0", { noremap = true })
 vim.keymap.set("n", "<s-l>", "$l", { noremap = true })
@@ -131,17 +147,47 @@ vim.keymap.set("n", "<C-a>", "gg<S-v>G")
 vim.opt.virtualedit:append("onemore")
 vim.keymap.set("n", "$", "$l", { noremap = true })
 
--- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
--- local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+-- Allow gf to edit files that do not exist yet.
+vim.keymap.set("n", "gf", function()
+	local file = vim.fn.expand("<cfile>")
+	vim.cmd.edit(vim.fn.fnameescape(file))
+end, { desc = "Edit file under cursor" })
 
--- vim.api.nvim_create_autocmd('TextYankPost', {
---     callback = function()
--- 	vim.highlight.on_yank()
---     end,
---     group = highlight_group,
---     pattern = '*',
--- })
+-- python/perl/bash comments
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = {
+		"python", "perl", "sh", "bash", "zsh", "fish", "ruby", "yaml", "toml",
+		"dosini", "gitconfig", "make", "dockerfile", "terraform", "nix", "julia",
+		"r", "crystal", "nim", "elixir",
+	},
+	callback = function(args)
+		vim.keymap.set({ "n", "v", "o" }, "#", [=[!!perl -pe'm{^\# ?}?s{^\#}{}:m{\S}?s{^}{\#}:1'<CR><LF>]=], { buffer = args.buf })
+	end,
+})
 
+-- -----------------------------------------------------------------------------
+-- Abbreviations
+-- -----------------------------------------------------------------------------
 
+-- Create a safe command-line abbreviation that expands only for an exact Ex command.
+local function command_abbreviation(from, to)
+	vim.keymap.set("c", from, function()
+		if vim.fn.getcmdtype() == ":" and vim.fn.getcmdline() == from then
+			return to
+		end
 
+		return from
+	end, { expr = true })
+end
+
+-- common misspells
+command_abbreviation("WQ", "wq")
+command_abbreviation("Wq", "wq")
+command_abbreviation("W", "w")
+command_abbreviation("Q", "q")
+command_abbreviation("Qa", "qa")
+command_abbreviation("QA", "qa")
+command_abbreviation("Wqa", "wqa")
+command_abbreviation("WQa", "wqa")
+command_abbreviation("WQA", "wqa")
+command_abbreviation("Vimrc", "e $MYVIMRC<CR>")

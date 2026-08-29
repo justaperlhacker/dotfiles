@@ -30,7 +30,6 @@
     // zoom level
     "window.zoomLevel": -1,
 
-
     // trusted domains
     "json.schemaDownload.trustedDomains": {
         "https://developer.microsoft.com/json-schemas/": true,
@@ -42,7 +41,7 @@
         "https://schemastore.azurewebsites.net/": true,
         "https://www.schemastore.org/": true
     },
-    
+
     // Theme customization
     "workbench.colorCustomizations": {
         // works on all dark themes
@@ -115,8 +114,8 @@
     },
 
     // Editor
-    "editor.fontFamily": "BerkeleyMono Nerd Font",
-    //"editor.fontFamily": "HE_TERMINAL Nerd Font",
+    //"editor.fontFamily": "BerkeleyMono Nerd Font",
+    "editor.fontFamily": "HE_TERMINAL Nerd Font",
     // "editor.fontFamily": "'Droid Sans Mono', monospace",
     // "editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",
@@ -133,11 +132,11 @@
     // "editor.fontFamily": "CaskaydiaCove Nerd Font",
     // "editor.fontFamily": "FiraCode Nerd Font Mono",
     // sometimes I like it a bit bolder
-    //"editor.fontWeight": "600", 
-    "editor.fontWeight": "500",    
+    //"editor.fontWeight": "600",
+    "editor.fontWeight": "500",
     // at zoom -1 fontsize 17 approx matches 14 (default)
     "editor.fontSize": 18,
-    // "editor.lineHeight": 1.5,
+    //"editor.lineHeight": 1.5,
     "editor.fontLigatures": false,
     "editor.glyphMargin": true,
     "editor.lineNumbers": "on",
@@ -202,7 +201,7 @@
     ],
     "perl-lsp.perltidyConfig": "/home/johnm/.perltidyrc",
     "perl-lsp.autoPopulateNewFiles": true,
-    "perl-lsp.featureProfile": "auto",    
+    "perl-lsp.featureProfile": "auto",
     "[perl]": {
         "editor.defaultFormatter": "tree-sitter-perl.vscode-perl-lsp",
         //"editor.defaultFormatter": "richterger.perl"
@@ -217,5 +216,5 @@
     // "perl.lsp.trace.server": "off",
     // "perl.enable": false,
     // "perl.showLocalVars": true,
-    
+
 }

@@ -7,8 +7,8 @@ settings {
 -- Backup: laptop -> drive (one-way)
 sync {
     default.rsync,
-    source = os.getenv("HOME") .. "/shared",
-    target = os.getenv("HOME") .. "/.shared_backup",
+    source = os.getenv("HOME") .. "/Projects",
+    target = os.getenv("HOME") .. "/shared/Projects",
     delay  = 2,
     rsync  = {
         archive  = true,
@@ -29,5 +29,4 @@ sync {
         "Thumbs.db",
     },
 }
-
 

@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.84.3",
-  "theme": "light",
+  "theme": "dark",
   "packages": [
     "npm:pi-permission-system",
     "npm:pi-undo-redo"

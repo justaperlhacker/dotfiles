@@ -177,7 +177,7 @@ set tabsize 4
 # set tabstospaces
 
 ## Snip whitespace at the end of lines when justifying or hard-wrapping.
-# set trimblanks
+set trimblanks
 
 ## Save files by default in Unix format (also when they were DOS or Mac).
 set unix
@@ -207,8 +207,60 @@ set unix
 # set zero
 
 
-## Paint the interface elements of nano.  These are examples; there are
-## no colors by default, except for errorcolor and spotlightcolor.
+## Paint the interface elements of nano.
+##
+## === Nord colour palette (reference) ===
+##   Polar Night (dark background tones):
+##     Nord0  #2E3440   Nord1  #3B4252   Nord2  #434C5E   Nord3  #4C566A
+##   Snow Storm (light foreground tones):
+##     Nord4  #D8DEE9   Nord5  #E5E9F0   Nord6  #ECEFF4
+##   Frost (cool accents - blue/cyan):
+##     Nord7  #8FBCBB   Nord8  #88C0D0   Nord9  #81A1C1   Nord10 #5E81AC
+##   Aurora (warm/saturated accents):
+##     Nord11 #BF616A   Nord12 #D08770   Nord13 #EBCB8B
+##     Nord14 #A3BE8C   Nord15 #B48EAD
+##
+## Note: nano's interface colours take only three-digit hex (#RGB), so
+## the values used below are the closest available approximations:
+##   Nord0 #2E3440 -> #234   Nord1 #3B4252 -> #345   Nord2 #434C5E -> #446
+##   Nord3 #4C566A -> #467   Nord5 #E5E9F0 -> #EEF   Nord6 #ECEFF4 -> #EFF
+##   Nord7 #8FBCBB -> #8BB   Nord8 #88C0D0 -> #8CD   Nord9 #81A1C1 -> #8AC
+##   Nord11 #BF616A -> #B66  Nord13 #EBCB8B -> #EC8  Nord15 #B48EAD -> #B8A
+
+## Title bar: bright text (Nord5) on the darkest Nord background (Nord0).
+set titlecolor bold,#EEF,#234
+
+## Status bar: bright text (Nord6) on Nord2.
+set statuscolor bold,#EFF,#446
+
+## Error bar: bright white on Nord red (Nord11).
+set errorcolor bold,#EFF,#B66
+
+## Prompt / question line: Nord5 text on Nord1.
+set promptcolor #EEF,#345
+
+## Selected text: Nord0 on Nord9 (blue highlight).
+set selectedcolor #234,#8AC
+
+## Spotlight (search match): Nord0 on Nord13 (yellow highlight).
+set spotlightcolor #234,#EC8
+
+## Guide stripe and vertical bar: Nord3.
+set stripecolor ,#467
+
+## Scrollbar indicator: Nord7 (teal).
+set scrollercolor #8BB
+
+## Line numbers: Nord3 (muted).
+set numbercolor #467
+
+## Shortcut keys: Nord8 (cyan).
+set keycolor #8CD
+
+## Function descriptions: Nord15 (purple).
+set functioncolor #B8A
+
+## Original examples, kept for reference:
 # set titlecolor bold,white,blue
 # set promptcolor lightwhite,grey
 # set statuscolor bold,white,green
@@ -220,8 +272,7 @@ set unix
 # set numbercolor cyan
 # set keycolor cyan
 # set functioncolor green
-
-## In root's .nanorc you might want to use:
+#
 # set titlecolor bold,white,magenta
 # set promptcolor black,yellow
 # set statuscolor bold,white,magenta
@@ -242,13 +293,65 @@ set unix
 include "/usr/share/nano/*.nanorc"
 include /usr/share/nano-syntax-highlighting/*.nanorc
 
-## Or you can select just the ones you need.  For example:
-# include "/usr/share/nano/html.nanorc"
-# include "/usr/share/nano/python.nanorc"
-# include "/usr/share/nano/sh.nanorc"
+## === Nord syntax overrides ===
+## Recolor the common named color groups to the Nord palette for the
+## most-used languages.  (Skipping 'error' and 'comment' overrides that
+## would collide with the defaults already provided by each syntax.)
+##
+## Nord colors: Nord8 #88C0D0 (cyan), Nord9 #81A1C1 (blue),
+## Nord11 #BF616A (red), Nord12 #D08770 (orange), Nord13 #EBCB8B (yellow),
+## Nord14 #A3BE8C (green), Nord15 #B48EAD (purple), Nord3 #4C566A (muted).
+##
+## Note: nano has NO global/background option, and this build does not
+## recognize a 'default' color group either -- so there is no way to set
+## a text-area background for every file from nanorc.  To get a Nord0
+## background everywhere, set your terminal's background color instead
+## (the edit window is transparent to it when no bgcolor is forced).
 
-## In /usr/share/nano/extra/ you can find some syntaxes that are
-## specific for certain distros or for some less common languages.
+## Comments: muted Nord3 across languages.
+extendsyntax c color brightblack "//.*$"
+extendsyntax javascript color brightblack "//.*$"
+extendsyntax python color brightblack "#.*$"
+extendsyntax sh color brightblack "#.*$"
+extendsyntax ruby color brightblack "#.*$"
+extendsyntax perl color brightblack "#.*$"
+extendsyntax html color brightblack "<!--.*-->"
+extendsyntax css color brightblack "/\*[^*]*\*+([^/*][^*]*\*+)*/"
+extendsyntax rust color brightblack "//.*$"
+extendsyntax go color brightblack "//.*$"
+
+## Keywords: Nord8 (cyan) for language keywords.
+extendsyntax c color brightcyan "\<(int|long|short|char|float|double|void|signed|unsigned|const|static|struct|union|enum|typedef|return|if|else|for|while|do|switch|case|default|break|continue|goto|sizeof|extern|register|volatile|auto|class|namespace|template|public|private|protected|virtual|new|delete|this|friend|operator|inline|override|typename|using|constexpr)\>"
+extendsyntax python color brightcyan "\<(def|class|return|if|elif|else|for|while|in|not|and|or|is|None|True|False|import|from|as|with|try|except|finally|raise|lambda|pass|break|continue|del|global|nonlocal|yield)\>"
+extendsyntax javascript color brightcyan "\<(function|return|var|let|const|if|else|for|while|do|switch|case|break|continue|new|typeof|instanceof|in|of|this|null|undefined|true|false|class|extends|super|import|export|try|catch|finally|throw|await|async|yield)\>"
+extendsyntax sh color brightcyan "\<(if|then|else|elif|fi|for|while|do|done|case|esac|function|in|select|until|return|local|export|readonly|exit)\>"
+extendsyntax ruby color brightcyan "\<(def|class|module|if|elsif|else|unless|while|until|for|in|do|end|return|break|next|redo|retry|raise|rescue|ensure|begin|case|when|then|yield|require|include|extend|nil|true|false|self|super|new)\>"
+extendsyntax perl color brightcyan "\<(sub|my|our|local|use|require|if|elsif|else|unless|while|until|for|foreach|do|return|last|next|redo|cmp|ne|eq|lt|gt|le|ge|and|or|not|xor)\>"
+extendsyntax rust color brightcyan "\<(fn|let|mut|const|static|if|else|match|loop|while|for|in|return|break|continue|struct|enum|impl|trait|pub|use|mod|type|where|move|ref|dyn|async|await|unsafe|extern|self|Self|true|false)\>"
+extendsyntax go color brightcyan "\<(func|package|import|var|const|type|struct|interface|map|chan|if|else|for|range|switch|case|default|return|break|continue|go|defer|select|fallthrough|goto)\>"
+
+## Strings: Nord14 (green).
+extendsyntax c color brightgreen "\"(\\.|[^\"\\])*\""
+extendsyntax python color brightgreen "\"(\\.|[^\"\\])*\"|'(\\.|[^'\\])*'"
+extendsyntax javascript color brightgreen "\"(\\.|[^\"\\])*\"|'(\\.|[^'\\])*'|`(\\.|[^`\\])*`"
+extendsyntax ruby color brightgreen "\"(\\.|[^\"\\])*\"|'(\\.|[^'\\])*'"
+extendsyntax rust color brightgreen "\"(\\.|[^\"\\])*\""
+extendsyntax go color brightgreen "\"(\\.|[^\"\\])*\""
+
+## Numbers: Nord12 (orange).
+extendsyntax c color brightyellow "\b(0[xX][0-9a-fA-F]+|[0-9]+(\.[0-9]*)?([eE][+-]?[0-9]+)?)"
+extendsyntax python color brightyellow "\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|[0-9]+(\.[0-9]*)?([eE][+-]?[0-9]+)?)"
+extendsyntax javascript color brightyellow "\b(0[xX][0-9a-fA-F]+|[0-9]+(\.[0-9]*)?([eE][+-]?[0-9]+)?)"
+extendsyntax rust color brightyellow "\b(0[xX][0-9a-fA-F]+|[0-9]+(\.[0-9]*)?([eE][+-]?[0-9]+)?)"
+extendsyntax go color brightyellow "\b(0[xX][0-9a-fA-F]+|[0-9]+(\.[0-9]*)?([eE][+-]?[0-9]+)?)"
+
+## Functions: Nord15 (purple) in the common C-derived families.
+extendsyntax c color brightmagenta "\<[a-zA-Z_][a-zA-Z0-9_]*\>(?=\s*\()"
+extendsyntax javascript color brightmagenta "\<[a-zA-Z_][a-zA-Z0-9_]*\>(?=\s*\()"
+extendsyntax go color brightmagenta "\<[a-zA-Z_][a-zA-Z0-9_]*\>(?=\s*\()"
+
+## Header/preprocessor: Nord12 (orange).
+extendsyntax c color brightyellow "^\s*#\s*(include|define|undef|if|ifdef|ifndef|else|elif|endif|pragma|error|warning)"
 
 
 ## If <Tab> should always produce four spaces when editing a Python file,
@@ -299,34 +402,35 @@ include /usr/share/nano-syntax-highlighting/*.nanorc
 ## If you would like nano to have keybindings that are more "usual",
 ## such as ^O for Open, ^F for Find, ^H for Help, and ^Q for Quit,
 ## then uncomment these:
-#bind ^X cut main
-#bind ^C copy main
-#bind ^V paste all
-#bind ^Q exit all
-#bind ^S savefile main
-#bind ^W writeout main
-#bind ^O insert main
-#set multibuffer
-#bind ^H help all
-#bind ^H exit help
-#bind ^F whereis all
-#bind ^G findnext all
-#bind ^B wherewas all
-#bind ^D findprevious all
-#bind ^R replace main
-#unbind ^U all
-#unbind ^N main
-#unbind ^Y all
-#unbind M-J main
-#unbind M-T main
-#bind ^A mark main
-#bind ^P location main
-#bind ^T gotoline main
-#bind ^T gotodir browser
-#bind ^T cutrestoffile execute
-#bind ^L linter execute
-#bind ^E execute main
-#bind ^K "{mark}{end}{zap}" main
-#bind ^U "{mark}{home}{zap}" main
-#bind ^Z undo main
-#bind ^Y redo main
+bind ^X cut main
+bind ^C copy main
+bind ^V paste all
+bind ^Q exit all
+bind ^S savefile main
+bind ^W writeout main
+bind ^O insert main
+bind ^R replace main
+bind ^H help all
+bind ^H exit help
+# bind ^F whereis all
+bind ^G findnext all
+bind ^B wherewas all
+bind ^D findprevious all
+# unbind ^U all
+# unbind ^N main
+# unbind ^Y all
+unbind M-J main
+unbind M-T main
+# bind ^A mark main
+# bind ^P location main
+# bind ^T gotoline main
+# bind ^T gotodir browser
+# bind ^T cutrestoffile execute
+# bind M-B gotodir all
+# bind ^L linter execute
+# bind ^E execute main   (kept ^E for its default end-of-line)
+# bind M-E execute all   (Execute left unbound by request; use ^T if needed)
+# bind ^K "{mark}{end}{zap}" main
+# bind ^U "{mark}{home}{zap}" main
+bind ^Z undo main
+bind ^Y redo main

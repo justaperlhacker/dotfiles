@@ -15,7 +15,7 @@ insert_final_newline = false
 indent_style = space
 indent_size = 2
 
-[*.{pl,pm,pod}]
+[*.{pl,pm,pod,t}]
 indent_style = space
 indent_size = 4
 

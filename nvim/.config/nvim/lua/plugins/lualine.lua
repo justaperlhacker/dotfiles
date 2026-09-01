@@ -35,6 +35,20 @@ return {
             end,
           }
         },
+        lualine_c = {
+          {
+            function()
+              local navic = require('nvim-navic')
+              if navic.is_available() then
+                return navic.get_location()
+              end
+              return ''
+            end,
+            cond = function()
+              return pcall(function() return require('nvim-navic').is_available() end)
+            end,
+          }
+        },
       },
     })
   end

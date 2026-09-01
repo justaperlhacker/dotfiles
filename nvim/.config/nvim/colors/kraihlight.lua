@@ -1,0 +1,352 @@
+vim.o.background = 'dark'
+
+vim.cmd('hi clear')
+if vim.g.syntax_on then
+  vim.cmd('syntax reset')
+end
+
+vim.g.colors_name = 'kraihlight'
+
+local function hi(group, opts)
+  vim.api.nvim_set_hl(0, group, opts)
+end
+
+hi('Visual', { bg = '#404040' })
+hi('VisualNOS', { bg = '#404040' })
+hi('Cursor', { bg = '#b0d0f0' })
+hi('Conceal', { fg = '#8a9597', bg = 'NONE' })
+hi('EndOfBuffer', { fg = '#1a1a1a', bg = 'NONE' })
+hi('Whitespace', { fg = '#34383c' })
+
+hi('Normal', { fg = '#f9f9f9', bg = '#1a1a1a' })
+hi('NormalNC', { fg = '#f9f9f9', bg = '#1a1a1a' })
+hi('NormalFloat', { fg = '#f9f9f9', bg = '#1e1e1e' })
+hi('FloatBorder', { fg = '#303030', bg = '#1e1e1e' })
+hi('FloatTitle', { fg = '#ab8252', bg = '#1e1e1e', bold = true })
+hi('WinBar', { fg = '#8a9597', bg = 'NONE' })
+hi('WinBarNC', { fg = '#8a9597', bg = 'NONE' })
+hi('WinSeparator', { fg = '#303030', bg = 'NONE' })
+hi('Underlined', { fg = '#f9f9f9', underline = true })
+hi('NonText', { fg = '#34383c' })
+hi('SpecialKey', { fg = '#f9f9f9' })
+hi('LineNr', { fg = '#34383c' })
+hi('StatusLine', { fg = '#34383c', bg = 'NONE' })
+hi('StatusLineNC', { fg = '#34383c', bg = 'NONE' })
+hi('VertSplit', { fg = '#303030', bg = '#303030' })
+hi('WildMenu', { fg = '#f9f9f9', bg = 'NONE' })
+hi('Folded', { fg = '#8a9597', bg = '#34383c' })
+hi('FoldColumn', { fg = '#8a9597', bg = '#34383c' })
+hi('SignColumn', { fg = '#8a9597', bg = '#34383c' })
+hi('MatchParen', { fg = 'NONE', bg = '#a2a96f', bold = true })
+hi('ErrorMsg', { fg = '#f9f9f9' })
+hi('WarnMsg', { fg = '#f9f9f9' })
+hi('ModeMsg', { fg = '#f9f9f9' })
+hi('MoreMsg', { fg = '#f9f9f9' })
+hi('Question', { fg = '#f9f9f9' })
+
+hi('Search', { fg = '#f9f9f9', bg = '#5b5b2b' })
+hi('IncSearch', { fg = '#1a1a1a', bg = '#d6b67f', bold = true })
+hi('CurSearch', { fg = '#1a1a1a', bg = '#d6b67f', bold = true })
+hi('Substitute', { fg = '#1a1a1a', bg = '#d6b67f' })
+
+hi('TabLine', { fg = '#8a9597', bg = '#232323' })
+hi('TabLineFill', { bg = '#1a1a1a' })
+hi('TabLineSel', { fg = '#f9f9f9', bg = '#303030', bold = true })
+
+hi('PmenuSbar', { bg = '#232323' })
+hi('PmenuThumb', { bg = '#34383c' })
+
+hi('Comment', { fg = '#726d73', italic = true })
+hi('String', { fg = '#9fac7f' })
+hi('Number', { fg = '#9fac7f' })
+
+hi('Keyword', { fg = '#d6b67f' })
+hi('PreProc', { fg = '#899ab4' })
+hi('Conditional', { fg = '#d6b67f' })
+
+hi('Todo', { fg = '#899ab4', italic = true, bold = true })
+hi('Constant', { fg = '#d08356' })
+
+hi('Identifier', { fg = '#899ab4' })
+hi('Function', { fg = '#ab8252' })
+hi('Type', { fg = '#d87d5f', bold = true })
+hi('Statement', { fg = '#d6b67f' })
+
+hi('Special', { fg = '#ac98ac' })
+hi('SpecialChar', { fg = '#ac98ac' })
+hi('SpecialComment', { fg = '#726d73', italic = true })
+hi('Tag', { fg = '#ab8252' })
+hi('Debug', { fg = '#d08356' })
+hi('Delimiter', { fg = '#f9f9f9' })
+hi('Operator', { fg = '#f9f9f9' })
+
+hi('Character', { fg = '#9fac7f' })
+hi('Boolean', { fg = '#9fac7f' })
+hi('Float', { fg = '#9fac7f' })
+hi('Label', { fg = '#d6b67f' })
+hi('Exception', { fg = '#d6b67f' })
+hi('Include', { fg = '#899ab4' })
+hi('Define', { fg = '#899ab4' })
+hi('Macro', { fg = '#899ab4' })
+hi('PreCondit', { fg = '#899ab4' })
+hi('StorageClass', { fg = '#d6b67f' })
+hi('Typedef', { fg = '#d87d5f', bold = true })
+hi('Bold', { bold = true })
+hi('Italic', { italic = true })
+
+hi('Title', { fg = '#ab8252', underline = true })
+hi('Repeat', { fg = '#d6b67f' })
+hi('Structure', { fg = '#d6b67f' })
+
+hi('Directory', { fg = '#dad085' })
+hi('Error', { bg = '#602020' })
+hi('Pmenu', { fg = '#000000', bg = '#9CBBDE' })
+hi('PmenuSel', { fg = '#000000', bg = '#ffffff' })
+
+-- original keep as backup.
+-- hi('CursorLine', { bg = '#000000' })
+-- hi('CursorColumn', { bg = '#000000' })
+-- hi('ColorColumn', { bg = '#303030' })
+-- lineHighlightBackground
+hi('CursorLine', { bg = '#232323' })
+hi('CursorColumn', { bg = '#232323' })
+hi('CursorLineNr', { fg = '#ab8252', bold = true })
+hi('ColorColumn', { bg = '#303030' })
+
+-- Diagnostic / LSP
+hi('DiagnosticError', { fg = '#b98a8a' })
+hi('DiagnosticWarn', { fg = '#d6b67f' })
+hi('DiagnosticInfo', { fg = '#899ab4' })
+hi('DiagnosticHint', { fg = '#9fac7f' })
+hi('DiagnosticOk', { fg = '#9fac7f' })
+hi('DiagnosticVirtualTextError', { fg = '#b98a8a' })
+hi('DiagnosticVirtualTextWarn', { fg = '#d6b67f' })
+hi('DiagnosticVirtualTextInfo', { fg = '#899ab4' })
+hi('DiagnosticVirtualTextHint', { fg = '#9fac7f' })
+hi('DiagnosticVirtualTextOk', { fg = '#9fac7f' })
+hi('DiagnosticUnderlineError', { undercurl = true, sp = '#b98a8a' })
+hi('DiagnosticUnderlineWarn', { undercurl = true, sp = '#d6b67f' })
+hi('DiagnosticUnderlineInfo', { undercurl = true, sp = '#899ab4' })
+hi('DiagnosticUnderlineHint', { undercurl = true, sp = '#9fac7f' })
+hi('DiagnosticUnderlineOk', { undercurl = true, sp = '#9fac7f' })
+hi('DiagnosticFloatingError', { link = 'DiagnosticError' })
+hi('DiagnosticFloatingWarn', { link = 'DiagnosticWarn' })
+hi('DiagnosticFloatingInfo', { link = 'DiagnosticInfo' })
+hi('DiagnosticFloatingHint', { link = 'DiagnosticHint' })
+hi('DiagnosticSignError', { fg = '#b98a8a' })
+hi('DiagnosticSignWarn', { fg = '#d6b67f' })
+hi('DiagnosticSignInfo', { fg = '#899ab4' })
+hi('DiagnosticSignHint', { fg = '#9fac7f' })
+
+-- Diff
+hi('DiffAdd', { fg = '#9fac7f', bg = '#202b20' })
+hi('DiffChange', { fg = '#d6b67f', bg = '#2b251a' })
+hi('DiffDelete', { fg = '#b98a8a', bg = '#2b2020' })
+hi('DiffText', { fg = '#899ab4', bg = '#20202b' })
+hi('Added', { fg = '#9fac7f' })
+hi('Changed', { fg = '#d6b67f' })
+hi('Removed', { fg = '#b98a8a' })
+
+-- Spelling
+hi('SpellBad', { fg = '#b98a8a', undercurl = true, sp = '#b98a8a' })
+hi('SpellCap', { fg = '#899ab4', undercurl = true, sp = '#899ab4' })
+hi('SpellLocal', { fg = '#ac98ac', undercurl = true, sp = '#ac98ac' })
+hi('SpellRare', { fg = '#9fac7f', undercurl = true, sp = '#9fac7f' })
+
+-- Python / general treesitter
+hi('@module', { link = 'Type' })
+hi('@type', { link = 'Type' })
+hi('@type.qualifier', { link = 'Type' })
+hi('@keyword.import', { fg = '#d6b67f' })
+hi('@keyword.exception', { fg = '#d6b67f' })
+hi('@exception', { fg = '#d6b67f' })
+hi('@attribute', { fg = '#899ab4' })
+hi('@decorator', { link = 'PreProc' })
+hi('@method', { link = 'Function' })
+hi('@punctuation.bracket', { link = 'Delimiter' })
+hi('@punctuation.delimiter', { link = 'Delimiter' })
+
+-- C / C++
+hi('@preproc', { fg = '#899ab4' })
+hi('@number.float', { link = 'Number' })
+hi('@class', { link = 'Type' })
+hi('@struct', { link = 'Type' })
+hi('@macro', { link = 'PreProc' })
+hi('@function.macro', { link = 'PreProc' })
+hi('@namespace.cpp', { link = 'Type' })
+hi('@parameter.cpp', { fg = '#899ab4' })
+hi('cPreCondit', { fg = '#899ab4' })
+hi('cPreConditMatch', { fg = '#899ab4' })
+hi('cInclude', { fg = '#899ab4' })
+hi('cDefine', { fg = '#899ab4' })
+hi('cppModifier', { fg = '#d6b67f' })
+hi('cppStatement', { fg = '#d6b67f' })
+hi('cppAccess', { fg = '#d6b67f' })
+hi('cppNamespace', { link = 'Type' })
+
+-- Bash
+hi('@variable.shell', { fg = '#899ab4' })
+hi('@function.builtin', { fg = '#d6b67f' })
+hi('shCommandSub', { fg = '#f9f9f9' })
+hi('shVariable', { fg = '#899ab4' })
+
+-- Lua
+hi('luaFunction', { link = 'Function' })
+hi('luaFuncCall', { link = 'Function' })
+
+-- Makefile
+hi('makeTarget', { fg = '#d6b67f', bold = true })
+hi('makeCommands', { link = 'String' })
+
+-- Markdown
+hi('@markup.heading', { fg = '#d6b67f', bold = true })
+hi('@markup.heading.1', { fg = '#d6b67f', bold = true })
+hi('@markup.heading.2', { fg = '#d6b67f', bold = true })
+hi('@markup.heading.3', { fg = '#d6b67f', bold = true })
+hi('@markup.heading.4', { fg = '#d6b67f', bold = true })
+hi('@markup.heading.5', { fg = '#d6b67f', bold = true })
+hi('@markup.heading.6', { fg = '#d6b67f', bold = true })
+hi('@markup.strong', { fg = '#f9f9f9', bold = true })
+hi('@markup.italic', { fg = '#f9f9f9', italic = true })
+hi('@markup.strikethrough', { fg = '#8a9597', strikethrough = true })
+hi('@markup.raw', { fg = '#9fac7f' })
+hi('@markup.raw.block', { fg = '#9fac7f' })
+hi('@markup.link', { fg = '#899ab4', underline = true })
+hi('@markup.link.url', { fg = '#899ab4', underline = true })
+hi('@markup.link.label', { fg = '#ab8252' })
+hi('@markup.list', { fg = '#d6b67f' })
+hi('@markup.list.checked', { fg = '#9fac7f' })
+hi('@markup.list.unchecked', { fg = '#d6b67f' })
+hi('@markup.quote', { fg = '#8a9597', italic = true })
+
+-- html (embedded in markdown and common as a standalone language)
+hi('htmlTag', { fg = '#d08770' })
+hi('htmlEndTag', { fg = '#d08770' })
+hi('htmlTagName', { fg = '#d08770' })
+hi('htmlArg', { fg = '#899ab4' })
+hi('htmlTitle', { fg = '#f9f9f9', bold = true })
+
+-- JavaScript / TypeScript
+hi('@keyword.type', { fg = '#d6b67f' })
+hi('@keyword.return', { fg = '#d6b67f' })
+hi('@keyword.directive', { fg = '#899ab4' })
+hi('@string.regexp', { fg = '#ac98ac' })
+hi('@character.special', { fg = '#ac98ac' })
+hi('@module.builtin', { fg = '#d08356' })
+hi('@punctuation.special', { fg = '#f9f9f9' })
+hi('@function.call', { link = 'Function' })
+hi('@function.method', { link = 'Function' })
+hi('@function.method.call', { link = 'Function' })
+
+-- LSP semantic tokens
+hi('@lsp.type.namespace', { link = 'Type' })
+hi('@lsp.type.class', { link = 'Type' })
+hi('@lsp.type.enum', { link = 'Type' })
+hi('@lsp.type.interface', { link = 'Type' })
+hi('@lsp.type.struct', { link = 'Type' })
+hi('@lsp.type.parameter', { link = 'Identifier' })
+hi('@lsp.type.variable', { link = 'Identifier' })
+hi('@lsp.type.property', { link = 'Identifier' })
+hi('@lsp.type.function', { link = 'Function' })
+hi('@lsp.type.method', { link = 'Function' })
+hi('@lsp.type.macro', { link = 'PreProc' })
+hi('@lsp.type.decorator', { link = 'PreProc' })
+
+-- General treesitter captures
+hi('@namespace', { link = 'Type' })
+hi('@type.builtin', { link = 'Type' })
+hi('@constant.builtin', { fg = '#d08356' })
+hi('@constant.macro', { link = 'Macro' })
+hi('@label', { fg = '#d6b67f' })
+hi('@operator', { link = 'Operator' })
+hi('@keyword', { fg = '#d6b67f' })
+hi('@keyword.function', { fg = '#d6b67f' })
+hi('@keyword.operator', { link = 'Operator' })
+hi('@variable', { link = 'Identifier' })
+hi('@variable.parameter', { link = 'Identifier' })
+hi('@variable.member', { link = 'Identifier' })
+hi('@property', { link = 'Identifier' })
+hi('@field', { link = 'Identifier' })
+hi('@function.builtin', { link = 'Function' })
+hi('@constructor', { link = 'Type' })
+
+-- Perl-specific highlights (linked to Type so they stay in sync)
+hi('perlPackageRef', { link = 'Type' })
+hi('perlPackage', { link = 'Type' })
+hi('perlPackageDecl', { link = 'Type' })
+hi('@variable.builtin', { fg = '#d6b67f' })
+
+-- Perl POD / documentation
+hi('perlPOD', { fg = '#726d73', italic = true })
+hi('podCommand', { fg = '#d6b67f' })
+hi('podCmdText', { fg = '#726d73', italic = true })
+
+-- Standalone .pod files (pod filetype)
+hi('podCommand', { fg = '#d6b67f' })
+hi('podCmdText', { fg = '#726d73', italic = true })
+hi('podOrdinary', { fg = '#f9f9f9' })
+hi('podVerbatim', { fg = '#9fac7f' })
+hi('podSpecial', { fg = '#ac98ac' })
+hi('podTodo', { link = 'Todo' })
+hi('podFormat', { link = 'Special' })
+
+-- Perl heredocs
+hi('perlHereDoc', { link = 'String' })
+hi('perlHereDocStart', { link = 'Delimiter' })
+hi('perlIndentedHereDoc', { link = 'String' })
+
+-- Perl regex / match operators (s///, m//, tr///)
+hi('perlMatch', { fg = '#ac98ac' })
+hi('perlMatchStartEnd', { fg = '#ac98ac' })
+hi('perlSpecialMatch', { fg = '#ac98ac' })
+
+-- Telescope
+hi('TelescopeBorder', { fg = '#303030', bg = '#1e1e1e' })
+hi('TelescopePromptBorder', { fg = '#303030', bg = '#1e1e1e' })
+hi('TelescopePromptTitle', { fg = '#1a1a1a', bg = '#d6b67f', bold = true })
+hi('TelescopeResultsTitle', { fg = '#1a1a1a', bg = '#899ab4', bold = true })
+hi('TelescopePreviewTitle', { fg = '#1a1a1a', bg = '#9fac7f', bold = true })
+hi('TelescopePromptPrefix', { fg = '#899ab4' })
+hi('TelescopeSelection', { bg = '#232323' })
+hi('TelescopeMatching', { fg = '#d6b67f' })
+
+-- WhichKey
+hi('WhichKey', { fg = '#d6b67f' })
+hi('WhichKeyGroup', { fg = '#899ab4' })
+hi('WhichKeySeparator', { fg = '#34383c' })
+hi('WhichKeyDesc', { fg = '#899ab4' })
+hi('WhichKeyFloat', { bg = '#1e1e1e' })
+
+-- Lualine
+hi('LualineNormal', { fg = '#899ab4' })
+hi('LualineInsert', { fg = '#9fac7f' })
+hi('LualineVisual', { fg = '#ac98ac' })
+hi('LualineReplace', { fg = '#d08356' })
+hi('LualineCommand', { fg = '#d6b67f' })
+
+-- Neo-tree / file explorer
+hi('NeoTreeNormal', { fg = '#f9f9f9', bg = '#1a1a1a' })
+hi('NeoTreeNormalNC', { fg = '#f9f9f9', bg = '#1a1a1a' })
+hi('NeoTreeDirectoryIcon', { fg = '#dad085' })
+hi('NeoTreeDirectoryName', { fg = '#dad085' })
+hi('NeoTreeFileName', { fg = '#f9f9f9' })
+hi('NeoTreeGitAdded', { fg = '#9fac7f' })
+hi('NeoTreeGitModified', { fg = '#d6b67f' })
+hi('NeoTreeGitDeleted', { fg = '#b98a8a' })
+hi('NeoTreeGitUntracked', { fg = '#899ab4' })
+hi('NeoTreeRootName', { fg = '#f9f9f9', bold = true })
+hi('NeoTreeTitleBar', { fg = '#8a9597', bg = '#1a1a1a' })
+
+-- Dashboard
+hi('DashboardHeader', { fg = '#d6b67f' })
+hi('DashboardFooter', { fg = '#8a9597' })
+hi('DashboardKey', { fg = '#899ab4' })
+hi('DashboardShortCut', { fg = '#d6b67f' })
+hi('DashboardDesc', { fg = '#8a9597' })
+
+-- DAP
+hi('DapBreakpoint', { fg = '#b98a8a' })
+hi('DapBreakpointCondition', { fg = '#d6b67f' })
+hi('DapLogPoint', { fg = '#899ab4' })
+hi('DapStopped', { fg = '#9fac7f' })
+

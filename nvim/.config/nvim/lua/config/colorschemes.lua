@@ -64,11 +64,17 @@ local colorscheme = {}
 -- colorscheme.name = "vague"
 -- colorscheme.name = "monochrome"
 -- colorscheme.name = "kanso"
-colorscheme.name = "vscode-red"
+-- colorscheme.name = "vscode-red"
+-- colorscheme.name = "miniwinter"
+colorscheme.name = "kraihlight"
 
 colorscheme.fallback = "default"
 colorscheme.background = "dark"
 
 vim.opt.background = colorscheme.background
 
-return colorscheme
+local ok, err = pcall(vim.cmd.colorscheme, colorscheme.name)
+if not ok then
+  vim.notify("[colorschemes.lua] colorscheme '" .. tostring(colorscheme.name) .. "' failed: " .. tostring(err))
+  vim.cmd.colorscheme(colorscheme.fallback)
+end

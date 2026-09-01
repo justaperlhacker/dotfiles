@@ -134,7 +134,7 @@ dmenu.selbackground: S_base02
 
 ! colors
 !#include ".Xresources.d/ashes"
-#include ".Xresources.d/gruvbox"
+!#include ".Xresources.d/gruvbox"
 !#include ".Xresources.d/ic_orange"
 !#include ".Xresources.d/manjaro"
 !#include ".Xresources.d/nord"
@@ -147,7 +147,7 @@ dmenu.selbackground: S_base02
 !#include ".Xresources.d/arrows"
 !#include ".Xresources.d/beach"
 !#include ".Xresources.d/bouquet"
-!#include ".Xresources.d/catppuccin"
+#include ".Xresources.d/catppuccin"
 !#include ".Xresources.d/cyberpunk"
 !#include ".Xresources.d/dracula"
 !#include ".Xresources.d/endeavouros"
@@ -171,4 +171,3 @@ dmenu.selbackground: S_base02
 !#include ".Xresources.d/tokyonight"
 !#include ".Xresources.d/tomorrow-night"
 !#include ".Xresources.d/xfce_gruv"
-

@@ -1,8 +1,14 @@
 {
-  "lastChangelogVersion": "0.84.3",
-  "theme": "dark",
+  "lastChangelogVersion": "0.84.4",
+  "theme": "light/dark",
   "packages": [
     "npm:pi-permission-system",
-    "npm:pi-undo-redo"
-  ]
+    "npm:pi-undo-redo",
+    "npm:context-mode",
+    "npm:pi-web-access",
+    "npm:@juicesharp/rpiv-todo"
+  ],
+  "terminal": {
+    "showTerminalProgress": true
+  }
 }

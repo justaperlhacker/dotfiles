@@ -60,6 +60,19 @@ function M.python(fname)
 	return resolve(dedup(list))
 end
 
+-- Raku module `Foo::Bar` -> Foo/Bar.rakumod (also tried .pm6 / .pm).
+function M.raku(fname)
+	local rel = fname:gsub("::", "/")
+	local list = {}
+	for _, r in ipairs(roots()) do
+		for _, ext in ipairs({ ".rakumod", ".pm6", ".pm" }) do
+			list[#list + 1] = r .. "/" .. rel .. ext
+			list[#list + 1] = r .. "/lib/" .. rel .. ext
+		end
+	end
+	return resolve(dedup(list))
+end
+
 -- C/C++ header: strip <> / "" and append a header suffix if none present.
 function M.c(fname)
 	local base = fname:match("^<(.+)>$") or fname:match("^\"(.+)\"$") or fname

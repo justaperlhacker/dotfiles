@@ -19,3 +19,4 @@ export PATH="/home/johnm/.kimi-code/bin:$PATH"
 export PATH="/home/johnm/.local/share/../bin:$PATH"
 
 export PATH="$HOME/.npm-packages/node_modules/.bin:$PATH"
+eval "$(/home/johnm/.rakubrew/bin/rakubrew init Bash)"

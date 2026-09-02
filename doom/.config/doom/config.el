@@ -29,8 +29,12 @@
 ;;(setq doom-font (font-spec :family "IoskeleyMonoTerm Nerd Font" :size 14 :weight 'medium)
 ;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
 
-;;(setq doom-font (font-spec :family "HE_TERMINAL NL Nerd Font" :size 14)
+;;(setq doom-font (font-spec :family "HE_TERMINAL Nerd Font" :size 14)
 ;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
+
+;;(setq doom-font (font-spec :family "BerkelyMono Nerd Font" :size 14)
+;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
+
 (let ((doom-font-size
        (pcase (downcase (or system-name ""))
          ("blackslate" 24)  ; 2K laptop: bump size for readability

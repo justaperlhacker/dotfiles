@@ -3,7 +3,7 @@
 
 !! for laptop with 2k screen we need to set dpi to 192
 !Xft.dpi: 192
-Xft.dpi:       96
+!Xft.dpi:       96
 Xft.antialias: true
 Xft.hinting:   true
 Xft.rgba:      rgb

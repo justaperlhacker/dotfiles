@@ -31,8 +31,17 @@
 
 ;;(setq doom-font (font-spec :family "HE_TERMINAL NL Nerd Font" :size 14)
 ;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
+<<<<<<< HEAD
 (setq doom-font (font-spec :family "BerkeleyMono Nerd Font" :size 14 :weight 'medium)
     doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14 :weight 'medium))
+=======
+(let ((doom-font-size
+       (pcase (downcase (or system-name ""))
+         ("blackslate" 24)  ; 2K laptop: bump size for readability
+         (_ 14))))
+  (setq doom-font (font-spec :family "BerkeleyMono Nerd Font" :size doom-font-size :weight 'medium)
+        doom-variable-pitch-font (font-spec :family "Fira Sans" :size doom-font-size)))
+>>>>>>> 5e0b353 (machine level adjustments for higher dpi)
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to

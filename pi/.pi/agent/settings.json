@@ -4,11 +4,14 @@
   "packages": [
     "npm:pi-permission-system",
     "npm:pi-undo-redo",
-    "npm:context-mode",
     "npm:pi-web-access",
-    "npm:@juicesharp/rpiv-todo"
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-mcp-adapter",
+    "npm:pi-background-tasks"
   ],
   "terminal": {
     "showTerminalProgress": true
-  }
+  },
+  "defaultProvider": "opencode-go",
+  "defaultModel": "kimi-k2.6"
 }

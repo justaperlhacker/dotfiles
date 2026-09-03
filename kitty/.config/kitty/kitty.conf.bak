@@ -1,6 +1,6 @@
 
 # BEGIN_KITTY_FONTS
-font_family      family="HE_TERMINAL Nerd Font"
+font_family      family="BerkeleyMono Nerd Font" style=Medium
 bold_font        auto
 italic_font      auto
 bold_italic_font auto
@@ -92,14 +92,11 @@ map ctrl+9 goto_tab 9
 map ctrl+0 goto_tab 10
 # Theme Configurations
 
-# titus-dwm theme
-#include active-theme.conf
-
 # Dank color generation
 #include dank-tabs.conf
 #include dank-theme.conf
 
 # BEGIN_KITTY_THEME
-# Doom One
+# Batman
 include current-theme.conf
 # END_KITTY_THEME

@@ -117,7 +117,14 @@
       "yay *": "allow",
       "xrandr *": "allow",
       "X *": "allow",
-      "Xorg *": "allow"
+      "Xorg *": "allow",
+      "make -j$(nproc) *": "allow",
+      "nproc *": "allow",
+      "make install *": "allow",
+      "git remote set-url *": "allow",
+      "command *": "allow",
+      "ruff *": "allow",
+      "pyflakes *": "allow"
     },
     "external_directory": {
       "/sys/module/bluetooth/parameters/*": "allow",
@@ -140,7 +147,8 @@
       "/usr/share/wireplumber/scripts/monitors/*": "allow",
       "/usr/share/wireplumber/*": "allow",
       "/usr/share/config.kcfg/*": "allow",
-      "/usr/lib/systemd/user/*": "allow"
+      "/usr/lib/systemd/user/*": "allow",
+      "/tmp/*": "allow"
     }
   }
 }

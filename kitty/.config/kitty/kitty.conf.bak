@@ -97,6 +97,6 @@ map ctrl+0 goto_tab 10
 #include dank-theme.conf
 
 # BEGIN_KITTY_THEME
-# Batman
+# Tokyo Night
 include current-theme.conf
 # END_KITTY_THEME

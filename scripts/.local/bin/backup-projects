@@ -12,7 +12,7 @@ done
 DATE=$(date +%Y%m%d)
 TARBALL="Projects_Backup_${DATE}.tar.gz"
 SOURCE="$HOME/Projects"
-TARGETS=("$HOME/.backups" "$HOME/OneDrive/Dump/Backups" "$HOME/shared/HUB/backups" "$HOME/shared/UGREEN/backups")
+TARGETS=("$HOME/OneDrive/Dump/Backups" "$HOME/shared/backups/HUB" "$HOME/shared/backups/UGREEN")
 RETENTION=7
 
 for TARGET in "${TARGETS[@]}"; do

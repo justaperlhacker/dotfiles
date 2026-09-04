@@ -15,18 +15,18 @@ sync {
         compress = false,
         acls     = true,
         xattrs   = true,
-    },
-    exclude = {
-        ".git/",
-        "node_modules/",
-        "venv/",
-        "__pycache__/",
-        "*.pyc",
-        "*.swp",
-        "*.swo",
-        "*~",
-        ".DS_Store",
-        "Thumbs.db",
-    },
+    }
+--    exclude = {
+--        ".git/",
+--       "node_modules/",
+--        "venv/",
+--        "__pycache__/",
+--        "*.pyc",
+--        "*.swp",
+--        "*.swo",
+--        "*~",
+--        ".DS_Store",
+--        "Thumbs.db",
+--    },
 }
 

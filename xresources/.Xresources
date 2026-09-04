@@ -32,7 +32,9 @@ XTerm*cursorColor:        green
 XTerm*cursorBlink:        true
 XTerm*innerBorder:        4
 XTerm*visualBell:         false
-XTerm*selectToClipboard:  true
+XTerm*bellIsUrgent:        false
+XTerm*bellSuppressTimeout: 0
+XTerm*selectToClipboard:   true
 
 
 !! UXterm
@@ -52,7 +54,9 @@ UXTerm*cursorColor:        green
 UXTerm*cursorBlink:        true
 UXTerm*innerBorder:        4
 UXTerm*visualBell:         false
-UXTerm*selectToClipboard:  true
+UXTerm*bellIsUrgent:        false
+UXTerm*bellSuppressTimeout: 0
+UXTerm*selectToClipboard:   true
 
 !! Xcursor theme
 Xcursor.theme: Qogir-Recolored-Gruvbox-Orange
@@ -83,6 +87,7 @@ URxvt.cursorColor:              green
 URxvt.cursorBlink:              true
 URxvt.internalBorder:           4
 URxvt.visualBell:               false
+URxvt.bell-command:              \"\"
 
 ! for 'fake' transparency (without Compton) uncomment the following three lines
 ! URxvt*inheritPixmap:            true

@@ -11,8 +11,7 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
--- undotree
-vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+-- undotree (plugin + keymap in lua/plugins/undotree.lua)
 
 -- clear highlights from searches
 vim.keymap.set('n', '<leader>h', ':nohlsearch<CR>')

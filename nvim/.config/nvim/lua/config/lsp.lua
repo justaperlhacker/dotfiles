@@ -15,29 +15,39 @@ local on_attach = function(_, bufnr)
   bmap("<leader>q", vim.diagnostic.setloclist, "Diagnostics to Location List")
 end
 
-local servers = { "lua_ls", "ts_ls", "basedpyright", "roslyn_ls" }
+-- Completion capabilities from blink.cmp (eager-loaded, see plugins/completion.lua).
+-- Falls back to stock capabilities if blink is unavailable.
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+local blink_ok, blink = pcall(require, "blink.cmp")
+if blink_ok and blink.get_lsp_capabilities then
+  capabilities = blink.get_lsp_capabilities(capabilities)
+end
+
+local servers = { "lua_ls", "ts_ls", "basedpyright" }
 for _, server in ipairs(servers) do
   vim.lsp.config(server, {
     on_attach = on_attach,
-    capabilities = vim.lsp.protocol.make_client_capabilities(),
+    capabilities = capabilities,
   })
   vim.lsp.enable(server)
 end
 
+-- Roslyn (mason: roslyn-language-server) needs pull-based diagnostics
+-- enabled, otherwise no diagnostics are reported
+vim.lsp.config("roslyn_ls", {
+  on_attach = on_attach,
+  capabilities = vim.tbl_deep_extend("force", capabilities, {
+    textDocument = { diagnostic = { dynamicRegistration = true } },
+  }),
+})
+vim.lsp.enable("roslyn_ls")
+
 -- Perl language server: Rust-backed `perllsp` (matches the NvChad setup)
 vim.lsp.config("perllsp", {
   on_attach = on_attach,
-  capabilities = vim.lsp.protocol.make_client_capabilities(),
+  capabilities = capabilities,
   cmd = { "perllsp", "--stdio" },
   filetypes = { "perl" },
   root_markers = { "cpanfile", "Makefile.PL", "Build.PL", ".git" },
 })
 vim.lsp.enable("perllsp")
-
--- Roslyn (mason: roslyn-language-server) needs pull-based diagnostics
--- enabled, otherwise no diagnostics are reported
-vim.lsp.config("roslyn_ls", {
-  capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), {
-    textDocument = { diagnostic = { dynamicRegistration = true } },
-  }),
-})

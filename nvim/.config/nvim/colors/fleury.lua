@@ -1,35 +1,49 @@
--- vscode-red: Neovim port of the Visual Studio Code built-in "Red" theme
--- Palette sourced from microsoft/vscode extensions/theme-red/themes/Red-color-theme.json
+-- fleury: Neovim port of Ryan Fleury's 4coder theme
+-- Palette sourced from 4coder-archive/4coder_fleury theme-fleury.4coder
+-- (https://github.com/Dion-Systems/4coder_fleury/blob/master/theme-fleury.4coder)
+-- 4coder colors are 0xAARRGGBB; the alpha byte is dropped below.
+--
+-- Signature traits preserved:
+--   * near-black warm background, tan text, dim-gray italic comments
+--   * "syntax crap" dimmed to brown (#5c4d3c), operators in red
+--   * gold keywords, orange constants, burnt-orange functions
 
 vim.cmd("highlight clear")
 vim.o.background = "dark"
 if vim.fn.exists("syntax_on") then
   vim.cmd("syntax reset")
 end
-vim.g.colors_name = "vscode-red"
+vim.g.colors_name = "fleury"
 
 local c = {
-  bg          = "#390000", -- editor.background
-  bg_dark     = "#300000", -- editorWidget.background
-  bg_sidebar  = "#330000", -- sideBar.background
-  bg_status   = "#700000", -- statusBar.background
-  bg_title    = "#770000", -- titleBar.activeBackground
-  bg_activity = "#580000", -- activityBar.background
-  bg_visual   = "#750000", -- editor.selectionBackground
-  bg_line     = "#4d0000", -- editor.lineHighlightBackground (blended)
-  border      = "#580000",
-  ws          = "#c10000", -- editorWhitespace.foreground
-  fg          = "#F8F8F8", -- editor.foreground
-  fg_dim      = "#cf9090",
-  link        = "#FFD0AA", -- editorLink.activeForeground
-  remote      = "#cc3333", -- statusBarItem.remoteBackground
-  red         = "#ff5555",
-  orange      = "#ce9178",
-  yellow      = "#ffd75f",
-  green       = "#98c379",
-  cyan        = "#56d4dd",
-  blue        = "#82aaff",
-  magenta     = "#ff79c6",
+  bg          = "#020202", -- defcolor_back
+  bg_dark     = "#101010", -- defcolor_line_numbers_back
+  bg_sidebar  = "#222425", -- defcolor_margin
+  bg_status   = "#222425", -- defcolor_margin
+  bg_title    = "#222425", -- defcolor_margin
+  bg_activity = "#63523d", -- defcolor_margin_hover / _active
+  bg_visual   = "#303040", -- defcolor_highlight
+  bg_line     = "#1e1e1e", -- defcolor_highlight_cursor_line
+  border      = "#63523d", -- defcolor_margin_hover
+  ws          = "#404040", -- defcolor_line_numbers_text
+  fg          = "#b99468", -- defcolor_text_default
+  fg_dim      = "#5c4d3c", -- fleury_color_syntax_crap
+  link        = "#fcaa05", -- defcolor_base
+  remote      = "#de8150", -- defcolor_pop1
+  red         = "#ff0000", -- defcolor_pop2 / special_character / error_annotation
+  operator    = "#bd2d2d", -- fleury_color_operators
+  orange      = "#ffa900", -- str/char/int/float/bool constants + include
+  yellow      = "#f0c674", -- defcolor_keyword (gold)
+  green       = "#6eb535", -- fleury_color_index_constant
+  sum_green   = "#a7eb13", -- fleury_color_index_sum_type
+  cyan        = "#8ffff2", -- fleury_color_brace_highlight
+  blue        = "#2895c7", -- fleury_color_index_macro
+  magenta     = "#c9598a", -- fleury_color_index_decl
+  preproc     = "#dc7575", -- defcolor_preproc
+  fn          = "#de451f", -- fleury_color_index_function
+  type_yellow = "#edb211", -- fleury_color_index_product_type
+  tag_orange  = "#ffae00", -- fleury_color_index_comment_tag
+  comment     = "#666666", -- defcolor_comment
   none        = "NONE",
 }
 
@@ -42,23 +56,23 @@ local link = function(from, to)
   vim.api.nvim_set_hl(0, from, { link = to, default = false })
 end
 
--- Terminal palette (red-tinted ANSI)
-vim.g.terminal_color_0  = "#300000"
-vim.g.terminal_color_1  = "#ff5555"
-vim.g.terminal_color_2  = "#98c379"
-vim.g.terminal_color_3  = "#ffd75f"
-vim.g.terminal_color_4  = "#82aaff"
-vim.g.terminal_color_5  = "#ff79c6"
-vim.g.terminal_color_6  = "#56d4dd"
-vim.g.terminal_color_7  = "#F8F8F8"
-vim.g.terminal_color_8  = "#8f5050"
-vim.g.terminal_color_9  = "#ff8888"
-vim.g.terminal_color_10 = "#b5e890"
-vim.g.terminal_color_11 = "#ffe49c"
-vim.g.terminal_color_12 = "#aac4ff"
-vim.g.terminal_color_13 = "#ffa3d6"
-vim.g.terminal_color_14 = "#8ee4ea"
-vim.g.terminal_color_15 = "#ffffff"
+-- Terminal palette (warm dark ANSI)
+vim.g.terminal_color_0  = "#020202"
+vim.g.terminal_color_1  = "#bd2d2d"
+vim.g.terminal_color_2  = "#6eb535"
+vim.g.terminal_color_3  = "#f0c674"
+vim.g.terminal_color_4  = "#2895c7"
+vim.g.terminal_color_5  = "#c9598a"
+vim.g.terminal_color_6  = "#8ffff2"
+vim.g.terminal_color_7  = "#b99468"
+vim.g.terminal_color_8  = "#666666"
+vim.g.terminal_color_9  = "#ff0000"
+vim.g.terminal_color_10 = "#a7eb13"
+vim.g.terminal_color_11 = "#ffae00"
+vim.g.terminal_color_12 = "#6fb3e0"
+vim.g.terminal_color_13 = "#e08bb0"
+vim.g.terminal_color_14 = "#bffff5"
+vim.g.terminal_color_15 = "#f0dcc0"
 
 -- Base
 hi("Normal",           { fg = c.fg, bg = c.bg })
@@ -67,15 +81,15 @@ hi("NormalFloat",      { fg = c.fg, bg = c.bg_dark })
 hi("FloatBorder",      { fg = c.border, bg = c.bg_dark })
 hi("FloatTitle",       { fg = c.link, bg = c.bg_dark, bold = true })
 hi("EndOfBuffer",      { fg = c.bg, bg = c.none })
-hi("ColorColumn",      { bg = "#450000" })
+hi("ColorColumn",      { bg = c.bg_line })
 hi("Conceal",          { fg = c.fg_dim, bg = c.none })
-hi("Cursor",           { fg = c.bg, bg = c.fg })
+hi("Cursor",           { fg = c.bg, bg = "#00ee00" }) -- defcolor_cursor cycles green first
 hi("CursorColumn",     { bg = c.bg_line })
 hi("CursorLine",       { bg = c.bg_line })
 hi("Directory",        { fg = c.link, bold = true })
 hi("Error",            { fg = c.red, bg = c.none })
 hi("ErrorMsg",         { fg = c.red, bg = c.none })
-hi("WarningMsg",       { fg = c.yellow, bg = c.none })
+hi("WarningMsg",       { fg = c.tag_orange, bg = c.none })
 hi("ModeMsg",          { fg = c.fg_dim, bg = c.none })
 hi("MoreMsg",          { fg = c.green, bg = c.none })
 hi("Question",         { fg = c.green, bg = c.none })
@@ -85,8 +99,8 @@ hi("Whitespace",       { fg = c.ws, bg = c.none })
 hi("NonText",          { fg = c.ws, bg = c.none })
 
 -- Lines / signs
-hi("LineNr",           { fg = "#9e5252", bg = c.none })
-hi("CursorLineNr",     { fg = "#ffbbbb", bg = c.bg_line, bold = true }) -- editorLineNumber.activeForeground
+hi("LineNr",           { fg = c.ws, bg = c.none })
+hi("CursorLineNr",     { fg = c.fg, bg = c.bg_line, bold = true })
 hi("SignColumn",       { fg = c.fg_dim, bg = c.none })
 hi("Folded",           { fg = c.fg_dim, bg = c.bg_sidebar })
 hi("FoldColumn",       { fg = c.border, bg = c.none })
@@ -96,18 +110,18 @@ link("VertSplit", "WinSeparator")
 -- Selection / search
 hi("Visual",           { bg = c.bg_visual })
 hi("VisualNOS",        { bg = c.bg_visual })
-hi("Search",           { fg = c.fg, bg = "#991111" })
+hi("Search",           { fg = c.bg, bg = "#494949" }) -- defcolor_mark
 hi("IncSearch",        { fg = c.bg, bg = c.remote, bold = true })
 hi("CurSearch",        { fg = c.bg, bg = c.remote, bold = true })
 hi("Substitute",       { fg = c.bg, bg = c.remote })
-hi("MatchParen",       { fg = c.fg, bg = c.bg_visual, bold = true })
+hi("MatchParen",       { fg = c.cyan, bg = c.bg_visual, bold = true })
 
 -- UI chrome
 hi("StatusLine",       { fg = c.fg, bg = c.bg_status })
-hi("StatusLineNC",     { fg = c.fg_dim, bg = c.bg_sidebar })
-hi("TabLine",          { fg = c.fg_dim, bg = "#300a0a" })   -- tab.inactiveBackground
-hi("TabLineFill",      { bg = c.bg_sidebar })               -- editorGroupHeader.tabsBackground
-hi("TabLineSel",       { fg = c.fg, bg = "#490000", bold = true }) -- tab.activeBackground
+hi("StatusLineNC",     { fg = c.comment, bg = c.bg_sidebar })
+hi("TabLine",          { fg = c.comment, bg = c.bg_dark })
+hi("TabLineFill",      { bg = c.bg_sidebar })
+hi("TabLineSel",       { fg = c.fg, bg = c.bg_activity, bold = true })
 hi("Pmenu",            { fg = c.fg, bg = c.bg_dark })
 hi("PmenuSel",         { fg = c.fg, bg = c.bg_activity, bold = true })
 hi("PmenuSbar",        { bg = c.bg_dark })
@@ -117,9 +131,9 @@ hi("WinBar",           { fg = c.fg_dim, bg = c.bg })
 hi("WinBarNC",         { fg = c.fg_dim, bg = c.bg })
 
 -- Diffs
-hi("DiffAdd",          { fg = c.green, bg = "#163a16" })
-hi("DiffChange",       { fg = c.yellow, bg = "#463500" })
-hi("DiffDelete",       { fg = c.red, bg = "#6b0000" })
+hi("DiffAdd",          { fg = c.green, bg = "#0f2a0f" })
+hi("DiffChange",       { fg = c.yellow, bg = "#2a230f" })
+hi("DiffDelete",       { fg = c.red, bg = "#3a0000" }) -- defcolor_highlight_junk
 hi("DiffText",         { fg = c.bg, bg = c.yellow, bold = true })
 hi("Added",            { fg = c.green })
 hi("Changed",          { fg = c.yellow })
@@ -133,57 +147,57 @@ hi("SpellRare",  { fg = c.magenta, underline = true, sp = c.magenta })
 
 -- Diagnostics
 hi("DiagnosticError", { fg = c.red })
-hi("DiagnosticWarn",  { fg = c.yellow })
+hi("DiagnosticWarn",  { fg = c.tag_orange })
 hi("DiagnosticInfo",  { fg = c.blue })
 hi("DiagnosticHint",  { fg = c.cyan })
 hi("DiagnosticOk",    { fg = c.green })
 hi("DiagnosticVirtualTextError", { fg = c.red })
-hi("DiagnosticVirtualTextWarn",  { fg = c.yellow })
+hi("DiagnosticVirtualTextWarn",  { fg = c.tag_orange })
 hi("DiagnosticVirtualTextInfo",  { fg = c.blue })
 hi("DiagnosticVirtualTextHint",  { fg = c.cyan })
 hi("DiagnosticVirtualTextOk",    { fg = c.green })
 hi("DiagnosticUnderlineError",   { underline = true, sp = c.red })
-hi("DiagnosticUnderlineWarn",    { underline = true, sp = c.yellow })
+hi("DiagnosticUnderlineWarn",    { underline = true, sp = c.tag_orange })
 hi("DiagnosticUnderlineInfo",    { underline = true, sp = c.blue })
 hi("DiagnosticUnderlineHint",    { underline = true, sp = c.cyan })
 hi("DiagnosticUnderlineOk",      { underline = true, sp = c.green })
 
--- Syntax
-hi("Comment",        { fg = "#a8766c", italic = true })
-hi("Constant",       { fg = "#ffaaaa" })
+-- Syntax (authentic fleury roles; comments deliberately not italic)
+hi("Comment",        { fg = c.comment, italic = true }) -- matches global italic in config/options.lua
+hi("Constant",       { fg = c.orange })
 hi("String",         { fg = c.orange })
 hi("Character",      { fg = c.orange })
-hi("Number",         { fg = "#ffb86c" })
-hi("Boolean",        { fg = "#ff9d9d" })
-hi("Float",          { fg = "#ffb86c" })
+hi("Number",         { fg = c.orange })
+hi("Boolean",        { fg = c.orange })
+hi("Float",          { fg = c.orange })
 hi("Identifier",     { fg = c.fg })
-hi("Function",       { fg = c.link })
-hi("Statement",      { fg = "#ff7778", bold = true })
-hi("Conditional",    { fg = "#ff7778", bold = true })
-hi("Repeat",         { fg = "#ff7778", bold = true })
-hi("Label",          { fg = "#ff9d9d" })
-hi("Operator",       { fg = "#e0999a" })
-hi("Keyword",        { fg = "#ff7778", bold = true })
+hi("Function",       { fg = c.fn })
+hi("Statement",      { fg = c.yellow })
+hi("Conditional",    { fg = c.yellow })
+hi("Repeat",         { fg = c.yellow })
+hi("Label",          { fg = c.remote })
+hi("Operator",       { fg = c.operator })
+hi("Keyword",        { fg = c.yellow })
 hi("Exception",      { fg = c.red, bold = true })
-hi("PreProc",        { fg = c.magenta })
-hi("Include",        { fg = c.magenta })
-hi("Define",         { fg = c.magenta })
-hi("Macro",          { fg = c.magenta })
-hi("PreCondit",      { fg = c.magenta })
-hi("Type",           { fg = "#ffc9c9" })
-hi("StorageClass",   { fg = "#ff7778" })
-hi("Structure",      { fg = "#ffc9c9" })
-hi("Typedef",        { fg = "#ffc9c9" })
-hi("Special",        { fg = c.cyan })
-hi("SpecialChar",    { fg = c.cyan })
+hi("PreProc",        { fg = c.preproc })
+hi("Include",        { fg = c.orange })
+hi("Define",         { fg = c.preproc })
+hi("Macro",          { fg = c.blue })
+hi("PreCondit",      { fg = c.preproc })
+hi("Type",           { fg = c.type_yellow })
+hi("StorageClass",   { fg = c.yellow })
+hi("Structure",      { fg = c.type_yellow })
+hi("Typedef",        { fg = c.type_yellow })
+hi("Special",        { fg = c.preproc })
+hi("SpecialChar",    { fg = c.red })
 hi("Tag",            { fg = c.link })
-hi("Delimiter",      { fg = "#e0999a" })
-hi("SpecialComment", { fg = "#c98a7d", italic = true })
+hi("Delimiter",      { fg = c.fg_dim }) -- fleury "syntax crap": ; ( ) dimmed
+hi("SpecialComment", { fg = c.tag_orange, italic = true })
 hi("Debug",          { fg = c.red })
 hi("Underlined",     { fg = c.link, underline = true })
 hi("Bold",           { bold = true })
 hi("Italic",         { italic = true })
-hi("Todo",           { fg = c.bg, bg = c.yellow, bold = true })
+hi("Todo",           { fg = c.bg, bg = c.tag_orange, bold = true })
 
 -- Treesitter
 link("@comment", "Comment")
@@ -205,7 +219,7 @@ link("@exception", "Exception")
 link("@punctuation.bracket", "Delimiter")
 link("@punctuation.delimiter", "Delimiter")
 link("@variable", "Identifier")
-hi("@variable.builtin", { fg = "#ff7778" }) -- distinct like kraihlight/fleury ($_, @_ ...)
+hi("@variable.builtin", { fg = c.yellow }) -- distinct like kraihlight ($_, @_ ...)
 link("@variable.parameter", "Identifier")
 link("@variable.member", "Identifier")
 link("@function", "Function")
@@ -236,19 +250,19 @@ link("@lsp.type.decorator", "PreProc")
 link("luaFunction", "Function")
 link("luaFuncCall", "Function")
 
--- Perl-specific highlights (same roles as kraihlight/fleury, red palette)
+-- Perl-specific highlights (same roles as kraihlight, fleury palette)
 link("perlPackageRef", "Type")
 link("perlPackage", "Type")
 link("perlPackageDecl", "Type")
 
--- Perl POD / documentation (links track Comment, incl. global italic)
-link("perlPOD", "Comment")
-hi("podCommand", { fg = "#ff7778" })
-link("podCmdText", "Comment")
+-- Perl POD / documentation (italic, like all comments)
+hi("perlPOD", { fg = c.comment, italic = true })
+hi("podCommand", { fg = c.yellow })
+hi("podCmdText", { fg = c.comment, italic = true })
 
 -- Standalone .pod files (pod filetype)
-hi("podCommand", { fg = "#ff7778" })
-link("podCmdText", "Comment")
+hi("podCommand", { fg = c.yellow })
+hi("podCmdText", { fg = c.comment, italic = true })
 hi("podOrdinary", { fg = c.fg })
 link("podVerbatim", "String")
 hi("podSpecial", { fg = c.magenta })
@@ -267,29 +281,29 @@ hi("perlSpecialMatch", { fg = c.magenta })
 
 -- Raku (Perl 6) -- filetype raku; .raku, .pm6, .rakumod, .rakutest, .p6
 link("rakuPackage", "Type")
-hi("rakuPackageScope", { fg = "#ff7778" })
-hi("rakuTwigil", { fg = "#ffb86c" })
-hi("rakuBareSigil", { fg = "#ffb86c" })
+hi("rakuPackageScope", { fg = c.yellow })
+hi("rakuTwigil", { fg = c.orange })
+hi("rakuBareSigil", { fg = c.orange })
 link("rakuVariable", "Identifier")
 link("rakuVarName", "Identifier")
 link("rakuVarStorage", "Identifier")
-hi("rakuVarExclam", { fg = "#ff7778" })
+hi("rakuVarExclam", { fg = c.yellow })
 link("rakuIdentifier", "Identifier")
 link("rakuType", "Type")
-link("rakuTypeConstraint", "Type")
-hi("rakuDeclare", { fg = "#ff7778" })
-hi("rakuDeclareRegex", { fg = "#ff7778" })
+hi("rakuTypeConstraint", { fg = c.type_yellow })
+hi("rakuDeclare", { fg = c.yellow })
+hi("rakuDeclareRegex", { fg = c.yellow })
 link("rakuConditional", "Conditional")
 link("rakuException", "Exception")
-hi("rakuFlowControl", { fg = "#ff7778" })
+hi("rakuFlowControl", { fg = c.yellow })
 link("rakuClosureTrait", "Identifier")
 link("rakuContext", "Operator")
 link("rakuHyperOp", "Operator")
 link("rakuOperator", "Operator")
 link("rakuSetOp", "Operator")
-hi("rakuBlockLabel", { fg = "#ff7778" })
+hi("rakuBlockLabel", { fg = c.yellow })
 link("rakuNumber", "Number")
-hi("rakuVersion", { fg = "#ffb86c" })
+hi("rakuVersion", { fg = c.orange })
 link("rakuInclude", "Include")
 
 -- Raku strings / interpolation
@@ -301,7 +315,7 @@ link("rakuStringAngle", "String")
 hi("rakuStringSpecial", { fg = c.magenta })
 hi("rakuStringSpecial2", { fg = c.magenta })
 link("rakuKey", "String")
-link("rakuShebang", "Comment")
+hi("rakuShebang", { fg = c.comment, italic = true })
 
 -- Raku regex / match operators
 hi("rakuMatch", { fg = c.magenta })
@@ -309,26 +323,26 @@ hi("rakuMatchBare", { fg = c.magenta })
 link("rakuMatchVar", "Identifier")
 hi("rakuSubstitution", { fg = c.magenta })
 hi("rakuTransliteration", { fg = c.magenta })
-hi("rakuRxMeta", { fg = "#ff9d9d" })
-hi("rakuRxAnchor", { fg = "#ff9d9d" })
+hi("rakuRxMeta", { fg = c.remote })
+hi("rakuRxAnchor", { fg = c.remote })
 hi("rakuRxCharClass", { fg = c.magenta })
 hi("rakuRxAssertGroup", { fg = c.magenta })
 
 -- Raku POD / documentation
-link("rakuPod", "Comment")
+hi("rakuPod", { fg = c.comment, italic = true })
 link("rakuPodFormat", "Special")
 link("rakuPodCode", "String")
-link("rakuPodComment", "Comment")
-hi("rakuPodDelim", { fg = "#ff7778" })
+hi("rakuPodComment", { fg = c.comment, italic = true })
+hi("rakuPodDelim", { fg = c.yellow })
 
 -- Raku attention / error
 link("rakuAttention", "Todo")
 link("rakuError", "Error")
 
 -- Plugin touches
-hi("TelescopeBorder",     { fg = c.border, bg = c.bg })
-hi("TelescopePromptTitle", { fg = c.bg, bg = c.remote, bold = true })
+hi("TelescopeBorder",       { fg = c.border, bg = c.bg })
+hi("TelescopePromptTitle",  { fg = c.bg, bg = c.remote, bold = true })
 hi("TelescopeResultsTitle", { fg = c.bg, bg = c.link, bold = true })
 hi("TelescopePreviewTitle", { fg = c.bg, bg = c.green, bold = true })
-hi("WhichKeyFloat",        { bg = c.bg_dark })
-hi("NormalFloatSB",        { bg = c.bg_dark })
+hi("WhichKeyFloat",         { bg = c.bg_dark })
+hi("NormalFloatSB",         { bg = c.bg_dark })

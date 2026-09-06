@@ -1,6 +1,8 @@
 return {
   "saghen/blink.cmp",
-  event = "InsertEnter",
+  -- Eager: config/lsp.lua reads blink's LSP capabilities at startup,
+  -- so blink must be on the runtimepath before LSP clients attach.
+  lazy = false,
   build = function() require('blink.cmp').build():pwait() end,
   dependencies = { "saghen/blink.lib", "rafamadriz/friendly-snippets" },
   opts = {

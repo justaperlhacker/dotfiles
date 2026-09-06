@@ -26,6 +26,7 @@ local colorscheme = {}
 -- colorscheme.name = "github-monochrome"
 -- colorscheme.name = "naysayer"
 -- colorscheme.name = "kanso"
+-- coloescheme.name = "fleury"
 
 -- Purple / moody / twilight vibes
 -- colorscheme.name = "kanagawa"
@@ -57,16 +58,14 @@ local colorscheme = {}
 -- colorscheme.name = "rose-pine"
 -- colorscheme.name = "toast"
 
--- Editor utilities / focus tools
--- colorscheme.name = "zen-mode"
-
 -- Active theme
 -- colorscheme.name = "vague"
 -- colorscheme.name = "monochrome"
 -- colorscheme.name = "kanso"
 -- colorscheme.name = "vscode-red"
 -- colorscheme.name = "miniwinter"
-colorscheme.name = "kraihlight"
+-- colorscheme.name = "kraihlight"
+colorscheme.name = "fleury"
 
 colorscheme.fallback = "default"
 colorscheme.background = "dark"

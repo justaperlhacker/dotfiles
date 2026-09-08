@@ -42,6 +42,26 @@ vim.lsp.config("roslyn_ls", {
 })
 vim.lsp.enable("roslyn_ls")
 
+-- Raku language server (mason: raku-navigator).
+-- rakuPath is absolute so syntax checking works even when the rakubrew
+-- shell hook hasn't run (e.g. GUI clients like Neovide). Update it if you
+-- switch Rakudo versions (`ls ~/.rakubrew/versions`).
+vim.lsp.config("raku_navigator", {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  cmd = { "raku-navigator", "--stdio" },
+  filetypes = { "raku" },
+  root_markers = { ".git" },
+  settings = {
+    -- NOTE: the server requests section "raku" (not "raku_navigator"),
+    -- so the key must be `raku` for rakuPath to take effect.
+    raku = {
+      rakuPath = "/home/johnm/.rakubrew/versions/moar-2026.07/bin/raku",
+    },
+  },
+})
+vim.lsp.enable("raku_navigator")
+
 -- Perl language server: Rust-backed `perllsp` (matches the NvChad setup)
 vim.lsp.config("perllsp", {
   on_attach = on_attach,

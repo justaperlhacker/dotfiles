@@ -216,5 +216,16 @@
     // "perl.lsp.trace.server": "off",
     // "perl.enable": false,
     // "perl.showLocalVars": true,
+    "raku.rakuPath": "raku",
+    "raku.logging": false,
+    "raku.formatting.enable": true,
+    "raku.formatting.indentSize": 4,
+
+    "[raku]": {
+        "editor.wordSeparators": "`~!#^&*()=+[{]}\\|;:'\",.<>/?",
+        "editor.formatOnSave": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize":
+    },
 
 }

@@ -15,6 +15,7 @@ return {
           "ts_ls",
           "basedpyright",
           "roslyn_ls",
+          "raku_navigator",
         },
       })
     end,

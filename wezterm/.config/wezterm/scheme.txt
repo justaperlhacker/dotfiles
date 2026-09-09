@@ -1,1 +1,6 @@
-Wombat
+# WezTerm appearance-aware schemes: one per OS mode.
+#   dark=...   used when the OS is in dark mode
+#   light=...  used when the OS is in light mode
+# Pick one with Ctrl+Shift+E to update the matching slot, or edit here.
+dark=tokyonight
+light=tokyonight_day

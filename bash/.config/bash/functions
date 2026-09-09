@@ -169,3 +169,27 @@ __git_branch() {
 __perl_env() {
     perl -v 2>/dev/null | head -n1 | awk '{print $4}'
 }
+
+# ----------------------------
+# Ported from cachyos-fish-config
+# ----------------------------
+
+# backup <file> -> cp file file.bak
+backup() {
+    if [[ $# -ne 1 ]]; then
+        echo "Usage: backup <file>" >&2
+        return 1
+    fi
+    command cp -- "$1" "$1.bak"
+}
+
+# copy DIR1 DIR2 — auto cp -r when first arg is a dir, else plain cp
+copy() {
+    if [[ $# -eq 2 && -d "$1" ]]; then
+        local from="${1%/}"
+        local to="$2"
+        command cp -r -- "$from" "$to"
+    else
+        command cp -- "$@"
+    fi
+}

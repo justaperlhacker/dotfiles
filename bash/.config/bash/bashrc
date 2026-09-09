@@ -47,6 +47,9 @@ bind -x '"\C-r": _fzf_history'
 # source rakubrew
 [[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"
 
+# add rakupp
+[[ -f "$HOME/.local/rakupp/bin/rakupp" ]] && export PATH="$HOME/.local/rakupp/bin:$PATH"
+
 # # -- START ACTIVESTATE INSTALLATION
 # export PATH="/home/johnm/.komodoide/12.0/XRE/state/bin:$PATH"
 # # -- STOP ACTIVESTATE INSTALLATION

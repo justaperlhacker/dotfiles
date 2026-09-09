@@ -1,4 +1,10 @@
 
+-- Auto-reload files changed on disk (e.g. edits by external tools/agents).
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  command = "checktime",
+})
+
 -- highlight on yank
 local highlight_yank_group = vim.api.nvim_create_augroup("HighlightYankGroup", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {

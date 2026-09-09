@@ -5,6 +5,7 @@
 __pycache__
 *.pyc
 *.bak
+*.bak.*
 
 # DankMaterialShell transpient files
 DankMaterialShell/.config/DankMaterialShell/.changelog-*

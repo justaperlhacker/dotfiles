@@ -23,7 +23,7 @@ end)
 -------------------------------------------------------
 -- Fallback scheme; scheme.lua overrides this per OS dark/light mode.
 config.color_scheme = "tokyonight_night"
-config.window_background_opacity = 0.90
+config.window_background_opacity = 0.95
 config.window_decorations = 'TITLE|RESIZE'
 config.window_padding = {
   left = 0,
@@ -51,7 +51,7 @@ scheme.apply(config)
 config.font = wezterm.font_with_fallback({
   "HE_TERMINAL Nerd Font",
   "JetBrainsMono Nerd Font",
-})
+}, { weight = "Medium" })
 config.font_size = 12
 --config.line_height = 1.0
 config.bold_brightens_ansi_colors = "BrightOnly"

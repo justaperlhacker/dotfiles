@@ -2,6 +2,9 @@
 
 .config/bash/local
 .vscode
+__pycache__
+*.pyc
+*.bak
 
 # DankMaterialShell transpient files
 DankMaterialShell/.config/DankMaterialShell/.changelog-*

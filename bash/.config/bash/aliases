@@ -188,3 +188,54 @@ alias 4ed='4ed-fleury'
 alias 4coder='4ed-fleury'
 alias aur_check='PYTHONPATH=~/opt/aur-malware-check/aur_check:$PYTHONPATH python -m aur_check --refresh --full'
 alias pycharm='flatpack run com.jetbrains.Pycharm-Community'
+
+# --- Added from /etc/skel / CachyOS zsh+fish configs ---
+# Sources: /etc/skel/.zshrc -> /usr/share/cachyos-zsh-config/cachyos-config.zsh
+#          /etc/skel/.config/fish/config.fish -> /usr/share/cachyos-fish-config/cachyos-config.fish
+# NOTE: skel alias n='ninja' skipped — n is used for neovim config switcher above.
+# NOTE: skel eza ls/la/ll variants skipped — keeping custom ls aliases above.
+
+# parallel builds
+alias make='make -j$(nproc)'
+alias ninja='ninja -j$(nproc)'
+
+# navigation (extends existing .. alias)
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+# shortcuts
+alias c='clear'
+alias please='sudo'
+
+# Arch / CachyOS pacman
+alias update='sudo cachyos-rate-mirrors && sudo pacman -Syu'
+alias mirror='sudo cachyos-rate-mirrors'
+alias grubup='sudo grub-mkconfig -o /boot/grub/grub.cfg'
+alias rmpkg='sudo pacman -Rsn'
+alias cleanch='sudo pacman -Scc'
+alias fixpacman='sudo rm /var/lib/pacman/db.lck'
+alias cleanup="sudo pacman -Rsn \$(pacman -Qtdq)"
+alias big="expac -H M '%m\t%n' | sort -h | nl"
+alias gitpkg='pacman -Q | grep -i "\-git" | wc -l'
+alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
+
+# journal / help
+alias jctl='journalctl -p 3 -xb'
+alias apt='man pacman'
+alias apt-get='man pacman'
+alias tb='nc termbin.com 9999'
+
+# tar / wget / ps / dir
+alias tarnow='tar -acf '
+alias untar='tar -zxvf '
+alias wget='wget -c '
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+
+# eza extras (eza is installed; ls/ll/la kept as ls-based above)
+alias lt='eza -aT --color=always --group-directories-first --icons=always'
+alias l.="eza -a | grep -e '^\\.'"

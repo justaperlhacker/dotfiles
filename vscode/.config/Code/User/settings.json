@@ -3,8 +3,6 @@
     // disable telemetry
     "update.mode": "none",
     "telemetry.telemetryLevel": "off",
-    "telemetry.enableCrashReporter": false,
-    "telemetry.enableDiagnostics": false,
     "telemetry.feedback.enabled": false,
     "telemetry.editStats.enabled": false,
     "redhat.telemetry.enabled": false,

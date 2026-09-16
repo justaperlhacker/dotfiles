@@ -22,10 +22,10 @@ my $help     = 0;
 my @packages;
 
 GetOptions(
-    'all|a'       => \$all,
+    'all|a'        => \$all,
     'package|p=s@' => \@packages,
-    'list|l'      => \$list,
-    'help|h'      => \$help,
+    'list|l'       => \$list,
+    'help|h'       => \$help,
 ) or usage_error();
 
 sub usage_error {

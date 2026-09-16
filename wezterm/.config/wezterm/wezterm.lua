@@ -56,10 +56,17 @@ config.font_size = 12
 --config.line_height = 1.0
 config.bold_brightens_ansi_colors = "BrightOnly"
 
+--selection_background #283457
+--selection_foreground #c0caf5
+--cursor #c0caf5
+--cursor_text_color #1a1b26
 -- cursor
 config.colors = {
-  cursor_bg = "#7aa2f7",
-  cursor_border = "#7aa2f7",
+--  cursor_bg = "#7aa2f7",
+--  cursor_border = "#7aa2f7",
+  cursor_bg = "#c0caf5",
+--  cursor_fg = "#1a1b26",
+  cursor_border = "#c0caf5",
 }
 config.default_cursor_style = "SteadyBlock"
 

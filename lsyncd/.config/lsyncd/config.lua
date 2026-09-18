@@ -8,7 +8,7 @@ settings {
 sync {
     default.rsync,
     source = os.getenv("HOME") .. "/Projects",
-    target = os.getenv("HOME") .. "/shared/Projects",
+    target = os.getenv("HOME") .. "/shared/UGREEN/sync/Projects",
     delay  = 2,
     rsync  = {
         archive  = true,

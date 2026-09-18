@@ -223,7 +223,7 @@
         "editor.wordSeparators": "`~!#^&*()=+[{]}\\|;:'\",.<>/?",
         "editor.formatOnSave": false,
         "editor.insertSpaces": true,
-        "editor.tabSize":
+        "editor.tabSize": 4,
     },
 
 }

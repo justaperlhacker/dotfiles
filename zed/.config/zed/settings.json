@@ -40,6 +40,7 @@
   "auto_install_extensions": {
     "kitty": true,
     "perl": true,
+    "kdl": true,
   },
   "file_types": {
     "Kitty": ["kitty.conf", "**/kitty/**/*.conf"],

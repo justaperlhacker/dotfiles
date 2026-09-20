@@ -59,13 +59,13 @@ local colorscheme = {}
 -- colorscheme.name = "toast"
 
 -- Active theme
--- colorscheme.name = "vague"
+colorscheme.name = "vague"
 -- colorscheme.name = "monochrome"
 -- colorscheme.name = "kanso"
 -- colorscheme.name = "vscode-red"
 -- colorscheme.name = "miniwinter"
 -- colorscheme.name = "kraihnight"
-colorscheme.name = "fleury"
+-- colorscheme.name = "fleury"
 
 colorscheme.fallback = "default"
 colorscheme.background = "dark"

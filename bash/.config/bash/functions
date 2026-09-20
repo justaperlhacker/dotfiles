@@ -193,3 +193,39 @@ copy() {
         command cp -- "$@"
     fi
 }
+
+# ----------------------------
+# git identity helper
+# ----------------------------
+
+# gitid — show the active git identity for the current repo (or global)
+# gitid <account> — set user.name/user.email locally for the current repo
+#                  accounts: satrac | justaperlhacker
+gitid() {
+    case "$1" in
+        "")
+            printf '%-16s %s\n' "name:"  "$(git config user.name 2>/dev/null)"
+            printf '%-16s %s\n' "email:" "$(git config user.email 2>/dev/null)"
+            printf '%-16s %s\n' "source:" "$(git config --show-origin user.name 2>/dev/null | awk '{print $1}')"
+            ;;
+        satrac|justaperlhacker)
+            local name="$1" email
+            if [[ "$1" == justaperlhacker ]]; then
+                email="justaperlhacker+github@gmail.com"
+            else
+                email="satrac@gmail.com"
+            fi
+            if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+                echo "gitid: not inside a git repository" >&2
+                return 1
+            fi
+            git config --local user.name  "$name"
+            git config --local user.email "$email"
+            echo "set $(basename "$(git rev-parse --show-toplevel)") -> $name <$email>"
+            ;;
+        *)
+            echo "usage: gitid [satrac|justaperlhacker]" >&2
+            return 1
+            ;;
+    esac
+}

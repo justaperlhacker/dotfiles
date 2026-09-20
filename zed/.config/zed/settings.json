@@ -30,7 +30,7 @@
   "theme": {
     "mode": "system",
     "light": "DankShell Light",
-    "dark": "Monochrome",
+    "dark": "Black Metal Gorgoroth",
   },
   "buffer_font_family": "HE_TERMINAL Nerd Font",
   "buffer_font_fallbacks": ["JetBrainsMono Nerd Font", "BerkeleyMono Nerd Font"],
@@ -83,5 +83,10 @@
   "preview_tabs": {
     "enable_preview_from_project_panel": false,
     "enabled": false,
+  },
+  "git": {
+    "inline_blame": {
+      "enabled": false,
+    },
   },
 }

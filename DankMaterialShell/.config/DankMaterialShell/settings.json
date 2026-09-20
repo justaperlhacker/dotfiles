@@ -47,7 +47,7 @@
       "cursorHideTimeout": 0
     }
   },
-  "fontFamily": "Fira Sans",
+  "fontFamily": "Adwaita Sans",
   "monoFontFamily": "JetBrainsMono NF",
   "soundLogin": true,
   "terminalsAlwaysDark": true,

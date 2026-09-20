@@ -6,7 +6,7 @@ if exists("syntax_on")
   syntax reset
 endif
 
-let colors_name = "kraihlight2"
+let colors_name = "kraihnight2"
 
 hi Visual guibg=#404040 ctermbg=238
 hi Cursor guibg=#b0d0f0 ctermbg=117

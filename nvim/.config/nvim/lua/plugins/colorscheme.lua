@@ -1,6 +1,6 @@
 -- Colorscheme gallery for the `<leader>cs` Telescope picker.
 --
--- The active theme is `kraihlight` (local, in colors/) and is applied by
+-- The active theme is `kraihnight` (local, in colors/) and is applied by
 -- lua/config/colorschemes.lua AFTER plugins load — so nothing here may
 -- apply a theme at startup. Every remote theme below is deferred to
 -- VeryLazy: zero blocking startup cost, but installed and ready by the
@@ -31,7 +31,7 @@ return {
   T({ "bluz71/vim-nightfly-guicolors", name = "nightfly" }),
   T({ "AlexvZyl/nordic.nvim", name = "nordic" }),
 
-  -- Nordic / cool-contrast (startup apply removed; kraihlight is active)
+  -- Nordic / cool-contrast (startup apply removed; kraihnight is active)
   T({ "shaunsingh/nord.nvim", name = "nord" }),
   T({ "navarasu/onedark.nvim", name = "onedark" }),
   T({ "doums/darcula", name = "darcula" }),
@@ -52,9 +52,9 @@ return {
     event = "VeryLazy",
   },
   {
-    -- Local theme (colors/kraihlight.lua) -- the ACTIVE theme,
+    -- Local theme (colors/kraihnight.lua) -- the ACTIVE theme,
     -- applied by lua/config/colorschemes.lua
-    "kraihlight",
+    "kraihnight",
     dir = vim.fn.stdpath("config") .. "/colors",
     event = "VeryLazy",
   },

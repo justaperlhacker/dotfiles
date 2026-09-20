@@ -64,7 +64,7 @@ local colorscheme = {}
 -- colorscheme.name = "kanso"
 -- colorscheme.name = "vscode-red"
 -- colorscheme.name = "miniwinter"
--- colorscheme.name = "kraihlight"
+-- colorscheme.name = "kraihnight"
 colorscheme.name = "fleury"
 
 colorscheme.fallback = "default"

@@ -32,4 +32,18 @@
   //"buffer_font_weight": 400,
   "disable_ai": true,
   "auto_indent": "syntax_aware",
+  "auto_install_extensions": {
+    "kitty": true,
+    "perl": true,
+  },
+  "file_types": {
+    "Kitty": ["kitty.conf", "**/kitty/**/*.conf"],
+    // Perl + Raku approximation (no real Raku language in Zed yet).
+    // Raku files get Perl highlighting until ~/Projects/zed-raku lands.
+    "Perl": [
+      "**/*.pl", "**/*.pm", "**/*.t", "**/*.PL", "**/*.pod",
+      "**/*.raku", "**/*.rakumod", "**/*.rakutest", "**/*.rakudoc",
+      "**/*.p6", "**/*.pl6", "**/*.pm6", "**/*.t6", "**/*.pod6", "**/*.nqp",
+    ],
+  },
 }

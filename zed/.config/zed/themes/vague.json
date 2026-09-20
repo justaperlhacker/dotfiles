@@ -1,10 +1,10 @@
 {
     "$schema": "https://zed.dev/schema/themes/v0.2.0.json",
-    "name": "Vague",
+    "name": "Vague Custom",
     "author": "johnm",
     "themes": [
         {
-            "name": "Vague",
+            "name": "Vague Custom",
             "appearance": "dark",
             "style": {
                 "accents": [
@@ -378,8 +378,69 @@
                         "color": "#9bb4bc",
                         "font_style": null,
                         "font_weight": null
+                    },
+                    "attribute.builtin": {
+                        "color": "#9bb4bc"
+                    },
+                    "builtin": {
+                        "color": "#b4d4cf"
+                    },
+                    "character": {
+                        "color": "#e8b589"
+                    },
+                    "character.special": {
+                        "color": "#6e94b2"
+                    },
+                    "function.call": {
+                        "color": "#bb9dbd"
+                    },
+                    "function.macro": {
+                        "color": "#aeaed1"
+                    },
+                    "function.method": {
+                        "color": "#c48282"
+                    },
+                    "function.method.call": {
+                        "color": "#9bb4bc"
+                    },
+                    "hint": {
+                        "color": "#7e98e8"
+                    },
+                    "module": {
+                        "color": "#aeaed1"
+                    },
+                    "namespace": {
+                        "color": "#9bb4bc"
+                    },
+                    "preproc": {
+                        "color": "#aeaed1"
+                    },
+                    "tag.attribute": {
+                        "color": "#aeaed1"
+                    },
+                    "tag.delimiter": {
+                        "color": "#cdcdcd"
+                    },
+                    "type.builtin": {
+                        "color": "#b4d4cf",
+                        "font_weight": 700
+                    },
+                    "variable.member": {
+                        "color": "#9bb4bc"
+                    },
+                    "variable.parameter": {
+                        "color": "#bb9dbd"
                     }
-                }
+                },
+                "debugger.accent": "#d8647e",
+                "editor.document_highlight.bracket_background": "#333738aa",
+                "panel.indent_guide": "#252530",
+                "panel.indent_guide_active": "#606079",
+                "panel.indent_guide_hover": "#252530",
+                "status_bar.foreground": "#cdcdcd",
+                "tab.active_foreground": "#6e94b2",
+                "version_control.conflict_marker.ours": "#f3be7c33",
+                "version_control.conflict_marker.theirs": "#9bb4bc33"
             }
         }
     ]

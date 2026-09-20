@@ -7,6 +7,10 @@ __pycache__
 *.bak
 *.bak.*
 
+# lsyncd transient files
+lsyncd/.config/lsyncd/lsyncd.log
+lsyncd/.config/lsyncd/lsyncd.status
+
 # DankMaterialShell transpient files
 DankMaterialShell/.config/DankMaterialShell/.changelog-*
 DankMaterialShell/.config/DankMaterialShell/.firstlaunch

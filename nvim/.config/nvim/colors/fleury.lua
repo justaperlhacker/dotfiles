@@ -219,7 +219,7 @@ link("@exception", "Exception")
 link("@punctuation.bracket", "Delimiter")
 link("@punctuation.delimiter", "Delimiter")
 link("@variable", "Identifier")
-hi("@variable.builtin", { fg = c.yellow }) -- distinct like kraihlight ($_, @_ ...)
+hi("@variable.builtin", { fg = c.yellow }) -- distinct like kraihnight ($_, @_ ...)
 link("@variable.parameter", "Identifier")
 link("@variable.member", "Identifier")
 link("@function", "Function")
@@ -246,11 +246,11 @@ link("@lsp.type.method", "@method")
 link("@lsp.type.macro", "Macro")
 link("@lsp.type.decorator", "PreProc")
 
--- Legacy vim-regex fallback (treesitter off): same as kraihlight
+-- Legacy vim-regex fallback (treesitter off): same as kraihnight
 link("luaFunction", "Function")
 link("luaFuncCall", "Function")
 
--- Perl-specific highlights (same roles as kraihlight, fleury palette)
+-- Perl-specific highlights (same roles as kraihnight, fleury palette)
 link("perlPackageRef", "Type")
 link("perlPackage", "Type")
 link("perlPackageDecl", "Type")

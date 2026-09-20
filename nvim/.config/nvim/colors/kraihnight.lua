@@ -5,7 +5,7 @@ if vim.g.syntax_on then
   vim.cmd('syntax reset')
 end
 
-vim.g.colors_name = 'kraihlight'
+vim.g.colors_name = 'kraihnight'
 
 local function hi(group, opts)
   vim.api.nvim_set_hl(0, group, opts)

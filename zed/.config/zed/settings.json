@@ -7,6 +7,10 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "proxy": "",
+  "buffer_font_weight": 500.0,
+  "ui_font_weight": 500.0,
+  "ui_font_family": "Adwaita Sans",
   "telemetry": {
     "diagnostics": true,
     "metrics": false,
@@ -31,6 +35,7 @@
   "buffer_font_fallbacks": ["JetBrainsMono Nerd Font", "BerkeleyMono Nerd Font"],
   //"buffer_font_weight": 400,
   "disable_ai": true,
+  //"buffer_line_height": "standard",
   "auto_indent": "syntax_aware",
   "auto_install_extensions": {
     "kitty": true,
@@ -45,5 +50,36 @@
       "**/*.raku", "**/*.rakumod", "**/*.rakutest", "**/*.rakudoc",
       "**/*.p6", "**/*.pl6", "**/*.pm6", "**/*.t6", "**/*.pod6", "**/*.nqp",
     ],
+  },
+  "languages": {
+    "Perl": {
+      // Prefer the installed perl-lsp (perllsp) over Perl Navigator.
+      "language_servers": ["perl-lsp", "!perlnavigator-server", "..."],
+      "tab_size": 4,
+    },
+  },
+  // Mirror the VS Code perl-lsp.* settings (server receives these as its
+  // workspace configuration).
+  "lsp": {
+    "perl-lsp": {
+      "settings": {
+        "enableSemanticTokens": false,
+        "enableFormatting": true,
+        "enableTestIntegration": true,
+        "diagnostics": true,
+        "featureProfile": "auto",
+        "autoPopulateNewFiles": true,
+        "includePaths": ["lib", ".", "local/lib/perl5"],
+        "perltidyConfig": "/home/johnm/.perltidyrc",
+        "perlcritic": {
+          "enabled": false,
+          "severity": 1,
+        },
+      },
+    },
+  },
+  "preview_tabs": {
+    "enable_preview_from_project_panel": false,
+    "enabled": false,
   },
 }

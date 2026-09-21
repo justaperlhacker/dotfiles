@@ -2,17 +2,6 @@
 background = '#303446'
 foreground = '#c6d0f5'
 
-<<<<<<< HEAD
-cursor_bg = '#ca9ee6'
-cursor_fg = '#303446'
-cursor_border = '#ca9ee6'
-
-selection_bg = '#542f79'
-selection_fg = '#c6d0f5'
-
-ansi = ['#292c3c', '#ff728a', '#73e68e', '#ffdc72', '#ba88da', '#542f79', '#ca9ee6', '#eae3f1']
-brights = ['#625d67', '#ff9faf', '#a5ffbb', '#ffe8a5', '#e2b9fd', '#e9c7ff', '#f1dbff', '#fbf8ff']
-=======
 cursor_bg = '#ef9f76'
 cursor_fg = '#303446'
 cursor_border = '#ef9f76'
@@ -22,4 +11,3 @@ selection_fg = '#c6d0f5'
 
 ansi = ['#292c3c', '#ff7670', '#8cef76', '#ffe570', '#e38759', '#6d3e24', '#ef9f76', '#faf1eb']
 brights = ['#645e5b', '#ffa29e', '#b5ffa4', '#ffeea4', '#ffb691', '#ffc3a4', '#ffd8c4', '#fffaf8']
->>>>>>> af04770 (updates)

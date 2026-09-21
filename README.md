@@ -41,7 +41,7 @@ stow -D bash          # remove symlinks
 | Package           | What it links                                             |
 |-------------------|-----------------------------------------------------------|
 | `bash`            | `.bashrc`, `.bash_profile`, `.bash_logout`, `.inputrc`, `.config/bash/` |
-| `brave`           | `.config/brave-flags.conf`                                 |
+| `brave`           | `.config/brave-flags.conf`, `.config/brave-flags.d/`, `.local/bin/brave` |
 | `DankMaterialShell`| `.config/DankMaterialShell/`                              |
 | `doom`            | `.config/doom/`                                           |
 | `i3`              | `.config/i3/`, `.xprofile`                                |
@@ -64,3 +64,17 @@ stow -D bash          # remove symlinks
 ### Per-machine overrides
 
 Create `~/.config/bash/local` for machine-specific settings (gitignored).
+
+### Brave flags
+
+`/usr/bin/brave` only ever reads `~/.config/brave-flags.conf`, so a
+`.local/bin/brave` shim shadows it and layers the files in
+`~/.config/brave-flags.d/`:
+
+1. `default.conf` — session/host-agnostic defaults (always applied).
+2. `<hostname>.conf` — used when present, otherwise:
+3. `default-<session>.conf` — `default-wayland.conf` or `default-x11.conf`.
+
+`~/.config/brave-flags.conf` keeps the common flags that `/usr/bin/brave`
+applies itself (e.g. `--password-store`). Chromium honours only one
+`--enable-features` value, so keep it to a single comma-separated line per file.

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Session/host-aware Brave launcher.
+#
+# The Arch /usr/bin/brave wrapper reads only ~/.config/brave-flags.conf and
+# offers no way to pick a different file per host. This shim shadows it via
+# ~/.local/bin (which precedes /usr/bin on PATH) and layers, in order:
+#
+#   default.conf            session/host-agnostic defaults
+#   <hostname>.conf         when present, otherwise...
+#   default-<session>.conf  wayland or x11 fallback
+#
+# Common flags still live in ~/.config/brave-flags.conf, which /usr/bin/brave
+# applies itself. Chromium honours only one --enable-features value, so keep
+# that flag to a single comma-separated line per file.
+
+conf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/brave-flags.d"
+
+case "${XDG_SESSION_TYPE:-}" in
+    wayland|x11) session="$XDG_SESSION_TYPE" ;;
+    *) if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then session=wayland; else session=x11; fi ;;
+esac
+
+profiles=("$conf_dir/default.conf")
+if [[ -f "$conf_dir/$(hostname).conf" ]]; then
+    profiles+=("$conf_dir/$(hostname).conf")
+else
+    profiles+=("$conf_dir/default-${session}.conf")
+fi
+
+flags=()
+for profile in "${profiles[@]}"; do
+    [[ -f "$profile" ]] || continue
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        [[ "$line" =~ ^[[:space:]]*(#|$) ]] && continue
+        flags+=("$line")
+    done < "$profile"
+done
+
+exec /usr/bin/brave "${flags[@]}" "$@"

@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "cli_default_open_behavior": "existing_window",
   "icon_theme": "Bearded Icon Theme",
   "proxy": "",
   "buffer_font_weight": 500.0,
@@ -25,12 +26,12 @@
   "buffer_font_size": 16,
   "terminal": {
     "font_family": "JetBrainsMono Nerd Font",
-    "font_size": 13, 
+    "font_size": 13,
   },
   "theme": {
     "mode": "system",
     "light": "DankShell Light",
-    "dark": "Black Metal Gorgoroth",
+    "dark": "Miniwinter",
   },
   "buffer_font_family": "HE_TERMINAL Nerd Font",
   "buffer_font_fallbacks": ["JetBrainsMono Nerd Font", "BerkeleyMono Nerd Font"],
@@ -49,14 +50,18 @@
     // Raku files get Perl highlighting until ~/Projects/zed-raku lands.
     "Perl": [
       "**/*.pl", "**/*.pm", "**/*.t", "**/*.PL", "**/*.pod",
-      "**/*.raku", "**/*.rakumod", "**/*.rakutest", "**/*.rakudoc",
-      "**/*.p6", "**/*.pl6", "**/*.pm6", "**/*.t6", "**/*.pod6", "**/*.nqp",
+      //"**/*.raku", "**/*.rakumod", "**/*.rakutest", "**/*.rakudoc",
+      //"**/*.p6", "**/*.pl6", "**/*.pm6", "**/*.t6", "**/*.pod6", "**/*.nqp",
     ],
   },
   "languages": {
     "Perl": {
       // Prefer the installed perl-lsp (perllsp) over Perl Navigator.
       "language_servers": ["perl-lsp", "!perlnavigator-server", "..."],
+      "tab_size": 4,
+    },
+    "Raku": {
+      "language_servers": ["raku-navigator", "..."],
       "tab_size": 4,
     },
   },
@@ -77,6 +82,14 @@
           "enabled": false,
           "severity": 1,
         },
+      },
+    },
+    // RakuNavigator: the extension finds `raku-navigator` on PATH (a wrapper
+    // around server/out/server.js). `includePaths` is passed through to the
+    // server as workspace configuration.
+    "raku-navigator": {
+      "settings": {
+        "includePaths": ["lib", "."],
       },
     },
   },

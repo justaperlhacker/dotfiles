@@ -1,13 +1,13 @@
 {
   "currentThemeName": "custom",
   "currentThemeCategory": "registry",
-  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/kanagawaWl/theme.json",
+  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/catppuccin/theme.json",
   "registryThemeVariants": {
     "rosePine": "rosePine",
     "catppuccin": {
       "dark": {
         "flavor": "frappe",
-        "accent": "red"
+        "accent": "mauve"
       }
     },
     "everforest": "medium",
@@ -162,6 +162,12 @@
     },
     "dms_clipboard_search": {
       "trigger": "cb"
+    },
+    "dms_power": {
+      "trigger": "pw"
+    },
+    "dms_qr_generator": {
+      "trigger": "qrg"
     }
   },
   "configVersion": 18

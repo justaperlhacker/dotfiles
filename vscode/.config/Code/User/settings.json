@@ -225,5 +225,6 @@
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
     },
+    "terminal.integrated.stickyScroll.enabled": false,
 
 }

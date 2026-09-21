@@ -7,11 +7,7 @@
     "catppuccin": {
       "dark": {
         "flavor": "frappe",
-<<<<<<< HEAD
-        "accent": "mauve"
-=======
         "accent": "peach"
->>>>>>> af04770 (updates)
       }
     },
     "everforest": "medium",
@@ -51,11 +47,6 @@
       "cursorHideTimeout": 0
     }
   },
-<<<<<<< HEAD
-  "fontFamily": "Adwaita Sans",
-  "monoFontFamily": "JetBrainsMono NF",
-=======
->>>>>>> af04770 (updates)
   "soundLogin": true,
   "terminalsAlwaysDark": true,
   "osdPowerProfileEnabled": true,

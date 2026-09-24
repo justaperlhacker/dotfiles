@@ -1,0 +1,30 @@
+{
+  "theme": "builtin://terminal",
+  "editor": {
+    "trim_trailing_whitespace_on_save": true,
+    "indentation_guide": "all"
+  },
+  "version": 2,
+  "active_keybinding_map": "default",
+  "plugins": {
+    "vi_mode": {
+      "enabled": true,
+      "settings": {
+        "autoStart": false,
+        "arrowKeys": true,
+        "searchWordUnderCursor": true
+      }
+    },
+    "welcome_screen": {
+      "enabled": true,
+      "settings": {
+        "showOnStartup": true
+      }
+    }
+  },
+  "file_explorer": {
+    "preview_tabs": false,
+    "width": "20%",
+    "follow_active_buffer": true
+  }
+}

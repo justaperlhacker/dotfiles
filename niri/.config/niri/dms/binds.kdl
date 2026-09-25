@@ -133,8 +133,9 @@ binds {
     Mod+grave hotkey-overlay-title="Scratchpad" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "kitty" "--session" "work" "--class" "kitty" "--title" "work"; }
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "sh" "-c" "test -n \"$TERMINAL\" && exec \"$TERMINAL\" || exec konsole"; }
     Mod+F9 hotkey-overlay-title="OpenCode" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "opencode" "--cmd" "opencode" "--class" "org.kde.konsole" "--title" "opencode"; }
-    Mod+F10 hotkey-overlay-title="Kilo Code" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "kilo" "--cmd" "kilo" "--class" "org.kde.konsole" "--title" "kilo"; }
-    Mod+F11 hotkey-overlay-title="Monitor" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "monitor" "--cmd" "htop" "--class" "org.kde.konsole" "--title" "monitor"; }
+    Mod+Shift+F9 hotkey-overlay-title="Kilo Code" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "kilo" "--cmd" "kilo" "--class" "org.kde.konsole" "--title" "kilo"; }
+    Mod+F11 hotkey-overlay-title="dgop" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "kitty" "--session" "dgop" "--cmd" "dgop" "--class" "kitty" "--title" "dgop"; }
+    Mod+Shift+F11 hotkey-overlay-title="htop" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--terminal" "konsole" "--session" "htop" "--cmd" "htop" "--class" "org.kde.konsole" "--title" "htop"; }
     Mod+F12 hotkey-overlay-title="Yakuake" { spawn "env" "ICON_THEME=breeze-dark" "yakuake"; }
     Mod+D repeat=false { toggle-overview; }
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }

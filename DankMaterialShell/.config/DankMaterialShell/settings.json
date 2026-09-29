@@ -1,7 +1,7 @@
 {
   "currentThemeName": "custom",
   "currentThemeCategory": "registry",
-  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/rosePine/theme.json",
+  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/tokyoNightDark/theme.json",
   "registryThemeVariants": {
     "rosePine": "rosePine",
     "catppuccin": {
@@ -47,6 +47,8 @@
       "cursorHideTimeout": 0
     }
   },
+  "fontFamily": "Adwaita Sans",
+  "monoFontFamily": "JetBrainsMono NF",
   "soundLogin": true,
   "terminalsAlwaysDark": true,
   "osdPowerProfileEnabled": true,

@@ -25,6 +25,10 @@
   "file_explorer": {
     "preview_tabs": false,
     "width": "20%",
-    "follow_active_buffer": true
+    "follow_active_buffer": true,
+    "show_hidden": true
+  },
+  "file_browser": {
+    "show_hidden": true
   }
 }

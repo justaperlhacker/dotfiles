@@ -30,6 +30,7 @@
   "showOccupiedWorkspacesOnly": true,
   "appIdSubstitutions": [],
   "clockDateFormat": "yyyy-MM-dd",
+  "networkPreference": "wifi",
   "iconThemePerMode": true,
   "cursorSettings": {
     "theme": "Qogir-Recolored-Gruvbox-Orange",

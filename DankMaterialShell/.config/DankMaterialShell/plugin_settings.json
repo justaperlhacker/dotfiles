@@ -1,5 +1,8 @@
 {
   "wallpaperCarousel": {
     "enabled": true
+  },
+  "dankPomodoroTimer": {
+    "enabled": true
   }
 }

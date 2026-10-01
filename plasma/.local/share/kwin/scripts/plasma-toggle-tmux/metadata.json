@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Id": "plasma-toggle-tmux",
+        "Name": "Plasma Toggle Tmux",
+        "Description": "Toggle floating tmux scratchpad terminals (SUPER+F9) like niri",
+        "Version": "1.0",
+        "License": "MIT",
+        "EnabledByDefault": true,
+        "Authors": [
+            {
+                "Name": "johnm"
+            }
+        ]
+    }
+}

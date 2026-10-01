@@ -56,7 +56,9 @@ stow -D bash          # remove symlinks
 | `nvim`            | `.config/nvim/`                                           |
 | `perl`            | `.perltidyrc`                                             |
 | `pi`              | `.pi/agent/settings.json`, `.pi/agent/auth.json`, `.pi/agent/models-store.json` |
+| `plasma`          | `.local/share/kwin/scripts/`, `.config/systemd/user/plasma-toggle-tmux@.service` |
 | `redshift`        | `.config/redshift/`                                       |
+| `scripts`         | `.local/bin/`                                             |
 | `starship`        | `.config/starship.toml`                                   |
 | `tmux`            | `.config/tmux/`                                           |
 | `xresources`      | `.Xresources`, `.Xresources.d/`                           |
@@ -78,3 +80,25 @@ Create `~/.config/bash/local` for machine-specific settings (gitignored).
 `~/.config/brave-flags.conf` keeps the common flags that `/usr/bin/brave`
 applies itself (e.g. `--password-store`). Chromium honours only one
 `--enable-features` value, so keep it to a single comma-separated line per file.
+
+### Plasma tmux scratchpad (SUPER+F9)
+
+`plasma` packages a KWin script that binds **SUPER+F9** to a niri-style
+floating tmux scratchpad, mirroring niri's `Mod+F9` "OpenCode" binding. KWin
+cannot spawn processes, so the shortcut starts `plasma-toggle-tmux@.service`,
+which runs the `plasma-toggle-tmux` Perl helper (in the `scripts` package) to
+do the actual toggle. After stowing, run this once:
+
+```bash
+plasma-toggle-tmux --install
+```
+
+`--install` enables and loads the KWin script, writes a systemd drop-in so the
+unit uses the perlbrewed perl that has `Net::DBus`, and daemon-reloads systemd.
+**SUPER+F9** then spawns a centered, always-on-top Konsole running the
+`opencode` tmux session, and **SUPER+\\** (backslash) does the same for the
+`work` session in kitty; pressing a binding again while its window is focused
+closes the window (the tmux session survives). Add more scratchpads by
+appending to `sessions` in
+`plasma/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js`.
+

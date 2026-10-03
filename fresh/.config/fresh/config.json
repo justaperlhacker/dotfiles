@@ -1,5 +1,5 @@
 {
-  "theme": "vague.json",
+  "theme": "kanso.json",
   "editor": {
     "trim_trailing_whitespace_on_save": true,
     "indentation_guide": "all"

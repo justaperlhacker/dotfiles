@@ -62,7 +62,7 @@ my %PRESETS = (
     kilo     => { terminal => 'konsole', cmd => 'kilo',     class => 'org.kde.konsole' },
     dgop     => { terminal => 'kitty',   cmd => 'dgop',     class => 'kitty' },
     htop     => { terminal => 'konsole', cmd => 'htop',     class => 'org.kde.konsole' },
-    work     => { terminal => 'kitty',   cmd => undef,      class => 'kitty' },
+    work     => { terminal => 'konsole', cmd => undef,      class => 'org.kde.konsole' },
 );
 
 my ($terminal, $session, $cmd, $class, $title);

@@ -1,7 +1,6 @@
 {
-  "currentThemeName": "custom",
-  "currentThemeCategory": "registry",
-  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/tokyoNightDark/theme.json",
+  "currentThemeName": "orange",
+  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/joziCityNights/theme.json",
   "registryThemeVariants": {
     "rosePine": "rosePine",
     "catppuccin": {
@@ -15,6 +14,12 @@
       "dark": {
         "flavor": "black",
         "accent": "orange"
+      }
+    },
+    "joziCityNights": {
+      "dark": {
+        "flavor": "nights",
+        "accent": "purple"
       }
     }
   },

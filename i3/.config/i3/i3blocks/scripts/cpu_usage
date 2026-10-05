@@ -44,7 +44,7 @@ while (<MPSTAT>) {
 }
 close(MPSTAT);
 
-$cpu_usage eq -1 and die 'Can\'t find CPU information';
+$cpu_usage == -1 and die 'Can\'t find CPU information';
 
 # Print short_text, full_text
 print "${label}";

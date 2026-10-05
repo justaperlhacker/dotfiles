@@ -47,7 +47,7 @@ while (<SENSORS>) {
 }
 close(SENSORS);
 
-$temperature eq -9999 and die 'Cannot find temperature';
+$temperature == -9999 and die 'Cannot find temperature';
 
 if ( $temperature < 45 ) {
     $label = '';

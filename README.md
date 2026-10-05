@@ -98,7 +98,7 @@ unit uses the perlbrewed perl that has `Net::DBus`, installs a session
 autostart entry that reloads the script each login (KWin does not reliably
 auto-load user scripts), and daemon-reloads systemd. **SUPER+F9** then spawns a
 centered, always-on-top Konsole running the `opencode` tmux session, and
-**SUPER+\\** (backslash) does the same for the `work` session in kitty; pressing
+**SUPER+\\** (backslash) does the same for the `work` session in Konsole; pressing
 a binding again while its window is focused closes the window (the tmux session
 survives). The window defaults to 90% width × 85% height of the active screen
 (`--width`/`--height`), and window class matching handles both Wayland app-ids

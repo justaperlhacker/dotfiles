@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Cwd qw(abs_path);
+use Cwd            qw(abs_path);
 use File::Basename qw(dirname basename);
 use File::Find;
 use File::Path qw(make_path);
@@ -11,14 +11,14 @@ use POSIX qw(strftime);
 
 Getopt::Long::Configure(qw(no_ignore_case));
 
-my $DOTFILES = abs_path(dirname($0)) || die "cannot resolve dotfiles dir\n";
-my $TARGET   = $ENV{HOME};
+my $DOTFILES    = abs_path( dirname($0) ) || die "cannot resolve dotfiles dir\n";
+my $TARGET      = $ENV{HOME};
 my $BACKUP_ROOT = "$DOTFILES/.backup";
-my $BACKUP_DIR  = "$BACKUP_ROOT/" . strftime('%Y%m%d-%H%M%S', localtime);
+my $BACKUP_DIR  = "$BACKUP_ROOT/" . strftime( '%Y%m%d-%H%M%S', localtime );
 
-my $all      = 0;
-my $list     = 0;
-my $help     = 0;
+my $all  = 0;
+my $list = 0;
+my $help = 0;
 my @packages;
 
 GetOptions(
@@ -58,7 +58,7 @@ EOF
 sub find_packages {
     my @pkgs;
     opendir my $dh, $DOTFILES or die "cannot read $DOTFILES: $!\n";
-    for my $name (readdir $dh) {
+    for my $name ( readdir $dh ) {
         next if $name =~ /^[._]/;
         push @pkgs, $name if -d "$DOTFILES/$name";
     }
@@ -74,14 +74,15 @@ if ($help) {
 if ($list) {
     my @pkgs = find_packages();
     if (@pkgs) {
-        print join("\n", @pkgs), "\n";
-    } else {
+        print join( "\n", @pkgs ), "\n";
+    }
+    else {
         print "(no packages found in $DOTFILES)\n";
     }
     exit 0;
 }
 
-if ($all && @packages) {
+if ( $all && @packages ) {
     print STDERR "error: --all and --package cannot be used together\n";
     usage_error();
 }
@@ -90,9 +91,11 @@ my @pkgs;
 if ($all) {
     @pkgs = find_packages();
     die "error: no packages found in $DOTFILES\n" unless @pkgs;
-} elsif (@packages) {
+}
+elsif (@packages) {
     @pkgs = @packages;
-} else {
+}
+else {
     usage_error();
 }
 
@@ -113,7 +116,7 @@ sub is_stowed {
 # covered by a folded directory and must never be backed up or clobbered.
 sub has_stowed_ancestor {
     my ($path) = @_;
-    while ($path ne $TARGET) {
+    while ( $path ne $TARGET ) {
         my $parent = dirname($path);
         return 1 if is_stowed($parent);
         $path = $parent;
@@ -122,25 +125,25 @@ sub has_stowed_ancestor {
 }
 
 sub collect_conflicts {
-    my ($pkg) = @_;
-    my $pkgdir  = "$DOTFILES/$pkg";
-    my $prefix  = "$pkgdir/";
-    my $wanted  = sub {
+    my ($pkg)  = @_;
+    my $pkgdir = "$DOTFILES/$pkg";
+    my $prefix = "$pkgdir/";
+    my $wanted = sub {
         my $full = $File::Find::name;
         return if $full eq $pkgdir;
-        my $rel    = substr($full, length($prefix));
+        my $rel    = substr( $full, length($prefix) );
         my $target = "$TARGET/$rel";
         return if has_stowed_ancestor($target);
-        if (-l $target) {
+        if ( -l $target ) {
             push @conflicts, $target unless is_stowed($target);
             return;
         }
-        if (-e $target) {
+        if ( -e $target ) {
             return if -d $full && -d $target;
             push @conflicts, $target;
         }
     };
-    find({ wanted => $wanted, no_chdir => 1 }, $pkgdir);
+    find( { wanted => $wanted, no_chdir => 1 }, $pkgdir );
 }
 
 for my $p (@pkgs) {
@@ -151,18 +154,19 @@ if (@conflicts) {
     make_path($BACKUP_DIR);
     print "Backing up ", scalar(@conflicts), " existing item(s) to $BACKUP_DIR:\n";
     for my $c (@conflicts) {
-        my $rel  = substr($c, length("$TARGET/"));
+        my $rel  = substr( $c, length("$TARGET/") );
         my $dest = "$BACKUP_DIR/$rel";
-        make_path(dirname($dest));
-        rename($c, $dest) or die "error: failed to back up $c: $!\n";
+        make_path( dirname($dest) );
+        rename( $c, $dest ) or die "error: failed to back up $c: $!\n";
         print "  $c -> $dest\n";
     }
-} else {
+}
+else {
     print "No conflicts to back up.\n";
 }
 
 print "Stowing: @pkgs\n";
-system('stow', '-d', $DOTFILES, '-t', $TARGET, @pkgs) == 0
-    or die "error: stow failed (exit ", ($? >> 8), ")\n";
+system( 'stow', '-d', $DOTFILES, '-t', $TARGET, @pkgs ) == 0
+    or die "error: stow failed (exit ", ( $? >> 8 ), ")\n";
 
 print "Done. Backups in: $BACKUP_DIR\n";

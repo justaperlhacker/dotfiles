@@ -4,19 +4,19 @@ use FindBin qw($Bin);
 use lib "$Bin";
 use I3Connect qw(i3_connect find_focused find_parent_of);
 
-my $i3 = i3_connect();
+my $i3   = i3_connect();
 my $tree = $i3->get_tree->recv;
 
 my $focused = find_focused($tree);
 exit 0 unless $focused;
 
-my $parent = find_parent_of($tree, $focused->{id});
+my $parent = find_parent_of( $tree, $focused->{id} );
 exit 0 unless $parent;
 
 my $layout = $parent->{layout} // '';
 
-if ($layout eq 'splith' || $layout eq 'splitv') {
+if ( $layout eq 'splith' || $layout eq 'splitv' ) {
     my $new = $layout eq 'splith' ? 'vertical' : 'horizontal';
     $i3->command('split toggle')->recv;
-    system('notify-send', '-t', '2000', 'Split Orientation', "$new");
+    system( 'notify-send', '-t', '2000', 'Split Orientation', "$new" );
 }

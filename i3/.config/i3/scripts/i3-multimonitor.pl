@@ -36,20 +36,20 @@ sub read_monitor_config($path) {
     my %config;
     my $section = 'default';
 
-    if (open my $fh, '<', $path) {
-        while (my $line = <$fh>) {
+    if ( open my $fh, '<', $path ) {
+        while ( my $line = <$fh> ) {
             chomp $line;
-            $line =~ s/\s*#.*$//;
-            $line =~ s/^\s+//;
+            $line         =~ s/\s*#.*$//;
+            $line         =~ s/^\s+//;
             next if $line =~ /^$/;
 
-            if ($line =~ /^\[(.+?)\]\s*$/) {
+            if ( $line =~ /^\[(.+?)\]\s*$/ ) {
                 $section = $1;
                 next;
             }
 
-            if ($line =~ /^\s*(.+?)\s*=\s*(.+?)\s*$/) {
-                my ($output, $suffix) = ($1, $2);
+            if ( $line =~ /^\s*(.+?)\s*=\s*(.+?)\s*$/ ) {
+                my ( $output, $suffix ) = ( $1, $2 );
                 $config{$section}{$output} = $suffix;
             }
         }
@@ -58,50 +58,53 @@ sub read_monitor_config($path) {
     return \%config;
 }
 
-sub auto_assign_suffixes($config, $host) {
+sub auto_assign_suffixes( $config, $host ) {
     my %suffixes;
 
     # Collect explicitly configured suffixes first
-    for my $section ($host, 'default') {
+    for my $section ( $host, 'default' ) {
         next unless exists $config->{$section};
-        for my $output (keys $config->{$section}->%*) {
+        for my $output ( keys $config->{$section}->%* ) {
             $suffixes{$output} = $config->{$section}{$output};
         }
     }
 
     # If we're falling back to default and have unmapped outputs,
     # auto-assign suffixes a, b, c... to connected outputs
-    if (!exists $config->{$host} && exists $config->{default}) {
-        my $suffix = ord('a');
+    if ( !exists $config->{$host} && exists $config->{default} ) {
+        my $suffix    = ord('a');
         my @connected = `xrandr --query 2>/dev/null | awk '/ connected/ {print \$1}'`;
         chomp @connected;
         for my $output (@connected) {
             next if exists $suffixes{$output};
-            $suffixes{$output} = chr($suffix++);
+            $suffixes{$output} = chr( $suffix++ );
         }
     }
 
     return \%suffixes;
 }
 
-sub send_command($i3, $cmd) {
+sub send_command( $i3, $cmd ) {
     my $cv = $i3->command($cmd);
-    $cv->cb(sub {
-        my ($cv) = @_;
-        my $reply = $cv->recv;
-        if ($reply) {
-            for my $r (@$reply) {
-                warn "i3 command FAILED: $cmd\n" unless $r->{success};
+    $cv->cb(
+        sub {
+            my ($cv) = @_;
+            my $reply = $cv->recv;
+            if ($reply) {
+                for my $r (@$reply) {
+                    warn "i3 command FAILED: $cmd\n" unless $r->{success};
+                }
             }
-        } else {
-            warn "i3 command no reply: $cmd\n";
+            else {
+                warn "i3 command no reply: $cmd\n";
+            }
         }
-    });
+    );
 }
 
-my $host = hostname();
-my $cfg = read_monitor_config($CONFIG);
-my $suffixes = auto_assign_suffixes($cfg, $host);
+my $host     = hostname();
+my $cfg      = read_monitor_config($CONFIG);
+my $suffixes = auto_assign_suffixes( $cfg, $host );
 
 %MONITOR_SUFFIX = %$suffixes;
 
@@ -135,6 +138,7 @@ sub on_binding($msg) {
             my $command;
 
             if ( $binding->{symbol} eq 'b' ) {
+
                 # $mod+Shift+b: move the focused window to the same-index
                 # workspace on the other monitor
                 return unless has_modifier( $mask, 'shift' );
@@ -150,7 +154,7 @@ sub on_binding($msg) {
 
                 if ( has_modifier( $mask, 'ctrl' ) && has_modifier( $mask, 'shift' ) ) {
                     my $other_suffix = $suffix eq 'a' ? 'b' : 'a';
-                    my $target = "$local_index$other_suffix";
+                    my $target       = "$local_index$other_suffix";
                     $command = "move container to workspace $target; workspace $target";
                 }
                 elsif ( has_modifier( $mask, 'ctrl' ) ) {

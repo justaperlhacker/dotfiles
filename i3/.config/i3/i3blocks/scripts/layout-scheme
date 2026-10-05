@@ -8,14 +8,14 @@ use I3Connect qw(i3_connect find_first_workspace);
 
 my $STATE_FILE = "$ENV{HOME}/.config/i3/.layout-state";
 
-my $i3 = i3_connect();
+my $i3   = i3_connect();
 my $tree = $i3->get_tree->recv;
 
 my $ws = find_first_workspace($tree);
 
 my $scheme = 'split';
 if ($ws) {
-    my $child = ($ws->{nodes} // [])->[0];
+    my $child = ( $ws->{nodes} // [] )->[0];
     if ($child) {
         my $layout = $child->{layout} // '';
         $scheme = 'tabbed'  if $layout eq 'tabbed';

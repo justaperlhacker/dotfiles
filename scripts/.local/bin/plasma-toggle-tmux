@@ -67,7 +67,7 @@ my %PRESETS = (
 
 my ($terminal, $session, $cmd, $class, $title);
 my ($width, $height, $keep_above, $skip_taskbar);
-my ($verbose, $install, $help);
+my ($verbose, $install, $load, $help);
 
 GetOptions(
     'terminal=s'    => \$terminal,
@@ -81,11 +81,13 @@ GetOptions(
     'skip-taskbar!' => \$skip_taskbar,
     'verbose|v'     => \$verbose,
     'install'       => \$install,
+    'load'          => \$load,
     'help|h'        => \$help,
 ) or usage(2);
 
 usage(0) if $help;
 exit(do_install() ? 0 : 1) if $install;
+exit(do_load() ? 0 : 1) if $load;
 
 die_usage("--session is required\n") unless defined $session && length $session;
 
@@ -99,8 +101,8 @@ if (exists $PRESETS{$session}) {
 $terminal     //= 'konsole';
 $class        //= 'org.kde.konsole';
 $title        //= $session;
-$width        //= 75;
-$height       //= 75;
+$width        //= 90;
+$height       //= 85;
 $keep_above   = 1 unless defined $keep_above;
 $skip_taskbar = 1 unless defined $skip_taskbar;
 
@@ -251,8 +253,21 @@ sub get_windows {
     return $data // [];
 }
 
+sub class_matches ($wcls, $want) {
+    $wcls = lc($wcls // '');
+    $want = lc($want // '');
+    return 1 if $wcls eq $want;
+    # Wayland app_id is reverse-DNS (org.kde.konsole); an X11 WM_CLASS is
+    # just "konsole", so compare the short (last dotted) segments too.
+    my ($short) = reverse split /\./, $want;
+    return 1 if defined $short && length $short && $wcls eq $short;
+    my ($wshort) = reverse split /\./, $wcls;
+    return 1 if defined $wshort && length $wshort && $wshort eq $want;
+    return 0;
+}
+
 sub is_target ($win) {
-    return 0 unless ($win->{cls} // '') eq $class;
+    return 0 unless class_matches($win->{cls}, $class);
     my $pid = $win->{pid} or return 0;
     open my $fh, '<', "/proc/$pid/cmdline" or return 0;
     my $cmdline = do { local $/; <$fh> };
@@ -323,7 +338,7 @@ if ($target) {
 else {
     $log->("no scratchpad, spawning $terminal/$session");
     spawn_terminal();
-    my $win = wait_for_window(3.0, 0.2);
+    my $win = wait_for_window(5.0, 0.2);
     if ($win) {
         show($win);
     }
@@ -350,8 +365,8 @@ sub usage ($code) {
           --cmd CMD          command to run inside the tmux session
           --class CLASS      window resourceClass to match (default: org.kde.konsole)
           --title STRING     /proc/<pid>/cmdline substring identifying the window
-          --width PCT        window width as % of screen (default: 75)
-          --height PCT       window height as % of screen (default: 75)
+          --width PCT        window width as % of screen (default: 90)
+          --height PCT       window height as % of screen (default: 85)
           --keep-above / --no-keep-above      keep window above others (default: on)
           --skip-taskbar / --no-skip-taskbar  hide from taskbar/pager (default: on)
           -v, --verbose      print what is happening
@@ -366,6 +381,32 @@ sub usage ($code) {
 sub die_usage ($msg) {
     print STDERR "plasma-toggle-tmux: $msg";
     usage(2);
+}
+
+sub load_kwin_script {
+    my $home = shift;
+    my $kwin_js = "$home/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js";
+    return 0 unless -r $kwin_js;
+
+    my $loaded = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
+        'org.kde.kwin.Scripting.isScriptLoaded', 'plasma-toggle-tmux');
+    chomp $loaded;
+    return 1 if $loaded eq 'true';
+
+    my $id = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
+        'org.kde.kwin.Scripting.loadScript', $kwin_js, 'plasma-toggle-tmux');
+    chomp $id;
+    return 0 unless $id =~ /^(\d+)$/;
+    qdbus_run($KWIN_SVC, "/Scripting/Script$1", 'org.kde.kwin.Script.run');
+    return 1;
+}
+
+sub do_load {
+    # Nothing to do outside a KWin session (e.g. a niri login); stay quiet.
+    my $services = `busctl --user --no-pager list 2>/dev/null`;
+    return 1 unless ($services // '') =~ /org\.kde\.KWin\b/;
+    my $home = $ENV{HOME} // return 0;
+    return load_kwin_script($home);
 }
 
 sub do_install {
@@ -383,7 +424,8 @@ sub do_install {
 
     # The systemd user manager does not inherit perlbrew's PATH, so drop in an
     # Environment= override pointing at the perl that actually has Net::DBus.
-    my $perl_bin   = dirname(abs_path($^X) // $^X);
+    my $perl       = abs_path($^X) // $^X;
+    my $perl_bin   = dirname($perl);
     my $dropin_dir = $home . '/.config/systemd/user/plasma-toggle-tmux@.service.d';
     mkdir $dropin_dir unless -d $dropin_dir;
     my $path = join ':', $perl_bin, "$home/.local/bin", '/usr/local/bin', '/usr/bin', '/bin';
@@ -393,6 +435,27 @@ sub do_install {
     }
     else {
         warn "plasma-toggle-tmux: could not write $dropin_dir/10-perlbrew.conf: $!\n";
+    }
+
+    # KWin does not reliably auto-load user scripts at login, so install a
+    # session autostart entry that loads it explicitly (no-op under niri).
+    my $autostart_dir = $home . '/.config/autostart';
+    mkdir $autostart_dir unless -d $autostart_dir;
+    if (open my $afh, '>', "$autostart_dir/plasma-toggle-tmux.desktop") {
+        print $afh <<~"DESKTOP";
+            [Desktop Entry]
+            Type=Application
+            Name=Plasma Toggle Tmux
+            Comment=Load the KWin shortcut script for the tmux scratchpad toggles
+            Exec=$perl $home/.local/bin/plasma-toggle-tmux --load
+            OnlyShowIn=KDE;
+            NoDisplay=true
+            X-GNOME-Autostart-enabled=true
+            DESKTOP
+        close $afh;
+    }
+    else {
+        warn "plasma-toggle-tmux: could not write autostart entry: $!\n";
     }
 
     system('systemctl', '--user', 'daemon-reload');
@@ -419,14 +482,8 @@ sub do_install {
             '--group', 'kwin', '--key', $name, '--delete');
     }
 
-    my $id = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
-        'org.kde.kwin.Scripting.loadScript', $kwin_js, 'plasma-toggle-tmux');
-    chomp $id;
-    if ($id =~ /^(\d+)$/) {
-        qdbus_run($KWIN_SVC, "/Scripting/Script$1", 'org.kde.kwin.Script.run');
-    }
-
     qdbus_run($KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure');
+    load_kwin_script($home);
     print "plasma-toggle-tmux: installed. SUPER+F9 toggles opencode, SUPER+\\ toggles work.\n";
     return 1;
 }

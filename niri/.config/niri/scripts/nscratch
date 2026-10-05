@@ -12,26 +12,26 @@ sub niri_cmd (@args) {
     system "niri", "msg", "action", @args;
 }
 
-sub move_window_to_scratchpad ($window_id, $animations) {
+sub move_window_to_scratchpad ( $window_id, $animations ) {
     niri_cmd "move-window-to-workspace", "--window-id", $window_id, $scratch_workspace, "--focus=false";
     niri_cmd "move-window-to-tiling", "--id", $window_id if $animations;
 }
 
-sub bring_scratchpad_window_to_focus ($window_id, $multi_monitor, $animations) {
+sub bring_scratchpad_window_to_focus ( $window_id, $multi_monitor, $animations ) {
     niri_cmd "move-window-to-workspace", "--window-id", $window_id, $focused_workspace{idx};
-    niri_cmd "move-window-to-monitor", "--id", $window_id, $focused_workspace{output} if $multi_monitor;
-    niri_cmd "move-window-to-floating", "--id", $window_id if $animations && !$scratch_window{is_floating};
-    niri_cmd "focus-window", "--id", $window_id;
+    niri_cmd "move-window-to-monitor",   "--id",        $window_id, $focused_workspace{output} if $multi_monitor;
+    niri_cmd "move-window-to-floating",  "--id",        $window_id if $animations && !$scratch_window{is_floating};
+    niri_cmd "focus-window",             "--id",        $window_id;
 }
 
-sub find_scratch_window ($wclass, $title, $windows) {
-    for my $window ($windows->@*) {
-        if (($wclass && $window->{app_id} eq $wclass) || ($title && $window->{title} eq $title)) {
+sub find_scratch_window ( $wclass, $title, $windows ) {
+    for my $window ( $windows->@* ) {
+        if ( ( $wclass && $window->{app_id} eq $wclass ) || ( $title && $window->{title} eq $title ) ) {
             %scratch_window = (
-                id            => $window->{id},
-                workspace_id  => $window->{workspace_id},
-                is_focused    => $window->{is_focused},
-                is_floating   => $window->{is_floating},
+                id           => $window->{id},
+                workspace_id => $window->{workspace_id},
+                is_focused   => $window->{is_focused},
+                is_floating  => $window->{is_floating},
             );
             last;
         }
@@ -39,12 +39,12 @@ sub find_scratch_window ($wclass, $title, $windows) {
 }
 
 sub fetch_focused_workspace () {
-    my $json = `niri msg --json workspaces`;
+    my $json       = `niri msg --json workspaces`;
     my $workspaces = decode_json($json);
 
-    for my $ws ($workspaces->@*) {
-        if ($ws->{is_focused}) {
-            %focused_workspace = (idx => $ws->{idx}, output => $ws->{output});
+    for my $ws ( $workspaces->@* ) {
+        if ( $ws->{is_focused} ) {
+            %focused_workspace = ( idx => $ws->{idx}, output => $ws->{output} );
             return $ws->{id};
         }
     }
@@ -56,38 +56,39 @@ sub get_windows () {
     return decode_json($json);
 }
 
-my ($wclass, $title, $spawn, $animations, $multi_monitor);
+my ( $wclass, $title, $spawn, $animations, $multi_monitor );
 
 GetOptions(
-    'id|app-id=s' => \$wclass,
-    't|title=s'   => \$title,
-    's|spawn=s'   => \$spawn,
-    'a|animations' => \$animations,
+    'id|app-id=s'     => \$wclass,
+    't|title=s'       => \$title,
+    's|spawn=s'       => \$spawn,
+    'a|animations'    => \$animations,
     'm|multi-monitor' => \$multi_monitor,
 ) or die "Usage: $0 (-id APP_ID | -t TITLE) [-s SPAWN] [-a] [-m]\n";
 
 die "Error: -id or -t is required\n" unless defined $wclass || defined $title;
 
 my $windows = get_windows();
-find_scratch_window($wclass, $title, $windows);
+find_scratch_window( $wclass, $title, $windows );
 
 unless (%scratch_window) {
-    if (defined $spawn) {
-        niri_cmd "spawn", "--", split(/\s+/, $spawn);
+    if ( defined $spawn ) {
+        niri_cmd "spawn", "--", split( /\s+/, $spawn );
         exit 0;
-    } else {
+    }
+    else {
         die "Usage: $0 (-id APP_ID | -t TITLE) [-s SPAWN] [-a] [-m]\n";
     }
 }
 
 my $window_id = $scratch_window{id};
 
-if (!$scratch_window{is_focused}) {
+if ( !$scratch_window{is_focused} ) {
     my $workspace_id = fetch_focused_workspace();
-    if ($scratch_window{workspace_id} != $workspace_id) {
-        bring_scratchpad_window_to_focus($window_id, $multi_monitor, $animations);
+    if ( $scratch_window{workspace_id} != $workspace_id ) {
+        bring_scratchpad_window_to_focus( $window_id, $multi_monitor, $animations );
         exit 0;
     }
 }
 
-move_window_to_scratchpad($window_id, $animations);
+move_window_to_scratchpad( $window_id, $animations );

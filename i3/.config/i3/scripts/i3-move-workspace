@@ -16,12 +16,12 @@ my ($focused) = grep { $_->{focused} } @$workspaces;
 exit unless $focused;
 
 my $name = $focused->{name};
-my ($num, $suffix) = $name =~ /^(\d+)([a-z])$/i;
+my ( $num, $suffix ) = $name =~ /^(\d+)([a-z])$/i;
 exit unless defined $num && defined $suffix;
 
 my $next_num = $direction eq 'next' ? $num + 1 : $num - 1;
-$next_num = 1  if $next_num > 8;
-$next_num = 8  if $next_num < 1;
+$next_num = 1 if $next_num > 8;
+$next_num = 8 if $next_num < 1;
 
 my $target = "$next_num$suffix";
 $i3->command("move container to workspace $target; workspace $target")->recv;

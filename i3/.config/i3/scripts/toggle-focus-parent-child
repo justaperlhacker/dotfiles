@@ -4,13 +4,13 @@ use FindBin qw($Bin);
 use lib "$Bin";
 use I3Connect qw(i3_connect find_focused);
 
-my $i3 = i3_connect();
+my $i3   = i3_connect();
 my $tree = $i3->get_tree->recv;
 
 my $focused = find_focused($tree);
 exit 0 unless $focused;
 
-if (($focused->{nodes} // [])->@*) {
+if ( ( $focused->{nodes} // [] )->@* ) {
     $i3->command('focus child')->recv;
 }
 else {

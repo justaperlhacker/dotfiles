@@ -31,28 +31,29 @@ use JSON::PP;
 use Time::HiRes qw(time sleep);
 use Net::DBus;
 use Net::DBus::Reactor;
-use POSIX qw(setsid _exit);
-use Cwd qw(abs_path);
+use POSIX          qw(setsid _exit);
+use Cwd            qw(abs_path);
 use File::Basename qw(dirname);
 
 # ---------------------------------------------------------------------------
 # D-Bus receiver: KWin scripts call this back with their result payload.
 # ---------------------------------------------------------------------------
 package Receiver;
-use base qw(Net::DBus::Object);
+use base                qw(Net::DBus::Object);
 use Net::DBus::Exporter qw(com.johnm.PlasmaToggleTmux);
 
-dbus_method('result', ['string'], [], { no_return => 1 });
+dbus_method( 'result', ['string'], [], { no_return => 1 } );
+
 sub result {
-    my ($self, $payload) = @_;
+    my ( $self, $payload ) = @_;
     $main::query_result = $payload;
     $main::reactor->shutdown if $main::reactor;
 }
 
 package main;
 
-our ($query_result, $reactor, $svc_name);
-our ($KWIN_SVC, $KWIN_OBJ) = ('org.kde.KWin', '/Scripting');
+our ( $query_result, $reactor, $svc_name );
+our ( $KWIN_SVC, $KWIN_OBJ ) = ( 'org.kde.KWin', '/Scripting' );
 
 # ---------------------------------------------------------------------------
 # Session presets so that `--session opencode` is enough (see systemd unit).
@@ -65,9 +66,9 @@ my %PRESETS = (
     work     => { terminal => 'konsole', cmd => undef,      class => 'org.kde.konsole' },
 );
 
-my ($terminal, $session, $cmd, $class, $title);
-my ($width, $height, $keep_above, $skip_taskbar);
-my ($verbose, $install, $load, $help);
+my ( $terminal, $session, $cmd,        $class, $title );
+my ( $width,    $height,  $keep_above, $skip_taskbar );
+my ( $verbose,  $install, $load,       $help );
 
 GetOptions(
     'terminal=s'    => \$terminal,
@@ -86,28 +87,28 @@ GetOptions(
 ) or usage(2);
 
 usage(0) if $help;
-exit(do_install() ? 0 : 1) if $install;
-exit(do_load() ? 0 : 1) if $load;
+exit( do_install() ? 0 : 1 ) if $install;
+exit( do_load()    ? 0 : 1 ) if $load;
 
 die_usage("--session is required\n") unless defined $session && length $session;
 
-if (exists $PRESETS{$session}) {
+if ( exists $PRESETS{$session} ) {
     my $p = $PRESETS{$session};
     $terminal //= $p->{terminal};
     $cmd      //= $p->{cmd};
     $class    //= $p->{class};
 }
 
-$terminal     //= 'konsole';
-$class        //= 'org.kde.konsole';
-$title        //= $session;
-$width        //= 90;
-$height       //= 85;
+$terminal //= 'konsole';
+$class    //= 'org.kde.konsole';
+$title    //= $session;
+$width    //= 90;
+$height   //= 85;
 $keep_above   = 1 unless defined $keep_above;
 $skip_taskbar = 1 unless defined $skip_taskbar;
 
-for my $pair ([width => $width], [height => $height]) {
-    my ($name, $val) = @$pair;
+for my $pair ( [ width => $width ], [ height => $height ] ) {
+    my ( $name, $val ) = @$pair;
     die_usage("--$name must be between 1 and 100\n") unless $val >= 1 && $val <= 100;
 }
 
@@ -146,7 +147,7 @@ sub js_query_windows {
 }
 
 sub js_show_window ($id) {
-    my ($ka, $st) = ($keep_above ? 'true' : 'false', $skip_taskbar ? 'true' : 'false');
+    my ( $ka, $st ) = ( $keep_above ? 'true' : 'false', $skip_taskbar ? 'true' : 'false' );
     return sprintf <<~"JS", js_str($id), $ka, $st, $st, $width, $height;
         (function () {
             var id = %s;
@@ -217,29 +218,27 @@ sub run_kwin_js ($js) {
     print $fh $js;
     close $fh;
 
-    my $id = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
-        'org.kde.kwin.Scripting.loadScript', $path, $name);
+    my $id = qdbus_capture( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.loadScript', $path, $name );
     chomp $id;
 
-    if ($id =~ /^(\d+)$/) {
-        qdbus_run($KWIN_SVC, "/Scripting/Script$1", 'org.kde.kwin.Script.run');
-    } else {
-        qdbus_run($KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.start');
+    if ( $id =~ /^(\d+)$/ ) {
+        qdbus_run( $KWIN_SVC, "/Scripting/Script$1", 'org.kde.kwin.Script.run' );
     }
-    qdbus_run($KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.unloadScript', $name);
+    else {
+        qdbus_run( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.start' );
+    }
+    qdbus_run( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.unloadScript', $name );
     unlink $path;
 }
 
 sub query_kwin ($expr) {
     $query_result = undef;
-    my $js = 'callDBus(' . js_str($svc_name)
-        . ', "/", "com.johnm.PlasmaToggleTmux", "result", String('
-        . $expr . '));';
+    my $js = 'callDBus(' . js_str($svc_name) . ', "/", "com.johnm.PlasmaToggleTmux", "result", String(' . $expr . '));';
     run_kwin_js($js);
 
     my $deadline = time + 5;
-    while (!defined $query_result && time < $deadline) {
-        my $timer = $reactor->add_timeout(100, sub { $reactor->shutdown });
+    while ( !defined $query_result && time < $deadline ) {
+        my $timer = $reactor->add_timeout( 100, sub { $reactor->shutdown } );
         $reactor->run;
         $reactor->remove_timeout($timer);
     }
@@ -247,16 +246,17 @@ sub query_kwin ($expr) {
 }
 
 sub get_windows {
-    my $json = query_kwin(js_query_windows());
+    my $json = query_kwin( js_query_windows() );
     return [] unless defined $json && length $json;
     my $data = eval { decode_json($json) };
     return $data // [];
 }
 
-sub class_matches ($wcls, $want) {
-    $wcls = lc($wcls // '');
-    $want = lc($want // '');
+sub class_matches ( $wcls, $want ) {
+    $wcls = lc( $wcls // '' );
+    $want = lc( $want // '' );
     return 1 if $wcls eq $want;
+
     # Wayland app_id is reverse-DNS (org.kde.konsole); an X11 WM_CLASS is
     # just "konsole", so compare the short (last dotted) segments too.
     my ($short) = reverse split /\./, $want;
@@ -267,26 +267,26 @@ sub class_matches ($wcls, $want) {
 }
 
 sub is_target ($win) {
-    return 0 unless class_matches($win->{cls}, $class);
+    return 0 unless class_matches( $win->{cls}, $class );
     my $pid = $win->{pid} or return 0;
     open my $fh, '<', "/proc/$pid/cmdline" or return 0;
     my $cmdline = do { local $/; <$fh> };
     close $fh;
     $cmdline =~ s/\0/ /g;
-    return index(lc($cmdline), lc($title)) >= 0;
+    return index( lc($cmdline), lc($title) ) >= 0;
 }
 
 sub find_target ($windows) {
-    for my $w ($windows->@*) {
+    for my $w ( $windows->@* ) {
         return $w if is_target($w);
     }
     return undef;
 }
 
-sub wait_for_window ($timeout = 3.0, $interval = 0.2) {
+sub wait_for_window ( $timeout = 3.0, $interval = 0.2 ) {
     my $deadline = time + $timeout;
-    while (time < $deadline) {
-        my $t = find_target(get_windows());
+    while ( time < $deadline ) {
+        my $t = find_target( get_windows() );
         return $t if $t;
         sleep $interval;
     }
@@ -294,23 +294,23 @@ sub wait_for_window ($timeout = 3.0, $interval = 0.2) {
 }
 
 sub spawn_terminal {
-    my @args = ($terminal, '-e', 'tmux', 'new-session', '-As', $session);
+    my @args = ( $terminal, '-e', 'tmux', 'new-session', '-As', $session );
     push @args, $cmd if defined $cmd && length $cmd;
 
     my $pid = fork // die "fork failed: $!";
-    if ($pid == 0) {
+    if ( $pid == 0 ) {
         setsid();
         open STDOUT, '>', '/dev/null';
         open STDERR, '>', '/dev/null';
         no warnings 'exec';
-        exec { $terminal } @args;
+        exec {$terminal} @args;
         _exit(127);
     }
 }
 
 sub show ($win) {
-    $log->("showing window " . $win->{id});
-    run_kwin_js(js_show_window($win->{id}));
+    $log->( "showing window " . $win->{id} );
+    run_kwin_js( js_show_window( $win->{id} ) );
 }
 
 # ---------------------------------------------------------------------------
@@ -319,16 +319,16 @@ sub show ($win) {
 my $bus = Net::DBus->session
     or die "plasma-toggle-tmux: no session D-Bus available\n";
 $svc_name = "com.johnm.PlasmaToggleTmux.p$$";
-my $service = $bus->export_service($svc_name);
-my $receiver = Receiver->new($service, '/');
+my $service  = $bus->export_service($svc_name);
+my $receiver = Receiver->new( $service, '/' );
 $reactor = Net::DBus::Reactor->main;
 
-my $target = find_target(get_windows());
+my $target = find_target( get_windows() );
 
 if ($target) {
-    if ($target->{active}) {
-        $log->("closing focused scratchpad " . $target->{id});
-        run_kwin_js(js_close_window($target->{id}));
+    if ( $target->{active} ) {
+        $log->( "closing focused scratchpad " . $target->{id} );
+        run_kwin_js( js_close_window( $target->{id} ) );
     }
     else {
         $log->("scratchpad exists, raising it");
@@ -338,7 +338,7 @@ if ($target) {
 else {
     $log->("no scratchpad, spawning $terminal/$session");
     spawn_terminal();
-    my $win = wait_for_window(5.0, 0.2);
+    my $win = wait_for_window( 5.0, 0.2 );
     if ($win) {
         show($win);
     }
@@ -384,43 +384,41 @@ sub die_usage ($msg) {
 }
 
 sub load_kwin_script {
-    my $home = shift;
+    my $home    = shift;
     my $kwin_js = "$home/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js";
     return 0 unless -r $kwin_js;
 
-    my $loaded = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
-        'org.kde.kwin.Scripting.isScriptLoaded', 'plasma-toggle-tmux');
+    my $loaded = qdbus_capture( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.isScriptLoaded', 'plasma-toggle-tmux' );
     chomp $loaded;
     return 1 if $loaded eq 'true';
 
-    my $id = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
-        'org.kde.kwin.Scripting.loadScript', $kwin_js, 'plasma-toggle-tmux');
+    my $id = qdbus_capture( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.loadScript', $kwin_js, 'plasma-toggle-tmux' );
     chomp $id;
     return 0 unless $id =~ /^(\d+)$/;
-    qdbus_run($KWIN_SVC, "/Scripting/Script$1", 'org.kde.kwin.Script.run');
+    qdbus_run( $KWIN_SVC, "/Scripting/Script$1", 'org.kde.kwin.Script.run' );
     return 1;
 }
 
 sub do_load {
+
     # Nothing to do outside a KWin session (e.g. a niri login); stay quiet.
     my $services = `busctl --user --no-pager list 2>/dev/null`;
-    return 1 unless ($services // '') =~ /org\.kde\.KWin\b/;
+    return 1 unless ( $services // '' ) =~ /org\.kde\.KWin\b/;
     my $home = $ENV{HOME} // return 0;
     return load_kwin_script($home);
 }
 
 sub do_install {
-    my $home = $ENV{HOME} // die "plasma-toggle-tmux: HOME is not set\n";
+    my $home    = $ENV{HOME} // die "plasma-toggle-tmux: HOME is not set\n";
     my $kwin_js = "$home/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js";
 
-    unless (-r $kwin_js) {
+    unless ( -r $kwin_js ) {
         print STDERR "plasma-toggle-tmux: KWin script not found at $kwin_js\n";
         print STDERR "Install the dotfiles 'plasma' package first (stow plasma).\n";
         return 0;
     }
 
-    system('kwriteconfig6', '--file', 'kwinrc', '--group', 'Plugins',
-        '--key', 'plasma-toggle-tmuxEnabled', 'true');
+    system( 'kwriteconfig6', '--file', 'kwinrc', '--group', 'Plugins', '--key', 'plasma-toggle-tmuxEnabled', 'true' );
 
     # The systemd user manager does not inherit perlbrew's PATH, so drop in an
     # Environment= override pointing at the perl that actually has Net::DBus.
@@ -429,7 +427,7 @@ sub do_install {
     my $dropin_dir = $home . '/.config/systemd/user/plasma-toggle-tmux@.service.d';
     mkdir $dropin_dir unless -d $dropin_dir;
     my $path = join ':', $perl_bin, "$home/.local/bin", '/usr/local/bin', '/usr/bin', '/bin';
-    if (open my $efh, '>', "$dropin_dir/10-perlbrew.conf") {
+    if ( open my $efh, '>', "$dropin_dir/10-perlbrew.conf" ) {
         print $efh "[Service]\nEnvironment=PATH=$path\n";
         close $efh;
     }
@@ -441,7 +439,7 @@ sub do_install {
     # session autostart entry that loads it explicitly (no-op under niri).
     my $autostart_dir = $home . '/.config/autostart';
     mkdir $autostart_dir unless -d $autostart_dir;
-    if (open my $afh, '>', "$autostart_dir/plasma-toggle-tmux.desktop") {
+    if ( open my $afh, '>', "$autostart_dir/plasma-toggle-tmux.desktop" ) {
         print $afh <<~"DESKTOP";
             [Desktop Entry]
             Type=Application
@@ -458,31 +456,27 @@ sub do_install {
         warn "plasma-toggle-tmux: could not write autostart entry: $!\n";
     }
 
-    system('systemctl', '--user', 'daemon-reload');
+    system( 'systemctl', '--user', 'daemon-reload' );
 
     # Unload, then purge our stale shortcut actions, then reload fresh. KGlobalAccel
     # caches previously-registered keys, so without the purge a changed default in
     # main.js would never take effect during a running session.
-    my $loaded = qdbus_capture($KWIN_SVC, $KWIN_OBJ,
-        'org.kde.kwin.Scripting.isScriptLoaded', 'plasma-toggle-tmux');
+    my $loaded = qdbus_capture( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.isScriptLoaded', 'plasma-toggle-tmux' );
     chomp $loaded;
-    qdbus_run($KWIN_SVC, $KWIN_OBJ,
-        'org.kde.kwin.Scripting.unloadScript', 'plasma-toggle-tmux')
+    qdbus_run( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.unloadScript', 'plasma-toggle-tmux' )
         if $loaded eq 'true';
 
-    my $names = qdbus_capture('org.kde.kglobalaccel', '/component/kwin',
-        'org.kde.kglobalaccel.Component.shortcutNames');
-    for my $name (split /[\n,]/, ($names // '')) {
-        $name =~ s/^\s+|\s+$//g;
-        $name =~ s/^"|"$//g;
+    my $names =
+        qdbus_capture( 'org.kde.kglobalaccel', '/component/kwin', 'org.kde.kglobalaccel.Component.shortcutNames' );
+    for my $name ( split /[\n,]/, ( $names // '' ) ) {
+        $name             =~ s/^\s+|\s+$//g;
+        $name             =~ s/^"|"$//g;
         next unless $name =~ /^Plasma Toggle Tmux:/;
-        qdbus_run('org.kde.kglobalaccel', '/kglobalaccel',
-            'org.kde.KGlobalAccel.unregister', 'kwin', $name);
-        system('kwriteconfig6', '--file', 'kglobalshortcutsrc',
-            '--group', 'kwin', '--key', $name, '--delete');
+        qdbus_run( 'org.kde.kglobalaccel', '/kglobalaccel', 'org.kde.KGlobalAccel.unregister', 'kwin', $name );
+        system( 'kwriteconfig6', '--file', 'kglobalshortcutsrc', '--group', 'kwin', '--key', $name, '--delete' );
     }
 
-    qdbus_run($KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure');
+    qdbus_run( $KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure' );
     load_kwin_script($home);
     print "plasma-toggle-tmux: installed. SUPER+F9 toggles opencode, SUPER+\\ toggles work.\n";
     return 1;

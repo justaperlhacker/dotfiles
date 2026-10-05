@@ -94,11 +94,39 @@ plasma-toggle-tmux --install
 ```
 
 `--install` enables and loads the KWin script, writes a systemd drop-in so the
-unit uses the perlbrewed perl that has `Net::DBus`, and daemon-reloads systemd.
-**SUPER+F9** then spawns a centered, always-on-top Konsole running the
-`opencode` tmux session, and **SUPER+\\** (backslash) does the same for the
-`work` session in kitty; pressing a binding again while its window is focused
-closes the window (the tmux session survives). Add more scratchpads by
+unit uses the perlbrewed perl that has `Net::DBus`, installs a session
+autostart entry that reloads the script each login (KWin does not reliably
+auto-load user scripts), and daemon-reloads systemd. **SUPER+F9** then spawns a
+centered, always-on-top Konsole running the `opencode` tmux session, and
+**SUPER+\\** (backslash) does the same for the `work` session in kitty; pressing
+a binding again while its window is focused closes the window (the tmux session
+survives). The window defaults to 90% width × 85% height of the active screen
+(`--width`/`--height`), and window class matching handles both Wayland app-ids
+(`org.kde.konsole`) and X11 WM_CLASS (`konsole`). Add more scratchpads by
 appending to `sessions` in
 `plasma/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js`.
+
+#### Dependencies (CachyOS/Arch)
+
+Everything the helper uses at runtime, mapped to the package that provides it.
+On a normal Plasma install these are already present except `Net::DBus`.
+
+| Dependency        | Package         | Notes                                                          |
+|-------------------|-----------------|----------------------------------------------------------------|
+| `Net::DBus` (Perl)| `perl-net-dbus` | Or `cpan -T -i Net::DBus` into the perlbrew perl (what this box uses). |
+| `qdbus6`          | `qt6-tools`     | KWin scripting and KGlobalAccel D-Bus calls.                   |
+| `kwriteconfig6`   | `kconfig`       | Writes `kwinrc`/`kglobalshortcutsrc` and configures systemd.   |
+| `busctl`, `systemctl` | `systemd`   | Session probe (`--load`) and the scratchpad unit.              |
+| KWin              | `kwin`          | Provides the `org.kde.KWin` scripting API (Wayland and X11).   |
+| `konsole`, `kitty`, `tmux` | `konsole`, `kitty`, `tmux` | Terminals + the tmux sessions the scratchpads run. |
+
+If you build `Net::DBus` from CPAN instead of using the distro package, the
+build-only dependencies are `dbus` (libdbus headers), `pkgconf`, and a compiler
+(`base-devel`). All Perl modules other than `Net::DBus` are core.
+
+```bash
+# distro-package route (makes system perl usable):
+sudo pacman -S --needed qt6-tools kconfig systemd konsole kitty tmux perl-net-dbus
+```
+
 

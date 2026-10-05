@@ -61,9 +61,9 @@ our ( $KWIN_SVC, $KWIN_OBJ ) = ( 'org.kde.KWin', '/Scripting' );
 my %PRESETS = (
     opencode => { terminal => 'konsole', cmd => 'opencode', class => 'org.kde.konsole' },
     kilo     => { terminal => 'konsole', cmd => 'kilo',     class => 'org.kde.konsole' },
-    dgop     => { terminal => 'kitty',   cmd => sub { first_available( 'dgop', 'htop', 'btop', 'top' ) }, class => 'kitty' },
-    htop     => { terminal => 'konsole', cmd => 'htop',     class => 'org.kde.konsole' },
-    work     => { terminal => 'konsole', cmd => undef,      class => 'org.kde.konsole' },
+    dgop => { terminal => 'kitty', cmd => sub { first_available( 'dgop', 'htop', 'btop', 'top' ) }, class => 'kitty' },
+    htop => { terminal => 'konsole', cmd => 'htop', class => 'org.kde.konsole' },
+    work => { terminal => 'konsole', cmd => undef,  class => 'org.kde.konsole' },
 );
 
 my ( $terminal, $session, $cmd,        $class, $title );

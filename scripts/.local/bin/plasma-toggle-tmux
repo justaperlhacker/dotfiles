@@ -478,6 +478,6 @@ sub do_install {
 
     qdbus_run( $KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure' );
     load_kwin_script($home);
-    print "plasma-toggle-tmux: installed. SUPER+F9 toggles opencode, SUPER+\\ toggles work.\n";
+    print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+\\ work, SUPER+F11 dgop.\n";
     return 1;
 }

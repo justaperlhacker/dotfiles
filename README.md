@@ -14,7 +14,6 @@ git clone git@github-justaperlhacker:justaperlhacker/dotfiles.git ~/.dotfiles
 
 `install.pl` is a wrapper around Stow that **backs up any existing file or
 directory before it is replaced**, so nothing is ever silently clobbered.
-Conflicts are moved to `~/.dotfiles/.backup/<timestamp>/` (gitignored).
 
 ```bash
 ./install.pl --all                                     # stow every package
@@ -44,14 +43,17 @@ stow -D bash          # remove symlinks
 | `brave`           | `.config/brave-flags.conf`, `.config/brave-flags.d/`, `.local/bin/brave` |
 | `DankMaterialShell`| `.config/DankMaterialShell/`                              |
 | `doom`            | `.config/doom/`                                           |
+| `hypr`            | `.config/hypr/` (Hyprland Lua config + scripts)           |
 | `i3`              | `.config/i3/`, `.xprofile`                                |
 | `kanata`          | `.config/kanata/`, `.config/systemd/user/kanata.service`  |
+| `kde`             | portable `.config/*rc` + `kdeglobals`/`kwalletrc` etc.    |
 | `kitty`           | `.config/kitty/`                                          |
 | `kilo`            | `.config/kilo/`                                           |
 | `LazyVim`         | `.config/LazyVim/`                                        |
 | `nano`            | `.config/nano/`                                           |
 | `neovide`         | `.config/neovide/`                                        |
 | `niri`            | `.config/niri/`, `.config/xdg-desktop-portal/`            |
+| `noctalia`        | `.config/noctalia/`                                       |
 | `NvChad`          | `.config/NvChad/`                                         |
 | `nvim`            | `.config/nvim/`                                           |
 | `perl`            | `.perltidyrc`                                             |
@@ -61,7 +63,41 @@ stow -D bash          # remove symlinks
 | `scripts`         | `.local/bin/`                                             |
 | `starship`        | `.config/starship.toml`                                   |
 | `tmux`            | `.config/tmux/`                                           |
+| `vscode`          | `.config/Code/User/`                                      |
 | `xresources`      | `.Xresources`, `.Xresources.d/`                           |
+
+### Hyprland + Noctalia + KDE (CachyOS)
+
+The `hypr` (Hyprland Lua config), `noctalia` (Noctalia v5 shell), and `kde`
+(portable KDE/Qt app config) packages provide a Hyprland session running
+Noctalia alongside the existing niri session. Install the base packages first:
+
+```bash
+sudo pacman -S --needed \
+  hyprland xdg-desktop-portal-hyprland noctalia \
+  plasma-integration breeze breeze-gtk qqc2-desktop-style \
+  kde-cli-tools kio kio-extras \
+  kwallet kwallet-pam kwalletmanager \
+  polkit-kde-agent xdg-desktop-portal-kde \
+  konsole yakuake dolphin qt5ct qt6ct qt5-wayland qt6-wayland \
+  power-profiles-daemon bluez bluez-utils networkmanager \
+  pipewire wireplumber upower gnome-keyring libsecret \
+  ddcutil playerctl wl-clipboard
+```
+
+Then `./install.pl --package hypr --package noctalia --package kde`.
+
+`hyprland-portals.conf` (for the Hyprland session) ships inside the `niri`
+package's `.config/xdg-desktop-portal/`.
+
+Per-host monitor overrides go in `~/.config/hypr/local.lua` (untracked).
+
+### VS Code custom themes
+
+The custom color themes (Miniwinter, Vague, Kanso, Black Metal Gorgoroth) live
+in a standalone project, `justaperlhacker/vscode-themes`, and are installed into
+VS Code as the `justaperlhacker.vscode-themes` extension. They are not managed
+by Stow.
 
 ### Per-machine overrides
 

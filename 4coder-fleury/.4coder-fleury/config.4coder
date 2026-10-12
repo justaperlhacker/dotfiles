@@ -65,7 +65,7 @@ default_theme_name = "theme-fleury";
 highlight_line_at_cursor = true;
 
 // Font
-default_font_name = "liberation-mono.ttf";
+default_font_name = "JetBrainsMonoNerdFont-Regular.ttf";
 default_font_size = 16;
 default_font_hinting = true;
 

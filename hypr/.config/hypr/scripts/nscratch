@@ -1,0 +1,60 @@
+#!/usr/bin/env perl
+# nscratch (Hyprland port): toggle a window to/from a special workspace.
+use v5.36;
+use Getopt::Long;
+use JSON::PP;
+
+my $SPECIAL = $ENV{NS_WORKSPACE} // "scratch";
+
+sub hypr {
+    my $cmd = join " ", "hyprctl", @_;
+    return `$cmd`;
+}
+
+sub hypr_json {
+    my $cmd = join " ", "hyprctl", "-j", @_;
+    return decode_json(`$cmd`);
+}
+
+sub get_clients { return hypr_json("clients"); }
+
+sub find_window {
+    my ( $class, $title, $clients ) = @_;
+    for my $w ( $clients->@* ) {
+        return $w if $class && ( $w->{class} // '' ) eq $class;
+        return $w if $title && ( $w->{title} // '' ) eq $title;
+    }
+    return undef;
+}
+
+my ( $wclass, $title, $spawn );
+GetOptions(
+    'id|app-id=s' => \$wclass,
+    't|title=s'   => \$title,
+    's|spawn=s'   => \$spawn,
+) or die "Usage: $0 (-id APP_ID | -t TITLE) [-s SPAWN]\n";
+
+die "Error: -id or -t is required\n" unless defined $wclass || defined $title;
+
+my $w = find_window( $wclass, $title, get_clients() );
+
+unless ($w) {
+    if ( defined $spawn ) {
+        my @args = split /\s+/, $spawn;
+        system "hyprctl", "dispatch", "exec", @args;
+        exit 0;
+    }
+    die "Usage: $0 (-id APP_ID | -t TITLE) [-s SPAWN]\n";
+}
+
+my $addr   = $w->{address};
+my $wsname = $w->{workspace}{name} // '';
+
+if ( $wsname eq "special:$SPECIAL" ) {
+    my $active = hypr_json("activeworkspace")->{id};
+    hypr( "dispatch", "movetoworkspace", "$active,address:$addr" );
+    hypr( "dispatch", "focuswindow", "address:$addr" );
+}
+else {
+    hypr( "dispatch", "movetoworkspacesilent", "special:$SPECIAL,address:$addr" );
+}

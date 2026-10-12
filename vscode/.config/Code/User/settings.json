@@ -18,7 +18,6 @@
     "typescript.disableAutomaticTypeAcquisition": true,
     "extensions.ignoreRecommendations": true,
     "workbench.list.openMode": "doubleClick",
-    "workbench.colorTheme": "Nord",
     "workbench.iconTheme": "file-icons-colourless",
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": false,
@@ -36,7 +35,7 @@
         "<C-l>": false,
     },
     // zoom level
-    "window.zoomLevel": -1,
+    //"window.zoomLevel": -1,
 
     // trusted domains
     "json.schemaDownload.trustedDomains": {
@@ -124,11 +123,13 @@
     // Editor
     //"editor.fontFamily": "BerkeleyMono Nerd Font",
     "editor.fontFamily": "HE_TERMINAL Nerd Font",
+    // "editor.fontFamily": "Terminess Nerd Font",
     // "editor.fontFamily": "'Droid Sans Mono', monospace",
     //"editor.fontFamily": "JetBrainsMono Nerd Font",
     // "editor.fontFamily": "Liberation Mono",
     // "editor.fontFamily": "IoskeleyMono Nerd Font",
     // "editor.fontFamily": "IoskeleyMonoTerm Nerd Font",
+    // "editor.fontFamily": "Iosevka Nerd Font",
     // "editor.fontFamily": "Hack Nerd Font",
     // "editor.fontFamily": "Monaspace Neon NF",
     // "editor.fontFamily": "Monaspace Argon NF",
@@ -139,11 +140,17 @@
     // "editor.fontFamily": "ComicShanns Nerd Font",
     // "editor.fontFamily": "CaskaydiaCove Nerd Font",
     // "editor.fontFamily": "FiraCode Nerd Font Mono",
+    // "editor.fontFamily": "MesloLGL Nerd Font",
     // sometimes I like it a bit bolder
     //"editor.fontWeight": "600",
     //"editor.fontWeight": "500",
+    //"editor.fontWeight": "100",
+    // HE_TERMINAL's default face is heavy; "300" selects its lighter "Roman" face
+    "editor.fontWeight": "300",
     // at zoom -1 fontsize 17 approx matches 14 (default)
-    "editor.fontSize": 18,
+    "editor.fontVariations": false,
+    "editor.fontSize": 16,
+    //"editor.fontSize": 18,
     //"editor.lineHeight": 1.5,
     "editor.fontLigatures": false,
     "editor.glyphMargin": true,
@@ -153,8 +160,9 @@
 
     // Terminal
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
-    "terminal.integrated.fontSize": 16,
+    "terminal.integrated.fontSize": 14,
     "terminal.integrated.fontLigatures.enabled": false,
+    "terminal.integrated.stickyScroll.enabled": false,
 
     // File / search behavior
     "files.watcherExclude": {
@@ -235,6 +243,8 @@
         "editor.insertSpaces": true,
         "editor.tabSize": 4,
     },
-    "terminal.integrated.stickyScroll.enabled": false,
+
+    "vsicons.dontShowNewVersionMessage": true,
+    "workbench.colorTheme": "Naysayer",
 
 }

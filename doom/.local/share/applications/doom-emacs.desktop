@@ -1,0 +1,19 @@
+[Desktop Entry]
+Categories=Development;TextEditor;
+Comment=Doom Emacs
+Exec=emacs --init-dir=/home/johnm/.config/doom-emacs --name=doom-emacs %F
+GenericName=Text Editor
+Icon=/home/johnm/.icons/doom-emacs_1.png
+MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
+Name=Doom Emacs
+NoDisplay=false
+Path=
+PrefersNonDefaultGPU=false
+Startup1Notify=true
+StartupNotify=true
+StartupWMClass=Doom-Emacs
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

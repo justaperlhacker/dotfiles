@@ -1,0 +1,14 @@
+[ExtractDialog]
+2 screens: Height=665
+2 screens: Width=892
+DirHistory[$e]=$HOME/Documents/Courses/Group312/oopcode,$HOME/.fonts/aristotelica/
+
+[Extraction]
+openDestinationFolderAfterExtraction=true
+
+[General]
+LockSidebar=true
+ShowSidebar=true
+
+[MainWindow]
+StatusBar=Disabled

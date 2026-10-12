@@ -111,7 +111,12 @@ load_config() {
     if [[ -f "$CONFIG_FILE" ]]; then
         source "$CONFIG_FILE"
     fi
-    
+
+    # Source shared .env if present (kept out of git)
+    if [[ -f "$HOME/.config/i3/scripts/.env" ]]; then
+        source "$HOME/.config/i3/scripts/.env"
+    fi
+
     # Override with environment variables if set
     OPENWEATHER_API_KEY="${OPENWEATHER_API_KEY:-}"
     OPENWEATHER_CITY_ID="${OPENWEATHER_CITY_ID:-}"

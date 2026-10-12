@@ -60,3 +60,6 @@ kde/.config/kdeconnect/
 
 # pi agent secrets (API keys) — never commit; still deployed by stow
 pi/.pi/agent/auth.json
+
+# OpenWeatherMap API key — never commit; still deployed by stow
+i3/.config/i3/scripts/.env

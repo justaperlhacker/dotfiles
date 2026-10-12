@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "1.0.4",
   "theme": "light/dark",
   "packages": [
     "npm:pi-permission-system",
@@ -7,11 +7,15 @@
     "npm:pi-web-access",
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-mcp-adapter",
-    "npm:pi-background-tasks"
+    "npm:pi-background-tasks",
+    "npm:pi-multi-account"
   ],
   "terminal": {
     "showTerminalProgress": true
   },
   "defaultProvider": "opencode-go",
-  "defaultModel": "kimi-k2.6"
+  "defaultModel": "deepseek-v4.1-flash",
+  "extensions": [
+    "-builtin:mcp"
+  ]
 }

@@ -46,6 +46,9 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 export SSH_ASKPASS="/usr/bin/ksshaskpass"
 
+# sudo graphical password prompt (used when no tty is available, e.g. opencode)
+[[ -x "$HOME/.local/bin/sudo-askpass" ]] && export SUDO_ASKPASS="$HOME/.local/bin/sudo-askpass"
+
 # libgit2 (gitui) doesn't read ~/.ssh/config by default
 export GIT_SSH_COMMAND="ssh"
 

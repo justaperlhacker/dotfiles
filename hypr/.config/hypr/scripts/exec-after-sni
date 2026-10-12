@@ -1,0 +1,32 @@
+#!/bin/sh
+# Wait for the shell/bar to export its StatusNotifierWatcher host, then exec the
+# given command. Tray apps (Discord, Slack, Telegram, ...) fail to register their
+# icon if launched before the watcher exists and never retry, so delay them.
+#
+# Usage: exec-after-sni <command> [args...]
+
+if [ "$#" -eq 0 ]; then
+    echo "usage: ${0##*/} <command> [args...]" >&2
+    exit 2
+fi
+
+# 40 * 0.25s = 10s max wait
+tries=40
+interval=0.25
+
+i=0
+while [ "$i" -lt "$tries" ]; do
+    if busctl --user get-property \
+        org.kde.StatusNotifierWatcher /StatusNotifierWatcher \
+        org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered 2>/dev/null \
+        | grep -q true; then
+        break
+    fi
+    i=$((i + 1))
+    sleep "$interval"
+done
+
+[ "$i" -eq "$tries" ] && \
+    echo "${0##*/}: no StatusNotifierWatcher after $((tries * 25 / 100))s, starting anyway" >&2
+
+exec "$@"

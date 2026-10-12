@@ -1,6 +1,7 @@
 {
-  "currentThemeName": "orange",
-  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/joziCityNights/theme.json",
+  "currentThemeName": "custom",
+  "currentThemeCategory": "registry",
+  "customThemeFile": "/home/johnm/.config/DankMaterialShell/themes/darkmatter/theme.json",
   "registryThemeVariants": {
     "rosePine": "rosePine",
     "catppuccin": {
@@ -20,6 +21,18 @@
       "dark": {
         "flavor": "nights",
         "accent": "purple"
+      }
+    },
+    "bru": {
+      "dark": {
+        "flavor": "espresso",
+        "accent": "orange"
+      }
+    },
+    "gruvboxMulti": {
+      "dark": {
+        "flavor": "material-hard-dark",
+        "accent": "green"
       }
     }
   },

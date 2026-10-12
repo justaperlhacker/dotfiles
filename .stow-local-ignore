@@ -41,3 +41,10 @@ _darcs
 # pi runtime / downloaded state
 ^pi/.pi/agent/npm
 ^pi/.pi/agent/sessions
+
+# Hyprland: DMS-generated fragments and per-host monitor overrides (never stow)
+^hypr/.config/hypr/dms/
+^hypr/.config/hypr/local\.lua
+
+# KDE: device pairing secrets (never stow)
+^kde/.config/kdeconnect/

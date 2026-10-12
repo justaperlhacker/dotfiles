@@ -1,0 +1,12 @@
+#!/bin/bash
+# Toggle the active window between floating+centered and tiled.
+TOGGLE_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-float-toggle"
+
+if [ -f "$TOGGLE_FILE" ]; then
+    rm -f "$TOGGLE_FILE"
+    hyprctl dispatch settiled >/dev/null
+else
+    touch "$TOGGLE_FILE"
+    hyprctl dispatch setfloating >/dev/null
+    hyprctl dispatch centerwindow >/dev/null
+fi

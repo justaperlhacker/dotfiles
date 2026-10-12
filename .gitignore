@@ -50,3 +50,13 @@ mc/.config/mc/panels.ini
 # trayxeyes compiled binaries (built via make)
 i3/.config/i3/scripts/trayxeyes
 i3/.config/i3/trayxeyes/trayxeyes
+
+# Hyprland package: DMS-generated fragments and per-host monitor overrides
+hypr/.config/hypr/dms/
+hypr/.config/hypr/local.lua
+
+# KDE secrets (device pairing keys/certs) — never commit
+kde/.config/kdeconnect/
+
+# pi agent secrets (API keys) — never commit; still deployed by stow
+pi/.pi/agent/auth.json

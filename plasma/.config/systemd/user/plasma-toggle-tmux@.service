@@ -6,3 +6,7 @@ Type=oneshot
 # The helper forks the terminal; do not let systemd reap it when we exit.
 KillMode=process
 ExecStart=%h/.local/bin/plasma-toggle-tmux --session %i
+
+[Install]
+WantedBy=default.target
+DefaultInstance=opencode

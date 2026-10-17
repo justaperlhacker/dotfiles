@@ -48,6 +48,3 @@ _darcs
 
 # KDE: device pairing secrets (never stow)
 ^kde/.config/kdeconnect/
-
-# Terminator: bundled terminator-themes plugin is machine-local (never stow)
-^terminator/.config/terminator/plugins/

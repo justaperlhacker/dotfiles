@@ -23,7 +23,7 @@
 # extras/overrides/deviations from PBP
 -ole=unix # force unix line endings
 
---maximum-line-length=120               # be slightly more generous
+--maximum-line-length=125               # be slightly more generous
 --warning-output                        # Show warnings
 --maximum-consecutive-blank-lines=2     # default is 1
 --nohanging-side-comments               # troublesome for commented out code
@@ -33,11 +33,11 @@
 #--square-bracket-tightness=1
 #--brace-tightness=1
 #--multiple-token-tightness=1
- 
+
 -isbc  # block comments may only be indented if they have some space characters before the #
 
 # we use version control, so just rewrite the file
--b 
+-b
 
 # for the up-tight folk :)
 #-pt=2   # High parenthesis tightness

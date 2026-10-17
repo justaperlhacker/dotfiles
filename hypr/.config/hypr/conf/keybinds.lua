@@ -17,12 +17,12 @@ hl.bind("ALT + Tab", hl.dsp.exec_cmd(ipc .. "window-switcher hold"))
 hl.bind(MOD .. " + ALT + L", hl.dsp.exec_cmd(ipc .. "session lock"))
 
 -- Terminal + scratchpads
-hl.bind(MOD .. " + T", hl.dsp.exec_cmd([[sh -c 'test -n "$TERMINAL" && exec "$TERMINAL" || exec konsole']]))
-hl.bind(MOD .. " + grave", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --terminal kitty --session work --class kitty --title work"))
-hl.bind(MOD .. " + F9", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --terminal konsole --session opencode --cmd opencode --class org.kde.konsole --title opencode"))
-hl.bind(MOD .. " + SHIFT + F9", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --terminal konsole --session kilo --cmd kilo --class org.kde.konsole --title kilo"))
-hl.bind(MOD .. " + F11", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --terminal kitty --session dgop --cmd dgop --class kitty --title dgop"))
-hl.bind(MOD .. " + SHIFT + F11", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --terminal konsole --session htop --cmd htop --class org.kde.konsole --title htop"))
+hl.bind(MOD .. " + T", hl.dsp.exec_cmd([[sh -c 'test -n "$TERMINAL" && exec "$TERMINAL" || { command -v kitty >/dev/null 2>&1 && exec kitty || exec konsole; }']]))
+hl.bind(MOD .. " + grave", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --session work --title work"))
+hl.bind(MOD .. " + F9", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --session opencode --cmd opencode --title opencode"))
+hl.bind(MOD .. " + SHIFT + F9", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --session kilo --cmd kilo --title kilo"))
+hl.bind(MOD .. " + F11", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --session dgop --cmd dgop --title dgop"))
+hl.bind(MOD .. " + SHIFT + F11", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-tmux --session htop --cmd htop --title htop"))
 hl.bind(MOD .. " + F12", hl.dsp.exec_cmd("yakuake"))
 hl.bind(MOD .. " + CTRL + period", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/toggle-float-center"))
 

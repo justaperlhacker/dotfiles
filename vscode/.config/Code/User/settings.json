@@ -15,7 +15,7 @@
     "extensions.autoCheckUpdates": false,
     "extensions.autoUpdate": "off",
     "npm.fetchOnlinePackageInfo": false,
-    "typescript.disableAutomaticTypeAcquisition": true,
+    "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
     "extensions.ignoreRecommendations": true,
     "workbench.list.openMode": "doubleClick",
     "workbench.iconTheme": "file-icons-colourless",
@@ -116,13 +116,25 @@
                 "settings": {
                     "fontStyle": "italic"
                 }
-            }
+            },
+            {
+                "scope": "keyword",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            // {
+            //     "scope": "string",
+            //     "settings": {
+            //         "fontStyle": "italic"
+            //     }
+            // },
         ]
     },
 
     // Editor
-    //"editor.fontFamily": "BerkeleyMono Nerd Font",
-    "editor.fontFamily": "HE_TERMINAL Nerd Font",
+    "editor.fontFamily": "BerkeleyMono Nerd Font",
+    //"editor.fontFamily": "HE_TERMINAL Nerd Font",
     // "editor.fontFamily": "Terminess Nerd Font",
     // "editor.fontFamily": "'Droid Sans Mono', monospace",
     //"editor.fontFamily": "JetBrainsMono Nerd Font",
@@ -146,13 +158,13 @@
     //"editor.fontWeight": "500",
     //"editor.fontWeight": "100",
     // HE_TERMINAL's default face is heavy; "300" selects its lighter "Roman" face
-    "editor.fontWeight": "300",
+    //"editor.fontWeight": "300",
     // at zoom -1 fontsize 17 approx matches 14 (default)
-    "editor.fontVariations": false,
     "editor.fontSize": 16,
     //"editor.fontSize": 18,
-    //"editor.lineHeight": 1.5,
-    "editor.fontLigatures": false,
+    //"editor.lineHeight": 1.3,
+    //"editor.lineHeight": 1.4,
+    "editor.fontLigatures": true,
     "editor.glyphMargin": true,
     "editor.lineNumbers": "on",
     "editor.renderLineHighlight": "line",

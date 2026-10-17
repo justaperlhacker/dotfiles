@@ -1,0 +1,104 @@
+# XWPE theme -- gruvbox
+# Converted from the fresh editor theme gruvbox.json
+[Theme]
+Name : gruvbox
+Version : 1
+
+[Palette]
+0 : 102 92 84
+1 : 40 40 40
+2 : 250 189 47
+3 : 235 219 178
+4 : 80 73 69
+5 : 124 111 100
+6 : 142 192 124
+7 : 60 56 54
+8 : 251 73 52
+9 : 63 33 32
+10 : 38 48 40
+11 : 251 241 199
+12 : 213 196 161
+13 : 211 134 155
+14 : 146 131 116
+
+[Color/X11]
+er : 0 1
+es : 2 1
+et : 3 1
+ez : 3 4
+ek : 1 2
+em : 5 1
+hh : 6 7
+hb : 6 1
+hm : 3 7
+db : 8 9
+dy : 6 10
+mr : 0 7
+ms : 6 7
+mt : 3 7
+mz : 1 2
+df : 1 1
+nr : 3 7
+ne : 11 0
+nt : 3 7
+nsnt : 1 6
+fr : 3 7
+fa : 11 0
+ft : 3 7
+fz : 11 0
+frft : 12 1
+fs : 3 7
+nsft : 6 1
+fsm : 1 2
+nz : 3 7
+ns : 6 7
+nm : 1 2
+of : 0 1
+ct : 3 1
+cr : 8 1
+ck : 13 1
+cp : 2 1
+cc : 14 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 8 0
+es : 3 0
+et : 7 0
+ez : 7 8
+ek : 0 3
+em : 8 0
+hh : 8 0
+hb : 8 0
+hm : 7 0
+db : 9 0
+dy : 8 0
+mr : 8 0
+ms : 8 0
+mt : 7 0
+mz : 0 3
+df : 0 0
+nr : 7 0
+ne : 7 8
+nt : 7 0
+nsnt : 0 8
+fr : 7 0
+fa : 7 8
+ft : 7 0
+fz : 7 8
+frft : 7 0
+fs : 7 0
+nsft : 8 0
+fsm : 0 3
+nz : 7 0
+ns : 8 0
+nm : 0 3
+of : 8 0
+ct : 7 0
+cr : 9 0
+ck : 8 0
+cp : 3 0
+cc : 8 0
+dc : 32
+ws : 7

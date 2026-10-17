@@ -292,6 +292,12 @@ window-rule {
     match app-id=r#"^org\.kde\.konsole$"# title=r#"tmux:.*Konsole$"#
     open-floating true
 }
+// Konsole (Maximized) launcher — open maximized, not floating
+window-rule {
+    match app-id=r#"^org\.kde\.konsole$"# title=r#"KONSOLEMAX"#
+    open-maximized true
+    open-floating false
+}
 // Yakuake dropdown terminal — always floating, centered
 window-rule {
     match app-id=r#"^org\.kde\.yakuake$"#

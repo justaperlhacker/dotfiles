@@ -1,0 +1,103 @@
+# XWPE theme -- rose-pine
+# Converted from the fresh editor theme rose-pine.json
+[Theme]
+Name : rose-pine
+Version : 1
+
+[Palette]
+0 : 38 35 58
+1 : 25 23 36
+2 : 224 222 244
+3 : 64 61 82
+4 : 246 193 119
+5 : 110 106 134
+6 : 235 188 186
+7 : 31 29 46
+8 : 235 111 146
+9 : 46 31 42
+10 : 196 167 231
+11 : 42 36 64
+12 : 49 116 143
+13 : 156 207 216
+
+[Color/X11]
+er : 0 1
+es : 0 1
+et : 2 1
+ez : 2 3
+ek : 1 4
+em : 5 1
+hh : 6 7
+hb : 6 1
+hm : 2 7
+db : 8 9
+dy : 10 11
+mr : 0 7
+ms : 6 7
+mt : 2 7
+mz : 2 3
+df : 1 1
+nr : 2 7
+ne : 2 3
+nt : 2 7
+nsnt : 2 1
+fr : 2 7
+fa : 2 3
+ft : 2 7
+fz : 2 3
+frft : 2 1
+fs : 2 7
+nsft : 6 1
+fsm : 2 3
+nz : 2 7
+ns : 6 7
+nm : 2 3
+of : 0 1
+ct : 2 1
+cr : 12 1
+ck : 4 1
+cp : 13 1
+cc : 2 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 0 0
+es : 0 0
+et : 7 0
+ez : 7 8
+ek : 0 7
+em : 8 0
+hh : 7 0
+hb : 7 0
+hm : 7 0
+db : 8 0
+dy : 7 0
+mr : 0 0
+ms : 7 0
+mt : 7 0
+mz : 7 8
+df : 0 0
+nr : 7 0
+ne : 7 8
+nt : 7 0
+nsnt : 7 0
+fr : 7 0
+fa : 7 8
+ft : 7 0
+fz : 7 8
+frft : 7 0
+fs : 7 0
+nsft : 7 0
+fsm : 7 8
+nz : 7 0
+ns : 7 0
+nm : 7 8
+of : 0 0
+ct : 7 0
+cr : 8 0
+ck : 7 0
+cp : 7 0
+cc : 7 0
+dc : 32
+ws : 7

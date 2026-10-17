@@ -1,0 +1,105 @@
+# XWPE theme -- kimbie-dark
+# Converted from the fresh editor theme kimbie-dark.json
+[Theme]
+Name : kimbie-dark
+Version : 1
+
+[Palette]
+0 : 94 69 43
+1 : 34 26 15
+2 : 211 175 134
+3 : 85 57 23
+4 : 255 255 255
+5 : 79 53 24
+6 : 75 56 34
+7 : 247 154 50
+8 : 54 39 18
+9 : 220 57 88
+10 : 95 13 13
+11 : 138 177 176
+12 : 44 33 17
+13 : 124 80 33
+14 : 152 103 106
+15 : 240 100 49
+
+[Color/X11]
+er : 0 1
+es : 1 1
+et : 2 1
+ez : 2 3
+ek : 4 5
+em : 6 1
+hh : 7 8
+hb : 7 1
+hm : 2 8
+db : 9 10
+dy : 11 12
+mr : 0 8
+ms : 7 8
+mt : 2 8
+mz : 2 13
+df : 1 1
+nr : 2 8
+ne : 2 3
+nt : 2 8
+nsnt : 2 1
+fr : 2 8
+fa : 2 3
+ft : 2 8
+fz : 2 3
+frft : 2 1
+fs : 2 8
+nsft : 7 1
+fsm : 2 13
+nz : 2 8
+ns : 7 8
+nm : 2 13
+of : 0 1
+ct : 2 1
+cr : 14 1
+ck : 7 1
+cp : 15 1
+cc : 2 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 8 0
+es : 0 0
+et : 8 0
+ez : 8 0
+ek : 15 0
+em : 0 0
+hh : 3 0
+hb : 3 0
+hm : 8 0
+db : 1 0
+dy : 8 0
+mr : 8 0
+ms : 3 0
+mt : 8 0
+mz : 8 8
+df : 0 0
+nr : 8 0
+ne : 8 0
+nt : 8 0
+nsnt : 8 0
+fr : 8 0
+fa : 8 0
+ft : 8 0
+fz : 8 0
+frft : 8 0
+fs : 8 0
+nsft : 3 0
+fsm : 8 8
+nz : 8 0
+ns : 3 0
+nm : 8 8
+of : 8 0
+ct : 8 0
+cr : 8 0
+ck : 3 0
+cp : 9 0
+cc : 8 0
+dc : 32
+ws : 7

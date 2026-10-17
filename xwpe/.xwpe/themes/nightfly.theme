@@ -1,0 +1,105 @@
+# XWPE theme -- nightfly
+# Converted from the fresh editor theme nightfly.json
+[Theme]
+Name : nightfly
+Version : 1
+
+[Palette]
+0 : 44 48 67
+1 : 1 22 39
+2 : 29 59 83
+3 : 195 204 220
+4 : 214 222 235
+5 : 56 80 122
+6 : 75 100 121
+7 : 130 170 255
+8 : 9 36 58
+9 : 255 88 116
+10 : 58 22 34
+11 : 161 205 94
+12 : 18 58 46
+13 : 199 146 234
+14 : 247 140 108
+15 : 33 199 168
+
+[Color/X11]
+er : 0 1
+es : 2 1
+et : 3 1
+ez : 3 2
+ek : 4 5
+em : 6 1
+hh : 7 8
+hb : 7 1
+hm : 3 8
+db : 9 10
+dy : 11 12
+mr : 0 8
+ms : 7 8
+mt : 3 8
+mz : 3 2
+df : 1 1
+nr : 3 8
+ne : 3 2
+nt : 3 8
+nsnt : 3 1
+fr : 3 8
+fa : 3 2
+ft : 3 8
+fz : 3 2
+frft : 3 1
+fs : 3 8
+nsft : 7 1
+fsm : 3 2
+nz : 3 8
+ns : 7 8
+nm : 3 2
+of : 0 1
+ct : 3 1
+cr : 13 1
+ck : 14 1
+cp : 15 1
+cc : 3 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 0 0
+es : 0 0
+et : 7 0
+ez : 7 0
+ek : 7 8
+em : 8 0
+hh : 12 0
+hb : 12 0
+hm : 7 0
+db : 8 0
+dy : 8 0
+mr : 0 0
+ms : 12 0
+mt : 7 0
+mz : 7 0
+df : 0 0
+nr : 7 0
+ne : 7 0
+nt : 7 0
+nsnt : 7 0
+fr : 7 0
+fa : 7 0
+ft : 7 0
+fz : 7 0
+frft : 7 0
+fs : 7 0
+nsft : 12 0
+fsm : 7 0
+nz : 7 0
+ns : 12 0
+nm : 7 0
+of : 0 0
+ct : 7 0
+cr : 7 0
+ck : 8 0
+cp : 6 0
+cc : 7 0
+dc : 32
+ws : 7

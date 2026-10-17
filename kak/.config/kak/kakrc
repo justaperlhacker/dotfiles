@@ -1,0 +1,124 @@
+# ~/.config/kak/kakrc
+#
+# A sensible starting-point configuration for Kakoune.
+# Everything here is optional — tweak or delete freely.
+#
+# Reload after editing with `:source %val{config}/kakrc` (or the <space>e
+# mapping below), and see `:doc options`, `:doc highlighters` and `:doc keys`
+# for the full reference.
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Appearance
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Color scheme — see `:colorscheme <tab>`; the themes live in $kak_config/colors.
+colorscheme gruvbox
+
+# Terminal UI: enable the mouse and set the terminal title.
+set-option global ui_options terminal_enable_mouse=yes terminal_set_title=yes
+
+# Status line: drop the client@session suffix, keep filename, position and mode.
+set-option global modelinefmt '%val{bufname} %val{cursor_line}:%val{cursor_char_column} {{context_info}} {{mode_info}}'
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Editor options
+# ─────────────────────────────────────────────────────────────────────────────
+
+set-option global tabstop 4
+set-option global indentwidth 4
+set-option global scrolloff 5,5
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Highlighters
+# ─────────────────────────────────────────────────────────────────────────────
+
+add-highlighter global/ number-lines -hlcursor -min-digits 3
+add-highlighter global/ show-matching
+add-highlighter global/ show-whitespaces -only-trailing
+
+# Uncomment to soft-wrap long lines at word boundaries:
+# add-highlighter global/ wrap -word -indent
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Leader key: <space> enters a small user mode
+# ─────────────────────────────────────────────────────────────────────────────
+
+map global normal <space> ':enter-user-mode user<ret>' -docstring 'leader'
+
+map global user w  ':write<ret>'        -docstring 'write'
+map global user Q  ':write-quit<ret>'   -docstring 'write and quit'
+map global user q  ':quit<ret>'         -docstring 'quit'
+map global user e  ':edit-config<ret>'  -docstring 'edit kakrc'
+map global user c  ':colorscheme<space>' -docstring 'choose color scheme'
+map global user b  ':buffer-next<ret>'  -docstring 'next buffer'
+map global user d  ':delete-buffer<ret>' -docstring 'close buffer'
+map global user n  ':new<ret>'          -docstring 'new client (needs tmux)'
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Commands and hooks
+# ─────────────────────────────────────────────────────────────────────────────
+
+# `:edit-config` — open this file from anywhere.
+define-command -docstring 'Open the user configuration' edit-config %{
+    edit %val{config}/kakrc
+}
+
+# Re-source the configuration whenever it is saved.
+hook global -group reload-kakrc BufWritePost .*kakrc %{ try %{ source %val{filename} } }
+
+# Strip trailing whitespace before writing a file.
+hook global -group strip-trailing-whitespace BufWritePre .* %{
+    try %{ execute-keys -draft '%s\h+$<ret>d' }
+}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Plugins (plug.kak)
+#
+# On first launch this clones plug.kak, then registers the plugins below.
+# Run `:plug-install` once, then restart Kakoune to load and configure them.
+# Manage them later with `:plug-list`, `:plug-update` and `:plug-clean`.
+# ─────────────────────────────────────────────────────────────────────────────
+
+evaluate-commands %sh{
+    plugins="$kak_config/plugins"
+    mkdir -p "$plugins"
+    [ -e "$plugins/plug.kak" ] || \
+        git clone -q https://github.com/andreyorst/plug.kak.git "$plugins/plug.kak"
+    printf "%s\n" "source '$plugins/plug.kak/rc/plug.kak'"
+}
+plug "andreyorst/plug.kak" noload
+
+# Smart indentation and alignment.
+plug "andreyorst/smarttab.kak"
+
+# Auto-close brackets, quotes, etc.
+plug "alexherbo2/auto-pairs.kak"
+
+# Fuzzy finding — needs the `fzf` binary in PATH.
+plug "andreyorst/fzf.kak" config %{
+    map global user f ':fzf-mode<ret>' -docstring 'fzf'
+}
+
+# Language server client — needs the `kak-lsp` binary in PATH.
+plug "kakoune-lsp/kakoune-lsp" config %{
+    map global user D ':lsp-definition<ret>' -docstring 'lsp: definition'
+    map global user h ':lsp-hover<ret>'      -docstring 'lsp: hover'
+    map global user r ':lsp-references<ret>' -docstring 'lsp: references'
+    map global user a ':lsp-code-actions<ret>' -docstring 'lsp: code actions'
+    map global user R ':lsp-rename<ret>'     -docstring 'lsp: rename'
+
+    # Auto-enable the LSP for common languages, but only if kak-lsp is installed.
+    evaluate-commands %sh{
+        if command -v kak-lsp >/dev/null 2>&1; then
+            for ft in rust python go javascript c cpp; do
+                printf 'hook global WinSetOption filetype=%s %%{ lsp-enable }\n' "$ft"
+            done
+        fi
+    }
+}

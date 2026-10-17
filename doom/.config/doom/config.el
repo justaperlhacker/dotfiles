@@ -4,7 +4,7 @@
 ;; sync' after modifying this file!
 
 
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; Some functionality uses this to ideuntify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
 ;;       user-mail-address "john@doe.com")
@@ -35,12 +35,20 @@
 ;;(setq doom-font (font-spec :family "BerkelyMono Nerd Font" :size 14)
 ;;    doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14))
 
-(let ((doom-font-size
-       (pcase (downcase (or system-name ""))
-         ("blackslate" 24)  ; 2K laptop: bump size for readability
-         (_ 14))))
-  (setq doom-font (font-spec :family "BerkeleyMono Nerd Font" :size doom-font-size :weight 'medium)
-        doom-variable-pitch-font (font-spec :family "Fira Sans" :size doom-font-size)))
+(setq doom-font-size
+      (pcase (downcase (or (system-name) ""))
+        ("blackslate" 24)  ; 2K laptop: bump size for readability
+        ("destro" 16)
+        (_ 16)))
+
+;;(setq doom-font-weight 'normal)
+(setq doom-font-weight 'medium)
+
+(setq doom-font-family "BerkeleyMono Nerd Font"
+      doom-variable-font-family "Fira Sans")
+
+(setq doom-font (font-spec :family doom-font-family :size doom-font-size :weight doom-font-weight)
+      doom-variable-pitch-font (font-spec :family doom-variable-font-family :size doom-font-size))
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -51,7 +59,12 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;;(setq doom-theme 'doom-one)
-(setq doom-theme 'doom-rouge)
+;; Custom themes living in $DOOMDIR/themes (ports of the fresh-editor palettes,
+;; the nvim mini.hues seasons, naysayer, and the vscode-themes repo — matching
+;; ~/.config/fresh, ~/.config/nvim, ~/.vscode, ~/.xwpe and ~/Projects/vscode-themes).
+;; Regenerate with:
+;;   python3 $DOOMDIR/scripts/gen_doom_themes.py
+(setq doom-theme 'doom-kanso)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -139,3 +152,12 @@
 (add-to-list 'auto-mode-alist '("\\.bashrc\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.bash_profile\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.inputrc\\'" . conf-mode))
+
+;; ==================== EVIL HYBRID EDITING ====================
+;; Doom has no +hybrid flag; this makes Emacs-style keys (C-a C-e C-k C-y ...)
+;; available in insert state, like Spacemacs's hybrid-mode.
+(setq evil-disable-insert-state-bindings t)
+
+;; ==================== TREEMACS FOCUS ====================
+(map! :leader :desc "Focus treemacs" "o RET" #'treemacs-select-window)
+(map! :n :desc "Focus treemacs" "M-0" #'treemacs-select-window)

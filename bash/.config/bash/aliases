@@ -126,6 +126,7 @@ alias cd..='cd ..'
 alias pdw="pwd"
 
 # emacs
+alias doom="~/.config/doom-emacs/bin/doom"
 alias em='emacs -nw'
 alias doomemacs="emacs --init-dir=\"$HOME/.config/doom-emacs\" --name=\"doom-emacs\""
 alias spacemacs="emacs --init-dir=\"$HOME/.config/spacemacs\" --name=\"spacemacs\""

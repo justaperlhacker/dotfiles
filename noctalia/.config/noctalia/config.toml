@@ -1,0 +1,18 @@
+# Noctalia v5 — declarative configuration.
+#
+# GUI-managed overrides live in ~/.local/state/noctalia/settings.toml, which is
+# NOT committed (state). Keep curated settings here.
+#
+# The bar/layout is intentionally left at its built-in default.
+
+[shell]
+# Use the KDE polkit agent started by the compositor session.
+polkit_agent = false
+# Declarative deployment: don't auto-open the first-run wizard.
+setup_wizard_enabled = false
+# No anonymous startup ping.
+telemetry_enabled = false
+
+[shell.screenshot]
+directory = "~/Pictures/Screenshots"
+filename_pattern = "Screenshot_%Y%m%d_%H%M%S"

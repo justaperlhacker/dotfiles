@@ -1,0 +1,105 @@
+# XWPE theme -- vague
+# Converted from the fresh editor theme vague.json
+[Theme]
+Name : vague
+Version : 1
+
+[Palette]
+0 : 37 37 48
+1 : 20 20 21
+2 : 205 205 205
+3 : 45 52 71
+4 : 255 255 255
+5 : 49 60 74
+6 : 44 44 52
+7 : 126 152 232
+8 : 28 28 36
+9 : 216 100 126
+10 : 59 36 42
+11 : 24 24 29
+12 : 51 55 56
+13 : 110 148 178
+14 : 174 174 209
+15 : 155 180 188
+
+[Color/X11]
+er : 0 1
+es : 0 1
+et : 2 1
+ez : 2 3
+ek : 4 5
+em : 6 1
+hh : 7 8
+hb : 7 1
+hm : 2 8
+db : 9 10
+dy : 7 11
+mr : 0 8
+ms : 7 8
+mt : 2 8
+mz : 2 12
+df : 1 1
+nr : 2 8
+ne : 2 3
+nt : 2 8
+nsnt : 2 1
+fr : 2 8
+fa : 2 3
+ft : 2 8
+fz : 2 3
+frft : 2 1
+fs : 2 8
+nsft : 7 1
+fsm : 2 12
+nz : 2 8
+ns : 7 8
+nm : 2 12
+of : 0 1
+ct : 2 1
+cr : 13 1
+ck : 14 1
+cp : 15 1
+cc : 2 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 0 0
+es : 0 0
+et : 7 0
+ez : 7 0
+ek : 15 0
+em : 0 0
+hh : 12 0
+hb : 12 0
+hm : 7 0
+db : 8 0
+dy : 12 0
+mr : 0 0
+ms : 12 0
+mt : 7 0
+mz : 7 0
+df : 0 0
+nr : 7 0
+ne : 7 0
+nt : 7 0
+nsnt : 7 0
+fr : 7 0
+fa : 7 0
+ft : 7 0
+fz : 7 0
+frft : 7 0
+fs : 7 0
+nsft : 12 0
+fsm : 7 0
+nz : 7 0
+ns : 12 0
+nm : 7 0
+of : 0 0
+ct : 7 0
+cr : 8 0
+ck : 7 0
+cp : 8 0
+cc : 7 0
+dc : 32
+ws : 7

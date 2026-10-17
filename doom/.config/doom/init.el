@@ -44,8 +44,8 @@
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;;smooth-scroll     ; So smooth you won't believe it's not butter
-       ;;tabs              ; a tab bar for Emacs
-       ;;treemacs          ; a project drawer, like neotree but cooler
+       tabs              ; a tab bar for Emacs
+       treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
        (vc-gutter +pretty) ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -54,7 +54,7 @@
        ;;zen               ; distraction-free coding or writing
 
        :editor
-       (evil +everywhere +hybrid); come to the dark side, we have cookies
+       (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
        ;;(format +onsave)  ; automated prettiness
@@ -81,7 +81,8 @@
        eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-       vterm             ; the best terminal emulation in Emacs
+       ;;vterm             ; almost the best terminal emulation in Emacs
+       ghostel           ; the best terminal emulation in Emacs
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
@@ -100,9 +101,9 @@
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
        ;;llm               ; when I said you needed friends, I didn't mean...
-       ;;(lsp +eglot)      ; M-x vscode
+       (lsp +eglot)      ; M-x vscode
        magit             ; a git porcelain for Emacs
-       ;;make              ; run make tasks from Emacs
+       make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
        ;;terraform         ; infrastructure as code
@@ -118,7 +119,7 @@
        ;;ada               ; In strong typing we (blindly) trust
        ;;(agda +local)     ; types of types of types of types...
        ;;beancount         ; mind the GAAP
-       ;;(cc +lsp)         ; C > C++ == 1
+       (cc +lsp)         ; C > C++ == 1
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -171,6 +172,7 @@
        ;;rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;;scad              ; trust the preview, regret the render
        ;;scala             ; java, but good
        ;;(scheme +guile)   ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
@@ -197,3 +199,7 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+
+;; If you're a dark-mode user who suffers from the "flash of white Emacs" when
+;; you first open Emacs, uncomment this (and adjust the color as you like).
+;; (add-to-list 'initial-frame-alist '(background-color . "#000000"))

@@ -1,0 +1,104 @@
+# XWPE theme -- black-metal-gorgoroth
+# Converted from the fresh editor theme black-metal-gorgoroth.json
+[Theme]
+Name : black-metal-gorgoroth
+Version : 1
+
+[Palette]
+0 : 31 31 31
+1 : 0 0 0
+2 : 14 14 14
+3 : 193 193 193
+4 : 23 32 32
+5 : 255 255 255
+6 : 41 41 41
+7 : 24 24 24
+8 : 95 135 135
+9 : 10 10 10
+10 : 10 14 14
+11 : 27 27 27
+12 : 153 153 153
+13 : 170 170 170
+14 : 155 141 127
+
+[Color/X11]
+er : 0 1
+es : 2 1
+et : 3 1
+ez : 3 4
+ek : 5 6
+em : 7 1
+hh : 8 9
+hb : 8 1
+hm : 3 9
+db : 8 10
+dy : 8 10
+mr : 0 9
+ms : 8 9
+mt : 3 9
+mz : 3 11
+df : 1 1
+nr : 3 9
+ne : 3 4
+nt : 3 9
+nsnt : 3 1
+fr : 3 9
+fa : 3 4
+ft : 3 9
+fz : 3 4
+frft : 3 1
+fs : 3 9
+nsft : 8 1
+fsm : 3 11
+nz : 3 9
+ns : 8 9
+nm : 3 11
+of : 0 1
+ct : 3 1
+cr : 12 1
+ck : 13 1
+cp : 14 1
+cc : 3 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 0 0
+es : 0 0
+et : 7 0
+ez : 7 0
+ek : 15 0
+em : 0 0
+hh : 8 0
+hb : 8 0
+hm : 7 0
+db : 8 0
+dy : 8 0
+mr : 0 0
+ms : 8 0
+mt : 7 0
+mz : 7 0
+df : 0 0
+nr : 7 0
+ne : 7 0
+nt : 7 0
+nsnt : 7 0
+fr : 7 0
+fa : 7 0
+ft : 7 0
+fz : 7 0
+frft : 7 0
+fs : 7 0
+nsft : 8 0
+fsm : 7 0
+nz : 7 0
+ns : 8 0
+nm : 7 0
+of : 0 0
+ct : 7 0
+cr : 8 0
+ck : 8 0
+cp : 8 0
+cc : 7 0
+dc : 32
+ws : 7

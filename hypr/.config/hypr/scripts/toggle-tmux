@@ -39,9 +39,25 @@ sub find_target_window {
     return undef;
 }
 
+sub is_kitty ($t) { return $t =~ m{(?:^|/)kitty$}; }
+
+sub has_command ($name) {
+    for my $dir ( split /:/, ( $ENV{PATH} // '' ) ) {
+        next unless length $dir;
+        return 1 if -x "$dir/$name";
+    }
+    return 0;
+}
+
 sub spawn_app {
     my ( $terminal, $session, $cmd ) = @_;
-    my @args = ( $terminal, '-e', 'tmux', 'new-session', '-As', $session );
+    my @args;
+    if ( is_kitty($terminal) ) {
+        @args = ( $terminal, '--instance-group', "tmux-$session", '--class', 'kitty', '-e', 'tmux', 'new-session', '-As', $session );
+    }
+    else {
+        @args = ( $terminal, '-e', 'tmux', 'new-session', '-As', $session );
+    }
     push @args, $cmd if defined $cmd;
     if ( fork == 0 ) {
         exec @args;
@@ -90,13 +106,13 @@ GetOptions(
     'class=s' => \my $wclass,
     'title=s',
     'width=i',
-) or die "Usage: $0 --session NAME --class CLASS --title TITLE [--cmd CMD] [--terminal konsole] [--width 75]\n";
+) or die "Usage: $0 --session NAME --title TITLE [--cmd CMD] [--terminal kitty|konsole] [--class CLASS] [--width 75]\n";
 
-$terminal //= 'konsole';
+$terminal //= has_command('kitty') ? 'kitty' : 'konsole';
 
 my $session = $opts{session} // die "Error: --session is required\n";
 my $cmd     = $opts{cmd};
-$wclass //= die "Error: --class is required\n";
+$wclass //= is_kitty($terminal) ? 'kitty' : 'org.kde.konsole';
 my $title = $opts{title} // die "Error: --title is required\n";
 my $width = $opts{width} // 75;
 

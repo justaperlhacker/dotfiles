@@ -27,6 +27,13 @@ function M.apply(config)
         action = wezterm.action_callback(scheme.on_pick),
       }),
     },
+    -- Shift+Enter inserts a newline in TUI apps (opencode, etc.) instead of
+    -- submitting. Send the CSI-u encoding of Shift+Enter directly.
+    {
+      key = "Enter",
+      mods = "SHIFT",
+      action = wezterm.action.SendString("\x1b[13;2u"),
+    },
   }
 
   -- Kitty-style tab selection: Ctrl+1..9 selects tabs 1-9, Ctrl+0 selects tab 10.

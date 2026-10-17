@@ -1,0 +1,105 @@
+# XWPE theme -- fleury
+# Converted from the fresh editor theme fleury.json
+[Theme]
+Name : fleury
+Version : 1
+
+[Palette]
+0 : 99 82 61
+1 : 2 2 2
+2 : 185 148 104
+3 : 48 48 64
+4 : 73 73 73
+5 : 33 33 33
+6 : 252 170 5
+7 : 16 16 16
+8 : 255 0 0
+9 : 58 0 0
+10 : 143 255 242
+11 : 9 9 9
+12 : 62 42 3
+13 : 240 198 116
+14 : 255 169 0
+15 : 237 178 17
+
+[Color/X11]
+er : 0 1
+es : 0 1
+et : 2 1
+ez : 2 3
+ek : 1 4
+em : 5 1
+hh : 6 7
+hb : 6 1
+hm : 2 7
+db : 8 9
+dy : 10 11
+mr : 0 7
+ms : 6 7
+mt : 2 7
+mz : 2 0
+df : 1 1
+nr : 2 7
+ne : 2 12
+nt : 2 7
+nsnt : 2 1
+fr : 2 7
+fa : 2 12
+ft : 2 7
+fz : 2 12
+frft : 2 1
+fs : 2 7
+nsft : 6 1
+fsm : 2 0
+nz : 2 7
+ns : 6 7
+nm : 2 0
+of : 0 1
+ct : 2 1
+cr : 13 1
+ck : 14 1
+cp : 15 1
+cc : 2 1
+dc : 32
+ws : 7
+
+[Color/Term]
+er : 8 0
+es : 8 0
+et : 8 0
+ez : 8 0
+ek : 0 8
+em : 0 0
+hh : 3 0
+hb : 3 0
+hm : 8 0
+db : 9 0
+dy : 7 0
+mr : 8 0
+ms : 3 0
+mt : 8 0
+mz : 8 8
+df : 0 0
+nr : 8 0
+ne : 8 0
+nt : 8 0
+nsnt : 8 0
+fr : 8 0
+fa : 8 0
+ft : 8 0
+fz : 8 0
+frft : 8 0
+fs : 8 0
+nsft : 3 0
+fsm : 8 8
+nz : 8 0
+ns : 3 0
+nm : 8 8
+of : 8 0
+ct : 8 0
+cr : 7 0
+ck : 3 0
+cp : 3 0
+cc : 8 0
+dc : 32
+ws : 7

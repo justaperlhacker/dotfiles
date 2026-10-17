@@ -59,11 +59,11 @@ our ( $KWIN_SVC, $KWIN_OBJ ) = ( 'org.kde.KWin', '/Scripting' );
 # Session presets so that `--session opencode` is enough (see systemd unit).
 # ---------------------------------------------------------------------------
 my %PRESETS = (
-    opencode => { terminal => 'konsole', cmd => 'opencode', class => 'org.kde.konsole' },
-    kilo     => { terminal => 'konsole', cmd => 'kilo',     class => 'org.kde.konsole' },
-    dgop => { terminal => 'kitty', cmd => sub { first_available( 'dgop', 'htop', 'btop', 'top' ) }, class => 'kitty' },
-    htop => { terminal => 'konsole', cmd => 'htop', class => 'org.kde.konsole' },
-    work => { terminal => 'konsole', cmd => undef,  class => 'org.kde.konsole' },
+    opencode => { cmd => 'opencode' },
+    kilo     => { cmd => 'kilo' },
+    dgop     => { cmd => sub { first_available( 'dgop', 'htop', 'btop', 'top' ) } },
+    htop     => { cmd => 'htop' },
+    work     => { cmd => undef },
 );
 
 my ( $terminal, $session, $cmd,        $class, $title );
@@ -94,13 +94,11 @@ die_usage("--session is required\n") unless defined $session && length $session;
 
 if ( exists $PRESETS{$session} ) {
     my $p = $PRESETS{$session};
-    $terminal //= $p->{terminal};
-    $cmd      //= ref $p->{cmd} eq 'CODE' ? $p->{cmd}->() : $p->{cmd};
-    $class    //= $p->{class};
+    $cmd //= ref $p->{cmd} eq 'CODE' ? $p->{cmd}->() : $p->{cmd};
 }
 
-$terminal //= 'konsole';
-$class    //= 'org.kde.konsole';
+$terminal //= first_available('kitty') // 'konsole';
+$class    //= is_kitty($terminal) ? 'kitty' : 'org.kde.konsole';
 $title    //= $session;
 $width    //= 90;
 $height   //= 85;
@@ -114,6 +112,8 @@ for my $pair ( [ width => $width ], [ height => $height ] ) {
 
 my $log = $verbose ? sub { say STDERR "[plasma-toggle-tmux] @_" } : sub { };
 
+sub is_kitty ($t) { return $t =~ m{(?:^|/)kitty$}; }
+
 sub first_available {
     for my $cand (@_) {
         for my $dir ( split /:/, ( $ENV{PATH} // '' ) ) {
@@ -122,6 +122,36 @@ sub first_available {
         }
     }
     return undef;
+}
+
+# The systemd user manager can carry a stale WAYLAND_DISPLAY (e.g. wayland-1
+# left over after a KWin restart) that no longer has a socket.  A terminal
+# spawned with it fails to connect ("Wayland: Failed to connect to display")
+# and never appears, so the scratchpad silently does nothing.  Prefer the
+# inherited value when its socket exists, otherwise fall back to the first
+# real wayland-* socket in XDG_RUNTIME_DIR.
+sub existing_wayland_display {
+    my $rt = $ENV{XDG_RUNTIME_DIR} // '';
+    return undef unless length $rt;
+    my $cur = $ENV{WAYLAND_DISPLAY};
+    return $cur if defined $cur && length $cur && -S "$rt/$cur";
+    my @cand;
+    for my $sock ( glob("$rt/wayland-*") ) {
+        next unless -S $sock;
+        ( my $name = $sock ) =~ s{.*/}{};
+        push @cand, [ $name, ( $name =~ /(\d+)/ )[0] // 0 ];
+    }
+    return undef unless @cand;
+    @cand = sort { $a->[1] <=> $b->[1] } @cand;
+    return $cand[0][0];
+}
+
+sub fix_compositor_env {
+    my $wd = existing_wayland_display();
+    if ( defined $wd && $wd ne ( $ENV{WAYLAND_DISPLAY} // '' ) ) {
+        $log->("using WAYLAND_DISPLAY=$wd (was " . ( $ENV{WAYLAND_DISPLAY} // 'unset' ) . ")");
+        $ENV{WAYLAND_DISPLAY} = $wd;
+    }
 }
 
 # ---------------------------------------------------------------------------
@@ -304,7 +334,17 @@ sub wait_for_window ( $timeout = 3.0, $interval = 0.2 ) {
 }
 
 sub spawn_terminal {
-    my @args = ( $terminal, '-e', 'tmux', 'new-session', '-As', $session );
+    fix_compositor_env();
+    my @args;
+    if ( is_kitty($terminal) ) {
+        @args = (
+            $terminal, '--instance-group', "tmux-$session", '--class', 'kitty', '-e',
+            'tmux',    'new-session',      '-As',           $session
+        );
+    }
+    else {
+        @args = ( $terminal, '-e', 'tmux', 'new-session', '-As', $session );
+    }
     push @args, $cmd if defined $cmd && length $cmd;
 
     my $pid = fork // die "fork failed: $!";
@@ -371,9 +411,9 @@ sub usage ($code) {
 
         Options:
           --session NAME     tmux session / scratchpad name (required)
-          --terminal NAME    terminal emulator (default: konsole)
+          --terminal NAME    terminal emulator (default: kitty if available, else konsole)
           --cmd CMD          command to run inside the tmux session
-          --class CLASS      window resourceClass to match (default: org.kde.konsole)
+          --class CLASS      window resourceClass to match (default: kitty for kitty, else org.kde.konsole)
           --title STRING     /proc/<pid>/cmdline substring identifying the window
           --width PCT        window width as % of screen (default: 90)
           --height PCT       window height as % of screen (default: 85)
@@ -476,8 +516,7 @@ sub do_install {
     qdbus_run( $KWIN_SVC, $KWIN_OBJ, 'org.kde.kwin.Scripting.unloadScript', 'plasma-toggle-tmux' )
         if $loaded eq 'true';
 
-    my $names =
-        qdbus_capture( 'org.kde.kglobalaccel', '/component/kwin', 'org.kde.kglobalaccel.Component.shortcutNames' );
+    my $names = qdbus_capture( 'org.kde.kglobalaccel', '/component/kwin', 'org.kde.kglobalaccel.Component.shortcutNames' );
     for my $name ( split /[\n,]/, ( $names // '' ) ) {
         $name             =~ s/^\s+|\s+$//g;
         $name             =~ s/^"|"$//g;

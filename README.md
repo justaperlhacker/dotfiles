@@ -62,6 +62,7 @@ stow -D bash          # remove symlinks
 | `redshift`        | `.config/redshift/`                                       |
 | `scripts`         | `.local/bin/`                                             |
 | `starship`        | `.config/starship.toml`                                   |
+| `terminator`      | `.config/terminator/` (config only; `plugins/` is not tracked) |
 | `tmux`            | `.config/tmux/`                                           |
 | `vscode`          | `.config/Code/User/`                                      |
 | `xresources`      | `.Xresources`, `.Xresources.d/`                           |

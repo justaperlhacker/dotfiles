@@ -63,3 +63,6 @@ pi/.pi/agent/auth.json
 
 # OpenWeatherMap API key — never commit; still deployed by stow
 i3/.config/i3/scripts/.env
+
+# Terminator: bundled terminator-themes plugin is machine-local — never commit
+terminator/.config/terminator/plugins/

@@ -146,9 +146,50 @@ vim.keymap.set("n", "<C-a>", "gg<S-v>G")
 vim.opt.virtualedit:append("onemore")
 vim.keymap.set("n", "$", "$l", { noremap = true })
 
+-- Resolve the file under the cursor for `gf`: expand `~`, `$VAR` / `${VAR}`,
+-- strip surrounding quotes/punctuation, and resolve relative paths against the
+-- current file's directory (falling back to the cwd when that file exists).
+local function resolve_under_cursor()
+	local word = vim.fn.expand("<cWORD>")
+	word = word:gsub("^[\"'`]+", ""):gsub("[\"'`]+$", "")
+	word = word:gsub("[%),;]+$", "")
+	if word == "" then
+		return nil
+	end
+
+	-- Expand ${VAR} and $VAR using the current environment.
+	local expanded = word:gsub("%${([%w_]+)}", function(v)
+		return vim.env[v] or ("${" .. v .. "}")
+	end):gsub("%$([%w_]+)", function(v)
+		return vim.env[v] or ("$" .. v)
+	end)
+	-- Expand a leading ~ as well.
+	if expanded:match("^~") then
+		expanded = vim.fn.expand(expanded)
+	end
+
+	if expanded:match("^/") then
+		return expanded
+	end
+
+	local from_file = vim.fn.simplify(vim.fn.expand("%:p:h") .. "/" .. expanded)
+	if vim.uv.fs_stat(from_file) then
+		return from_file
+	end
+	local from_cwd = vim.fn.simplify(vim.fn.getcwd() .. "/" .. expanded)
+	if vim.uv.fs_stat(from_cwd) then
+		return from_cwd
+	end
+	return from_file
+end
+
 -- Allow gf to edit files that do not exist yet.
 vim.keymap.set("n", "gf", function()
-	local file = vim.fn.expand("<cfile>")
+	local file = resolve_under_cursor()
+	if not file then
+		vim.notify("No file under cursor", vim.log.levels.WARN)
+		return
+	end
 	vim.cmd.edit(vim.fn.fnameescape(file))
 end, { desc = "Edit file under cursor" })
 

@@ -87,7 +87,7 @@ opt.cmdheight = 1 -- command line height
 
 
 -- spell checking
-opt.spell = false -- enable spell checking
+opt.spell = false -- disable spell checking
 -- opt.spell = true -- enable spell checking
 opt.spelllang = "en" -- set spell check language
 opt.iskeyword:append("-") -- treat dashes as part of words
@@ -181,16 +181,5 @@ opt.foldlevel = 99 -- start with all folds open
 opt.foldlevelstart = 99 -- start with all folds open
 
 
-
--- This leaves a nice underline
--- vim.api.nvim_set_hl(0, "CursorLine", {})
--- vim.api.nvim_set_hl(0, "CursorLine", { underline = true })
-
--- Make all comments italic.
-vim.api.nvim_set_hl(0, "Comment", { italic = true })
-
-vim.api.nvim_set_hl(0, "VertSplit", {})
-
 -- Delete comment character when joining commented lines
 opt.formatoptions:append("j")
-

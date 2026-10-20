@@ -114,14 +114,10 @@ vim.keymap.set({ 'n', 'x' }, '<leader>P', '"+P', { desc = 'Paste from system cli
 
 -- window management
 vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", opts) -- split window vertically
-vim.keymap.set("n", "<leader>sh", ":split<CR>", opts) -- split window horizontally
+vim.keymap.set("n", "<leader>sh", ":split<CR>", opts)  -- split window horizontally
 vim.keymap.set("n", "<leader>se", "<C-w>=", opts)      -- make split windows equal width & height
-vim.keymap.set("n", "<leader>sx", ":close<CR>", opts) -- close current split window
-vim.keymap.set("n", "<leader>so", ":only<CR>", opts)    -- close all but current window
--- maximize window: <leader>sm
--- configured in maximize plugin
--- in traditional neovim setup, would be:
---vim.keymap.set("n", "<leader>sm", "<cmd>MaximizerToggle<CR>", opts) -- toggle maximize window
+vim.keymap.set("n", "<leader>sx", ":close<CR>", opts)  -- close current split window
+vim.keymap.set("n", "<leader>so", ":only<CR>", opts)   -- close all but current window
 
 -- Indenting in visual mode
 vim.keymap.set("v", "<", "<gv", { desc = 'Indent left and reselect' })
@@ -183,8 +179,16 @@ local function resolve_under_cursor()
 	return from_file
 end
 
--- Allow gf to edit files that do not exist yet.
+-- Use Neovim's native gf first so 'includeexpr' (Perl/Python/Raku/C/Lua
+-- modules) and 'suffixesadd' work. Fall back to the literal path under the
+-- cursor so gf can still create files that do not exist yet.
 vim.keymap.set("n", "gf", function()
+	local before = vim.api.nvim_buf_get_name(0)
+	vim.cmd("silent! normal! gf")
+	if vim.api.nvim_buf_get_name(0) ~= before then
+		return
+	end
+
 	local file = resolve_under_cursor()
 	if not file then
 		vim.notify("No file under cursor", vim.log.levels.WARN)

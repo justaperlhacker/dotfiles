@@ -61,7 +61,7 @@ our ( $KWIN_SVC, $KWIN_OBJ ) = ( 'org.kde.KWin', '/Scripting' );
 my %PRESETS = (
     opencode => { cmd => 'opencode' },
     kilo     => { cmd => 'kilo' },
-    dgop     => { cmd => sub { first_available( 'dgop', 'htop', 'btop', 'top' ) } },
+    btop     => { cmd => 'btop' },
     htop     => { cmd => 'htop' },
     work     => { cmd => undef },
 );
@@ -423,7 +423,7 @@ sub usage ($code) {
           --install          enable + load the KWin shortcut script for this session
           -h, --help         show this help
 
-        Preset sessions: opencode, kilo, dgop, htop, work
+        Preset sessions: opencode, kilo, btop, htop, work
         USAGE
     exit $code;
 }
@@ -527,6 +527,6 @@ sub do_install {
 
     qdbus_run( $KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure' );
     load_kwin_script($home);
-    print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+\\ work, SUPER+F11 dgop.\n";
+    print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+\\ work, SUPER+F11 btop.\n";
     return 1;
 }

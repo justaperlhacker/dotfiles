@@ -64,6 +64,12 @@ if [[ -z "$SSH_AUTH_SOCK" ]]; then
     fi
 fi
 
+# load codeberg key into the agent
+if ! ssh-add -l 2>/dev/null | grep -q ed25519_satrac_codeberg; then
+    [[ -f "$HOME/.ssh/ed25519_satrac_codeberg" ]] \
+        && ssh-add "$HOME/.ssh/ed25519_satrac_codeberg" 2>/dev/null
+fi
+
 # man pages
 export MANROFFOPT="-c"
 export PAGER="less -R"

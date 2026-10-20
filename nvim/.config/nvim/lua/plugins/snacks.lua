@@ -6,7 +6,8 @@ return {
   opts = {
     indent = { enabled = true },
     terminal = { enabled = true },
-    lazygit = { enabled = true }
+    lazygit = { enabled = true },
+    zen = { enabled = true }
   },
   keys = {
     -- Terminal
@@ -14,5 +15,8 @@ return {
     { "<c-_>", function() Snacks.terminal.toggle() end, mode = { "n", "t" }, desc = "which_key_ignore" },
     -- Lazygit
     { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
+    -- Window zoom (vim-maximizer style)
+    { "<F3>", function() Snacks.zen.zoom() end, mode = { "n", "v", "i" }, desc = "Toggle maximize window" },
+    { "<leader>sm", function() Snacks.zen.zoom() end, desc = "Toggle maximize window" },
   },
 }

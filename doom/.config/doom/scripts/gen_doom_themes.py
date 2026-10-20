@@ -10,6 +10,7 @@ Output: $DOOMDIR/themes/doom-<name>-theme.el
 import json
 import os
 import re
+import sys
 from string import Template
 
 # Resolve paths relative to this script:  <dotfiles>/doom/.config/doom/scripts/
@@ -22,6 +23,13 @@ NVIM = os.path.join(REPO, "nvim", ".config", "nvim", "colors")
 MINI = os.path.join(HOME, ".local", "share", "nvim", "lazy", "miniwinter", "colors")
 VSC = os.path.join(HOME, "Projects", "vscode-themes", "themes")
 OUT = os.path.join(DOOMDIR, "themes")
+
+# 10x Editor palettes live with the Kakoune theme family (the shared source of
+# truth for these ports).
+KAK_SCRIPTS = os.path.join(HOME, "Projects", "kakoune-themes", "scripts")
+if KAK_SCRIPTS not in sys.path:
+    sys.path.insert(0, KAK_SCRIPTS)
+import tenx
 
 # Themes produced by hand or by another source; skip in the fresh-editor pass.
 SKIP = {"vscode-red", "miniwinter", "monochrome"}
@@ -404,7 +412,8 @@ ANSI16 = {"bg": "nil", "base0": '"black"', "base8": '"white"',
           "fg": '"brightwhite"', "base1": '"brightblack"', "grey": '"brightblack"'}
 
 
-def render(name, v, kw_bold, kw_italic, type_bold, type_italic, source_note):
+def render(name, v, kw_bold, kw_italic, type_bold, type_italic, source_note,
+           comment_italic=True):
     v.setdefault("dark-blue", darken(v["blue"], 0.4))
     v.setdefault("dark-cyan", darken(v["cyan"], 0.4))
     v.setdefault("dark-violet", darken(v["violet"], 0.4))
@@ -436,11 +445,13 @@ def render(name, v, kw_bold, kw_italic, type_bold, type_italic, source_note):
         return " ".join(parts)
 
     bg_decl = "\n  :background-mode 'light" if light else ""
+    comment_slant = "italic" if comment_italic else "normal"
 
     return Template(FILE_HEAD + FILE_TAIL).safe_substitute(
         v, spec=spec, name=name, source_note=source_note, bg_decl=bg_decl,
         kw_attrs=attrs(kw_bold, kw_italic),
-        type_attrs=attrs(type_bold, type_italic))
+        type_attrs=attrs(type_bold, type_italic),
+        comment_slant=comment_slant)
 
 
 FRESH_NOTE = (";; Generated from the fresh-editor palette:\n"
@@ -452,6 +463,8 @@ NAYSAYER_NOTE = (";; Generated from p0209p/naysayer.vim (Neovim) and the\n"
                  ";; justaperlhacker VSCode \"naysayer\" theme.")
 VSC_NOTE = (";; Generated from the justaperlhacker vscode-themes source:\n"
             ";;   ~/Projects/vscode-themes/themes/{name}-color-theme.json")
+TENX_NOTE = (";; Generated from the 10x Editor color scheme:\n"
+             ";;   ~/Projects/kakoune-themes/palettes/10x/{name}.10x_settings")
 
 
 SPEC_TEMPLATE = r'''  ;; name        default      256          16
@@ -517,7 +530,7 @@ FILE_TAIL = r'''
   ;;;; Base theme face overrides
   (((font-lock-comment-face &override)
     :background (if doom-${name}-comment-bg bg-alt 'unspecified)
-    :slant 'italic)
+    :slant '${comment_slant})
    ((font-lock-keyword-face &override) :foreground keywords ${kw_attrs})
    ((font-lock-builtin-face &override) :foreground builtin)
    ((font-lock-function-name-face &override) :foreground functions)
@@ -983,10 +996,12 @@ def palette_from_vscode(name):
     return v, kw_bold, kw_italic, type_bold, type_italic, VSC_NOTE.format(name=name)
 
 
-def write_theme(name, v, kw_bold, kw_italic, type_bold, type_italic, note):
+def write_theme(name, v, kw_bold, kw_italic, type_bold, type_italic, note,
+                comment_italic=True):
     dest = os.path.join(OUT, "doom-%s-theme.el" % name)
     with open(dest, "w") as fh:
-        fh.write(render(name, v, kw_bold, kw_italic, type_bold, type_italic, note))
+        fh.write(render(name, v, kw_bold, kw_italic, type_bold, type_italic,
+                        note, comment_italic))
     print("wrote", dest)
     return name
 
@@ -1000,7 +1015,7 @@ def main():
         if not fn.endswith(".json"):
             continue
         name = fn[:-len(".json")]
-        if name in SKIP:
+        if name in SKIP or name.startswith("10x-"):
             continue
         with open(os.path.join(FRESH, fn)) as fh:
             data = json.load(fh)
@@ -1019,6 +1034,15 @@ def main():
         for fn_name in VSC_THEMES:
             short = fn_name[len("doom-"):] if fn_name.startswith("doom-") else fn_name
             names.append(write_theme(short, *palette_from_vscode(fn_name)))
+
+    # 5) 10x Editor color schemes
+    for name, path, data in tenx.all_palettes():
+        v, meta = tenx.normalize(name, data)
+        names.append(write_theme(
+            "10x-" + meta["slug"], v, meta["kw_bold"], meta["kw_italic"],
+            meta["type_bold"], meta["type_italic"],
+            TENX_NOTE.format(name=name),
+            comment_italic=meta["comment_italic"]))
 
     print("total:", len(names))
 

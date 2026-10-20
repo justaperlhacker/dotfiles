@@ -58,6 +58,15 @@ local colorscheme = {}
 -- colorscheme.name = "rose-pine"
 -- colorscheme.name = "toast"
 
+-- 10x Editor ports (all 41 stock schemes, colors/10x-*.lua)
+-- colorscheme.name = "10x-sunset" -- 10x default
+-- colorscheme.name = "10x-terracotta"
+-- colorscheme.name = "10x-monokai"
+-- colorscheme.name = "10x-gruvbox-dark"
+-- colorscheme.name = "10x-solarized-dark"
+-- colorscheme.name = "10x-icing"
+-- colorscheme.name = "10x-vs-plus-vax"
+
 -- Active theme
 colorscheme.name = "vague"
 -- colorscheme.name = "monochrome"

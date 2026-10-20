@@ -60,8 +60,11 @@
 ;; `load-theme' function. This is the default:
 ;;(setq doom-theme 'doom-one)
 ;; Custom themes living in $DOOMDIR/themes (ports of the fresh-editor palettes,
-;; the nvim mini.hues seasons, naysayer, and the vscode-themes repo — matching
-;; ~/.config/fresh, ~/.config/nvim, ~/.vscode, ~/.xwpe and ~/Projects/vscode-themes).
+;; the nvim mini.hues seasons, naysayer, the vscode-themes repo, and all 41
+;; stock 10x Editor schemes — matching ~/.config/fresh, ~/.config/nvim,
+;; ~/.vscode, ~/.xwpe, ~/Projects/vscode-themes and ~/Projects/kakoune-themes).
+;; 10x examples: doom-10x-sunset (the 10x default), doom-10x-terracotta,
+;; doom-10x-monokai, doom-10x-gruvbox-dark, doom-10x-solarized-dark.
 ;; Regenerate with:
 ;;   python3 $DOOMDIR/scripts/gen_doom_themes.py
 (setq doom-theme 'doom-kanso)

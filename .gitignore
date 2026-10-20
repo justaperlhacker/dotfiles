@@ -1,6 +1,6 @@
 .backup/
 
-.config/bash/local
+bash/.config/bash/local
 .vscode
 __pycache__
 *.pyc

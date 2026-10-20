@@ -9,6 +9,9 @@ source ~/.config/bash/aliases
 source ~/.config/bash/functions
 source ~/.config/bash/prompt
 
+# Local, untracked overrides (personal helpers, identities, etc.)
+[[ -f ~/.config/bash/local ]] && source ~/.config/bash/local
+
 # Load shell completions
 [[ -f "$HOME/.config/bash/completion" ]] && source "$HOME/.config/bash/completion"
 

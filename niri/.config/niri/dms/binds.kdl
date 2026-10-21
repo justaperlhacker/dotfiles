@@ -82,15 +82,15 @@ binds {
     Mod+Ctrl+WheelScrollRight { move-column-right; }
     Mod+Down { focus-window-down; }
     Mod+End { focus-column-last; }
-    Mod+Equal { set-column-width "+10%"; }
-    Mod+F { maximize-column; }
+    Mod+Equal { set-window-width "+10%"; }
+    Mod+F { spawn "/home/johnm/.config/niri/scripts/niri-toggle-maximize"; }
     Mod+H { focus-column-left; }
     Mod+Home { focus-column-first; }
     Mod+J { focus-window-down; }
     Mod+K { focus-window-up; }
     Mod+L { focus-column-right; }
     Mod+Left { focus-column-left; }
-    Mod+Minus { set-column-width "-10%"; }
+    Mod+Minus { set-window-width "-10%"; }
     Mod+Period { expel-window-from-column; }
     Mod+Ctrl+Period hotkey-overlay-title="Toggle Float Center" { spawn "/home/johnm/.config/niri/scripts/toggle-float-center"; }
     Mod+Q repeat=false { close-window; }

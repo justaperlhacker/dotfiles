@@ -1,0 +1,24 @@
+#!/bin/sh
+win=$(niri msg --json focused-window 2>/dev/null) || exit 0
+id=$(printf '%s' "$win" | jq -r '.id')
+floating=$(printf '%s' "$win" | jq -r '.is_floating')
+
+if [ "$floating" != true ]; then
+    exec niri msg action maximize-column
+fi
+
+state="${XDG_RUNTIME_DIR:-/tmp}/niri-maximize-$id"
+if [ -f "$state" ]; then
+    read -r width height < "$state"
+    rm -f "$state"
+    niri msg action set-window-width --id "$id" "$width"
+    niri msg action set-window-height --id "$id" "$height"
+    niri msg action center-window --id "$id"
+else
+    width=$(printf '%s' "$win" | jq -r '.layout.tile_size[0] | floor')
+    height=$(printf '%s' "$win" | jq -r '.layout.tile_size[1] | floor')
+    printf '%s %s\n' "$width" "$height" > "$state"
+    niri msg action set-window-width --id "$id" 100%
+    niri msg action set-window-height --id "$id" 100%
+    niri msg action center-window --id "$id"
+fi

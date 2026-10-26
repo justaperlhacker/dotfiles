@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=OneDriveGUI
+Comment=A simple GUI for OneDrive Linux client
+Exec=/home/johnm/.config/niri/scripts/exec-after-sni /home/johnm/.local/bin/OneDriveGUI-1.3.2-x86_64.AppImage
+Icon=OneDriveGUI
+Terminal=false
+Categories=Network;Office;
+StartupNotify=false
+Hidden=false

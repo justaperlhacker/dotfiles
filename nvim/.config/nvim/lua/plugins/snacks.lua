@@ -16,7 +16,7 @@ return {
     -- Lazygit
     { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
     -- Window zoom (vim-maximizer style)
-    { "<F3>", function() Snacks.zen.zoom() end, mode = { "n", "v", "i" }, desc = "Toggle maximize window" },
+    { "<F3>", function() Snacks.zen.zoom() end, mode = { "n", "v", "i", "t" }, desc = "Toggle maximize window" },
     { "<leader>sm", function() Snacks.zen.zoom() end, desc = "Toggle maximize window" },
   },
 }

@@ -1,0 +1,129 @@
+{
+  "id": "umbrellaCorporation",
+  "name": "Umbrella Corporation",
+  "version": "1.0.0",
+  "author": "Cha1000000",
+  "description": "Resident Evil inspired: Umbrella scarlet accent on graphite black, with T-virus green and G-virus blue as supporting colors",
+  "dark": {
+    "primary": "#b8101a",
+    "primaryText": "#fff4f2",
+    "primaryContainer": "#33080c",
+    "secondary": "#8c8c92",
+    "surface": "#0a0a0b",
+    "surfaceText": "#ececee",
+    "surfaceVariant": "#3a3a3f",
+    "surfaceVariantText": "#a9a9b0",
+    "surfaceTint": "#b8101a",
+    "background": "#070708",
+    "backgroundText": "#d8d8da",
+    "outline": "#5a5a60",
+    "surfaceContainer": "#111113",
+    "surfaceContainerHigh": "#1d1d20",
+    "error": "#ff7043",
+    "warning": "#ffb020",
+    "info": "#2ea6e6"
+  },
+  "light": {
+    "primary": "#b3121a",
+    "primaryText": "#fff4f2",
+    "primaryContainer": "#f2c9cb",
+    "secondary": "#5a5a60",
+    "surface": "#e8e8ea",
+    "surfaceText": "#18181a",
+    "surfaceVariant": "#d3d3d8",
+    "surfaceVariantText": "#2a2a2e",
+    "surfaceTint": "#b3121a",
+    "background": "#e8e8ea",
+    "backgroundText": "#18181a",
+    "outline": "#6a6a70",
+    "surfaceContainer": "#e8e8ea",
+    "surfaceContainerHigh": "#cfcfd4",
+    "error": "#b3360d",
+    "warning": "#8f5200",
+    "info": "#0f5f80"
+  },
+  "wcag": {
+    "level": "fail",
+    "dark": {
+      "level": "fail",
+      "minRatio": 2.81,
+      "worstPair": [
+        "primary",
+        "surfaceContainer"
+      ],
+      "body": {
+        "level": "AAA",
+        "minRatio": 7.2,
+        "worstPair": [
+          "surfaceVariantText",
+          "surfaceContainerHigh"
+        ]
+      },
+      "accent": {
+        "level": "fail",
+        "minRatio": 2.81,
+        "worstPair": [
+          "primary",
+          "surfaceContainer"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 6.87,
+        "worstPair": [
+          "error",
+          "surfaceContainer"
+        ]
+      },
+      "breakdown": [
+        {
+          "name": "Dark",
+          "mode": "dark",
+          "level": "fail",
+          "bodyLevel": "AAA"
+        }
+      ]
+    },
+    "light": {
+      "level": "AA",
+      "minRatio": 5.69,
+      "worstPair": [
+        "primary",
+        "surfaceContainer"
+      ],
+      "body": {
+        "level": "AAA",
+        "minRatio": 9.21,
+        "worstPair": [
+          "surfaceVariantText",
+          "surfaceContainerHigh"
+        ]
+      },
+      "accent": {
+        "level": "AA",
+        "minRatio": 5.69,
+        "worstPair": [
+          "primary",
+          "surfaceContainer"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 4.97,
+        "worstPair": [
+          "error",
+          "surfaceContainer"
+        ]
+      },
+      "breakdown": [
+        {
+          "name": "Light",
+          "mode": "light",
+          "level": "AA",
+          "bodyLevel": "AAA"
+        }
+      ]
+    }
+  },
+  "sourceDir": "umbrella-corporation"
+}

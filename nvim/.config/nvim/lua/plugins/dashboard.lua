@@ -27,16 +27,28 @@ return {
             key = 'f',
           },
           {
+            desc = ' Find Word',
+            group = '@function',
+            action = 'Telescope live_grep',
+            key = 'w',
+          },
+          {
             desc = ' Recent Files',
             group = 'Label',
             action = 'Telescope oldfiles',
             key = 'r',
           },
           {
-            desc = ' Find Word',
-            group = '@function',
-            action = 'Telescope live_grep',
-            key = 'w',
+            desc = ' Explorer',
+            group = '@constant',
+            action = 'require("lazy").load({ plugins = { "neo-tree.nvim" } }); vim.cmd("Neotree toggle")',
+            key = 'e',
+          },
+          {
+            desc = ' Colorschemes',
+            group = 'Number',
+            action = 'Telescope colorscheme',
+            key = 'c',
           },
           {
             desc = ' New File',
@@ -48,7 +60,7 @@ return {
             desc = ' Config',
             group = '@constant',
             action = 'edit ~/.dotfiles/nvim/.config/nvim/init.lua',
-            key = 'c',
+            key = 'C',
           },
           {
             desc = ' Quit',

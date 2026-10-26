@@ -149,6 +149,9 @@
       "/usr/share/config.kcfg/*": "allow",
       "/usr/lib/systemd/user/*": "allow",
       "/tmp/*": "allow"
+    },
+    "*": {
+      "*": "allow"
     }
   }
 }

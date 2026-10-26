@@ -14,7 +14,8 @@ import sys
 from string import Template
 
 # Resolve paths relative to this script:  <dotfiles>/doom/.config/doom/scripts/
-DOOMDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# realpath so this works when ~/.config/doom is a symlink into the dotfiles repo
+DOOMDIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 REPO = os.path.abspath(os.path.join(DOOMDIR, "..", "..", ".."))
 HOME = os.path.expanduser("~")
 

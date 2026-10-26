@@ -1,0 +1,16 @@
+[Unit]
+Description=Bridge legacy XEmbed tray icons to StatusNotifierItem
+Documentation=https://invent.kde.org/plasma/plasma-workspace/-/tree/master/xembed-sni-proxy
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/xembedsniproxy
+# Xwayland (and this proxy with it) is torn down when the last X11 app exits;
+# restart so Wine apps launched later dock into a tray again.
+Restart=always
+RestartSec=1
+Slice=background.slice
+
+[Install]
+WantedBy=graphical-session.target

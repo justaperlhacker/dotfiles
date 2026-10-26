@@ -52,7 +52,7 @@ stow -D bash          # remove symlinks
 | `LazyVim`         | `.config/LazyVim/`                                        |
 | `nano`            | `.config/nano/`                                           |
 | `neovide`         | `.config/neovide/`                                        |
-| `niri`            | `.config/niri/`, `.config/xdg-desktop-portal/`            |
+| `niri`            | `.config/niri/`, `.config/xdg-desktop-portal/`, `.config/autostart/OneDriveGUI.desktop`, `.config/systemd/user/xembedsniproxy.service` |
 | `noctalia`        | `.config/noctalia/`                                       |
 | `NvChad`          | `.config/NvChad/`                                         |
 | `nvim`            | `.config/nvim/`                                           |
@@ -66,6 +66,26 @@ stow -D bash          # remove symlinks
 | `tmux`            | `.config/tmux/`                                           |
 | `vscode`          | `.config/Code/User/`                                      |
 | `xresources`      | `.Xresources`, `.Xresources.d/`                           |
+
+### niri tray icons (XEmbed → SNI bridge)
+
+DankMaterialShell's tray only speaks StatusNotifierItem, but Wine (EA App via
+Lutris) and other legacy X11 apps use the XEmbed protocol. `xembedsniproxy`
+bridges the two; without it Wine draws its own floating "tray" window.
+
+niri tears Xwayland down when the last X11 app exits, which kills the proxy
+too, so the `niri` package ships it as a systemd user service that is
+restarted automatically instead of a one-shot `spawn-at-startup`.
+
+```bash
+sudo pacman -S --needed plasma-workspace   # provides /usr/bin/xembedsniproxy
+systemctl --user enable --now xembedsniproxy.service
+```
+
+The `OneDriveGUI.desktop` autostart entry starts via
+`~/.config/niri/scripts/exec-after-sni` because OneDriveGUI checks
+`QSystemTrayIcon.isSystemTrayAvailable()` once at startup and silently skips
+creating its icon if DMS's SNI host isn't registered yet.
 
 ### Hyprland + Noctalia + KDE (CachyOS)
 

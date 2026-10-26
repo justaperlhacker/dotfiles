@@ -170,6 +170,9 @@ spawn-at-startup "/usr/lib/pam_kwallet_init"
 // Wait for DMS to export its StatusNotifierWatcher before starting Discord,
 // otherwise the tray icon fails to register (DMS startup race).
 spawn-at-startup "/home/johnm/.config/niri/scripts/exec-after-sni" "discord"
+// Bridge legacy X11 XEmbed tray icons (Wine/EA App, GTK applets) to SNI so DMS can show them.
+// Without this, Wine draws its own floating "tray" window instead of using the bar's tray.
+spawn-at-startup "xembedsniproxy"
 
 // niri:KDE:gnome so we use niri-portals.conf for the portal backends, while Qt apps still get
 // Plasma/Breeze dark theme and GTK portal reads color-scheme (KDE is the second component)

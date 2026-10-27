@@ -166,3 +166,20 @@
 (map! :leader :desc "Focus treemacs" "o RET" #'treemacs-select-window)
 ;; Global (rather than :n) so it works whether or not evil is enabled.
 (map! :desc "Focus treemacs" "M-0" #'treemacs-select-window)
+
+;; ==================== PERL ====================
+;; PerlNavigator over Eglot (AUR: nodejs-perlnavigator-server / perlnavigator).
+;; lang/perl no longer exists in Doom 2.2.4, so this is wired up by hand.
+(after! eglot
+  (add-to-list 'eglot-server-programs
+               '(((cperl-mode :language-id "perl")
+                  (perl-mode :language-id "perl"))
+                 . ("perlnavigator" "--stdio"))))
+
+;; Start Eglot automatically, like Doom's language modules do.
+(add-hook 'cperl-mode-local-vars-hook #'lsp! 'append)
+(add-hook 'perl-mode-local-vars-hook #'lsp! 'append)
+
+;; Prefer cperl-mode over the built-in perl-mode for .pl/.pm files.
+;; (Leave .t alone: Raku tests use that extension too.)
+(add-to-list 'auto-mode-alist '("\\.p[lm]\\'" . cperl-mode))

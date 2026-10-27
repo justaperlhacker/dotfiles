@@ -4,7 +4,7 @@
 ;; sync' after modifying this file!
 
 
-;; Some functionality uses this to ideuntify you, e.g. GPG configuration, email
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
 ;;       user-mail-address "john@doe.com")
@@ -159,8 +159,10 @@
 ;; ==================== EVIL HYBRID EDITING ====================
 ;; Doom has no +hybrid flag; this makes Emacs-style keys (C-a C-e C-k C-y ...)
 ;; available in insert state, like Spacemacs's hybrid-mode.
+;; NOTE: evil is currently disabled in init.el, so this is inert until re-enabled.
 (setq evil-disable-insert-state-bindings t)
 
 ;; ==================== TREEMACS FOCUS ====================
 (map! :leader :desc "Focus treemacs" "o RET" #'treemacs-select-window)
-(map! :n :desc "Focus treemacs" "M-0" #'treemacs-select-window)
+;; Global (rather than :n) so it works whether or not evil is enabled.
+(map! :desc "Focus treemacs" "M-0" #'treemacs-select-window)

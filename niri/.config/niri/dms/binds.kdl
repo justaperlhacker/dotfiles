@@ -134,7 +134,7 @@ binds {
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "sh" "-c" "test -n \"$TERMINAL\" && exec \"$TERMINAL\" || { command -v kitty >/dev/null 2>&1 && exec kitty || exec konsole; }"; }
     Mod+F9 hotkey-overlay-title="OpenCode" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--session" "opencode" "--cmd" "opencode" "--title" "opencode"; }
     Mod+Shift+F9 hotkey-overlay-title="Kilo Code" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--session" "kilo" "--cmd" "kilo" "--title" "kilo"; }
-    Mod+F11 hotkey-overlay-title="dgop" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--session" "dgop" "--cmd" "dgop" "--title" "dgop"; }
+    Mod+F11 hotkey-overlay-title="dgop" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--session" "btop" "--cmd" "btop" "--title" "btop"; }
     Mod+Shift+F11 hotkey-overlay-title="htop" { spawn "/home/johnm/.config/niri/scripts/toggle-tmux" "--session" "htop" "--cmd" "htop" "--title" "htop"; }
     Mod+F12 hotkey-overlay-title="Yakuake" { spawn "env" "ICON_THEME=breeze-dark" "yakuake"; }
     Mod+D repeat=false { toggle-overview; }

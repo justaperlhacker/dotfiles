@@ -129,6 +129,7 @@ alias pdw="pwd"
 alias doom="~/.config/doom-emacs/bin/doom"
 alias em='emacs -nw'
 alias doomemacs="emacs --init-dir=\"$HOME/.config/doom-emacs\" --name=\"doom-emacs\""
+alias de='doomemacs'
 alias spacemacs="emacs --init-dir=\"$HOME/.config/spacemacs\" --name=\"spacemacs\""
 alias gnuemacs="emacs --init-dir=\"$HOME/.config/gnuemacs\" --name="gnuemacs""
 

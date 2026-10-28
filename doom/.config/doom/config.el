@@ -168,13 +168,23 @@
 (map! :desc "Focus treemacs" "M-0" #'treemacs-select-window)
 
 ;; ==================== PERL ====================
-;; PerlNavigator over Eglot (AUR: nodejs-perlnavigator-server / perlnavigator).
+;; perllsp over Eglot (cargo install perllsp; binary at ~/.cargo/bin/perllsp).
 ;; lang/perl no longer exists in Doom 2.2.4, so this is wired up by hand.
+;; Project settings live in .perl-lsp.toml. Upstream Emacs/Eglot guide:
+;; https://github.com/EffortlessMetrics/perl-lsp/blob/master/docs/EDITORS/EMACS_SETUP.md
 (after! eglot
   (add-to-list 'eglot-server-programs
                '(((cperl-mode :language-id "perl")
                   (perl-mode :language-id "perl"))
-                 . ("perlnavigator" "--stdio"))))
+                 . ("perllsp" "--stdio"))))
+
+;; Fallback: PerlNavigator (AUR: nodejs-perlnavigator-server / perlnavigator).
+;; To switch back, comment out the perllsp entry above and uncomment this one.
+;; (after! eglot
+;;   (add-to-list 'eglot-server-programs
+;;                '(((cperl-mode :language-id "perl")
+;;                   (perl-mode :language-id "perl"))
+;;                  . ("perlnavigator" "--stdio"))))
 
 ;; Start Eglot automatically, like Doom's language modules do.
 (add-hook 'cperl-mode-local-vars-hook #'lsp! 'append)

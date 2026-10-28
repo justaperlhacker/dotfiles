@@ -99,6 +99,24 @@ vim.keymap.set('n', '<leader>bn', ':bn<CR>', { desc = '[B]uffer [N]ext' })
 vim.keymap.set('n', '<leader>bp', ':bp<CR>', { desc = '[B]uffer [P]revious' })
 vim.keymap.set('n', '<leader>bd', ':bd<CR>', { desc = '[B]uffer [D]elete' })
 
+-- Navigating tab pages
+vim.keymap.set('n', '<leader>to', ':tabnew<CR>',     { desc = '[T]ab [O]pen' })
+vim.keymap.set('n', '<leader>tx', function()
+  local buf = vim.api.nvim_get_current_buf()
+  -- :tabnew leaves an unnamed, unmodified buffer behind; close that too.
+  local orphan = vim.api.nvim_buf_get_name(buf) == ''
+    and vim.bo[buf].buftype == ''
+    and not vim.bo[buf].modified
+  if not pcall(vim.cmd, 'tabclose') then
+    return
+  end
+  if orphan and #vim.fn.win_findbuf(buf) == 0 then
+    pcall(vim.cmd, 'bdelete! ' .. buf)
+  end
+end, { desc = '[T]ab [X]close' })
+vim.keymap.set('n', '<leader>tn', ':tabnext<CR>',    { desc = '[T]ab [N]ext' })
+vim.keymap.set('n', '<leader>tp', ':tabprevious<CR>', { desc = '[T]ab [P]revious' })
+
 -- Navigate vim panes better
 -- already set in tmux-navigator
 --vim.keymap.set('n', '<c-k>', ':wincmd k<CR>')

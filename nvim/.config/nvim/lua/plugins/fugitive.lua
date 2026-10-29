@@ -1,0 +1,27 @@
+return {
+  "tpope/vim-fugitive",
+  cmd = {
+    "Git",
+    "G",
+    "Gdiffsplit",
+    "Gread",
+    "Gwrite",
+    "Ggrep",
+    "Glgrep",
+    "Gclog",
+    "Gllog",
+    "Gstatus",
+    "Gcommit",
+    "Gblame",
+    "Gbrowse",
+    "Gedit",
+  },
+  keys = {
+    { "<leader>gg", "<cmd>Git<cr>", desc = "Git status" },
+    { "<leader>gd", "<cmd>Gdiffsplit<cr>", desc = "Git diff split" },
+    { "<leader>gb", "<cmd>Git blame<cr>", desc = "Git blame" },
+    { "<leader>gl", "<cmd>Git log --oneline --graph --decorate<cr>", desc = "Git log" },
+    { "<leader>gp", "<cmd>Git push<cr>", desc = "Git push" },
+    { "<leader>gP", "<cmd>Git pull<cr>", desc = "Git pull" },
+  },
+}

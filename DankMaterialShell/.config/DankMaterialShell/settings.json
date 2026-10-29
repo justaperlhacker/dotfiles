@@ -1,6 +1,6 @@
 {
-  "currentThemeName": "custom",
-  "currentThemeCategory": "registry",
+  "currentThemeName": "dynamic",
+  "currentThemeCategory": "dynamic",
   "customThemeFile": "/home/johnm/.config/dms/themes/deepmono/theme.json",
   "registryThemeVariants": {
     "rosePine": "rosePine",

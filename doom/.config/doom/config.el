@@ -159,13 +159,38 @@
 ;; ==================== EVIL HYBRID EDITING ====================
 ;; Doom has no +hybrid flag; this makes Emacs-style keys (C-a C-e C-k C-y ...)
 ;; available in insert state, like Spacemacs's hybrid-mode.
-;; NOTE: evil is currently disabled in init.el, so this is inert until re-enabled.
+;; evil is enabled in init.el; this keeps insert state Emacs-like while
+;; normal/visual state stays Vim. Remove this if you want full Vim insert keys.
 (setq evil-disable-insert-state-bindings t)
 
-;; ==================== TREEMACS FOCUS ====================
-(map! :leader :desc "Focus treemacs" "o RET" #'treemacs-select-window)
-;; Global (rather than :n) so it works whether or not evil is enabled.
-(map! :desc "Focus treemacs" "M-0" #'treemacs-select-window)
+;; ==================== TREEMACS ====================
+;; -- Keybindings ---------------------------------------------------------
+;; Doom only binds <f9> in +emacs-bindings.el (non-evil); with evil enabled
+;; that file isn't loaded, so restore the sidebar toggle here.
+(map! :desc "Toggle treemacs" "<f9>" #'+treemacs/toggle)
+
+;; `treemacs-find-tag' has no default Doom binding; group it with the other
+;; project commands (SPC p T is projectile-test-project, so p t is free).
+(map! :leader
+      :desc "Find tag in treemacs" "p t" #'treemacs-find-tag)
+
+;; Traditional Emacs-style twin, in the C-c p (project) area. Works from any
+;; state, including insert, since it doesn't depend on the evil leader.
+(map! :desc "Find tag in treemacs" "C-c p t" #'treemacs-find-tag)
+
+;; -- Tag view ------------------------------------------------------------
+;; Tag view is built into treemacs (imenu-based): expanding a file in the
+;; sidebar lists its tags, and tag-follow keeps the tag at point selected.
+;; `imenu-auto-rescan' keeps the tag list from going stale.
+(setq imenu-auto-rescan t)
+(after! treemacs
+  (setq treemacs-tag-follow-delay 0.8)
+  (treemacs-tag-follow-mode +1))
+
+;; ==================== WHICH-KEY ====================
+;; Doom's default is 1.0s, which makes the hint popup feel laggy.
+(setq which-key-idle-delay 0.3
+      which-key-idle-secondary-delay 0.05)
 
 ;; ==================== PERL ====================
 ;; perllsp over Eglot (cargo install perllsp; binary at ~/.cargo/bin/perllsp).

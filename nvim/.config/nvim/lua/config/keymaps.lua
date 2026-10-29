@@ -28,10 +28,8 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set({ 'n', 'v'}, '<PageUp>', '<C-u>')
 vim.keymap.set({ 'n', 'v'}, '<PageDown>', '<C-d>')
 
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+vim.keymap.set("n", "<leader>j", "<cmd>lnext<CR>zz")
+vim.keymap.set("n", "<leader>k", "<cmd>lprev<CR>zz")
 
 -- Move Lines
 vim.keymap.set({ 'n', 'x' }, '<M-S-Up>', ':move -2<cr>', { desc = 'Move Line Up' })
@@ -140,6 +138,11 @@ vim.keymap.set("n", "<leader>so", ":only<CR>", opts)   -- close all but current 
 -- Indenting in visual mode
 vim.keymap.set("v", "<", "<gv", { desc = 'Indent left and reselect' })
 vim.keymap.set("v", ">", ">gv", { desc = 'Indent right and reselect' })
+
+-- Format the whole buffer with perltidy directly. This avoids an LSP
+-- round-trip and is faster for whole-buffer formatting; perltidy reads
+-- the project or user .perltidyrc.
+vim.keymap.set("n", "<leader>pf", "<cmd>%!perltidy<cr>", { desc = "Format buffer with perltidy" })
 
 -- commenting
 -- uses a comments plugin

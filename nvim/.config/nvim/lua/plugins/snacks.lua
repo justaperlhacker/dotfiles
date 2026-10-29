@@ -10,11 +10,10 @@ return {
     zen = { enabled = true }
   },
   keys = {
-    -- Terminal
-    { "<c-/>", function() Snacks.terminal.toggle() end, mode = { "n", "t" }, desc = "Toggle Terminal" },
-    { "<c-_>", function() Snacks.terminal.toggle() end, mode = { "n", "t" }, desc = "which_key_ignore" },
+    -- Terminal toggles live in lua/plugins/toggleterm.lua
     -- Lazygit
-    { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
+    { "<leader>gL", function() Snacks.lazygit() end, desc = "Lazygit" },
+    { "<F11>", function() Snacks.lazygit() end, mode = { "n", "t" }, desc = "Lazygit" },
     -- Window zoom (vim-maximizer style)
     { "<F3>", function() Snacks.zen.zoom() end, mode = { "n", "v", "i", "t" }, desc = "Toggle maximize window" },
     { "<leader>sm", function() Snacks.zen.zoom() end, desc = "Toggle maximize window" },

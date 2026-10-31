@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# xdg-terminal-exec — pick the user's default terminal emulator.
+#
+# GLib (and DMS) launch apps whose .desktop has Terminal=true by looking for
+# `xdg-terminal-exec` on PATH first. If it is missing they fall back to a
+# hardcoded list in which gnome-terminal wins, which is why cachy-update used
+# to pop open GNOME Terminal. Having this on PATH makes kitty the default.
+#
+# Order: kitty -> konsole -> terminator -> gnome-terminal -> alacritty ->
+#        foot -> ghostty -> wezterm -> xterm
+# (kitty matches ~/.config/xdg-terminals.list and DMS's $TERMINAL=kitty)
+#
+# Usage: xdg-terminal-exec [OPTIONS] [--] [COMMAND [ARGS...]]
+
+set -u
+
+title=''
+workdir=''
+app_id=''
+
+while (( $# )); do
+    case "$1" in
+        --) shift; break ;;
+        -t|--title)             title=${2-};   shift $(( $# < 2 ? $# : 2 )) ;;
+        --title=*)              title=${1#*=}; shift ;;
+        -w|--working-directory|--dir)
+                                workdir=${2-}; shift $(( $# < 2 ? $# : 2 )) ;;
+        --working-directory=*|--dir=*)
+                                workdir=${1#*=}; shift ;;
+        -a|--app-id|--class)    app_id=${2-};  shift $(( $# < 2 ? $# : 2 )) ;;
+        --app-id=*|--class=*)   app_id=${1#*=}; shift ;;
+        -e|--exec|--command)    shift; break ;;
+        -*)                     shift ;;   # ignore flags we don't implement
+        *)                      break ;;
+    esac
+done
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+if have kitty; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--title "$title")
+    [[ -n $workdir ]] && opts+=(--directory "$workdir")
+    [[ -n $app_id  ]] && opts+=(--class "$app_id")
+    exec kitty "${opts[@]}" "$@"
+fi
+
+if have konsole; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--title "$title")
+    [[ -n $workdir ]] && opts+=(--workdir "$workdir")
+    (( $# )) || exec konsole "${opts[@]}"
+    exec konsole "${opts[@]}" -e "$@"
+fi
+
+if have terminator; then
+    opts=()
+    [[ -n $title   ]] && opts+=(-T "$title")
+    [[ -n $workdir ]] && opts+=(--working-directory "$workdir")
+    (( $# )) || exec terminator "${opts[@]}"
+    exec terminator "${opts[@]}" -x "$@"
+fi
+
+if have gnome-terminal; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--title="$title")
+    [[ -n $workdir ]] && opts+=(--working-directory="$workdir")
+    (( $# )) || exec gnome-terminal "${opts[@]}"
+    exec gnome-terminal "${opts[@]}" -- "$@"
+fi
+
+if have alacritty; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--title "$title")
+    [[ -n $workdir ]] && opts+=(--working-directory "$workdir")
+    [[ -n $app_id  ]] && opts+=(--class "$app_id")
+    (( $# )) || exec alacritty "${opts[@]}"
+    exec alacritty "${opts[@]}" -e "$@"
+fi
+
+if have foot; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--title="$title")
+    [[ -n $workdir ]] && opts+=(--working-directory="$workdir")
+    [[ -n $app_id  ]] && opts+=(--app-id="$app_id")
+    (( $# )) || exec foot "${opts[@]}"
+    exec foot "${opts[@]}" -- "$@"
+fi
+
+if have ghostty; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--title="$title")
+    [[ -n $workdir ]] && opts+=(--working-directory="$workdir")
+    [[ -n $app_id  ]] && opts+=(--class="$app_id")
+    (( $# )) || exec ghostty "${opts[@]}"
+    exec ghostty "${opts[@]}" -e "$@"
+fi
+
+if have wezterm; then
+    opts=()
+    [[ -n $title   ]] && opts+=(--config "window_title=\"$title\"")
+    (( $# )) || exec wezterm start "${opts[@]}" ${workdir:+--cwd "$workdir"}
+    exec wezterm start "${opts[@]}" ${workdir:+--cwd "$workdir"} -- "$@"
+fi
+
+if have xterm; then
+    opts=()
+    [[ -n $title ]] && opts+=(-T "$title")
+    (( $# )) || exec xterm "${opts[@]}"
+    exec xterm "${opts[@]}" -e "$@"
+fi
+
+echo "xdg-terminal-exec: no terminal emulator found in PATH" >&2
+exit 1

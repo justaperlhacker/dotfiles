@@ -47,7 +47,7 @@ stow -D bash          # remove symlinks
 | `i3`              | `.config/i3/`, `.xprofile`                                |
 | `kanata`          | `.config/kanata/`, `.config/systemd/user/kanata.service`  |
 | `kde`             | portable `.config/*rc` + `kdeglobals`/`kwalletrc` etc.    |
-| `kitty`           | `.config/kitty/`                                          |
+| `kitty`           | `.config/kitty/`, `.config/xdg-terminals.list` (default terminal), `.local/share/applications/kitty.desktop` |
 | `kilo`            | `.config/kilo/`                                           |
 | `LazyVim`         | `.config/LazyVim/`                                        |
 | `nano`            | `.config/nano/`                                           |
@@ -60,12 +60,28 @@ stow -D bash          # remove symlinks
 | `pi`              | `.pi/agent/settings.json`, `.pi/agent/auth.json`, `.pi/agent/models-store.json` |
 | `plasma`          | `.local/share/kwin/scripts/`, `.config/systemd/user/plasma-toggle-tmux@.service` |
 | `redshift`        | `.config/redshift/`                                       |
-| `scripts`         | `.local/bin/`                                             |
+| `scripts`         | `.local/bin/` (incl. `xdg-terminal-exec`)                 |
 | `starship`        | `.config/starship.toml`                                   |
 | `terminator`      | `.config/terminator/` (incl. `terminator-themes` plugin)  |
 | `tmux`            | `.config/tmux/`                                           |
 | `vscode`          | `.config/Code/User/`                                      |
 | `xresources`      | `.Xresources`, `.Xresources.d/`                           |
+
+### Default terminal (`xdg-terminal-exec`)
+
+Apps whose `.desktop` file sets `Terminal=true` (e.g. Cachy-Update) are launched
+by GLib/DMS via `xdg-terminal-exec` on `PATH`. Without it, GLib falls back to a
+hardcoded list in which `gnome-terminal` wins over kitty/konsole.
+
+- `scripts` provides `~/.local/bin/xdg-terminal-exec`, a small wrapper that runs
+  the first available terminal: kitty → konsole → terminator → gnome-terminal →
+  alacritty → foot → ghostty → wezterm → xterm.
+- `kitty` provides `~/.config/xdg-terminals.list` (`kitty.desktop`), the
+  xdg-terminals spec list.
+
+To use the packaged reference implementation instead, install `xdg-terminal-exec`
+from `extra` and remove `~/.local/bin/xdg-terminal-exec` — it shadows the package
+because `~/.local/bin` comes first on `PATH`.
 
 ### niri tray icons (XEmbed → SNI bridge)
 

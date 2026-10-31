@@ -356,6 +356,24 @@ recent-windows {
 // X11/Xwayland setup (keyboard rate, bell off, dpms, Xresources)
 spawn-at-startup "sh" "-c" "/home/johnm/.config/niri/scripts/niri-autostart.sh"
 
+// Apps that should open maximized (full width + height of the workspace).
+// Rules only run when a window opens, so restart the app to see the change.
+window-rule {
+    // Brave and its "install as app" / PWA windows (app-ids brave-browser,
+    // brave-<id>-Default, crx_<id>).
+    match app-id=r#"^(brave-browser|brave-.*-Default|crx_.*)$"#
+    open-maximized true
+}
+window-rule {
+    match app-id=r#"^discord$"#
+    open-maximized true
+}
+window-rule {
+    // Whatsie is a Qt app; accept every app-id variant it has used.
+    match app-id=r#"(?i)whatsie"#
+    open-maximized true
+}
+
 // Include dms files
 include optional=true "dms/colors.kdl"
 include optional=true "dms/layout.kdl"
@@ -363,3 +381,11 @@ include optional=true "dms/alttab.kdl"
 include optional=true "dms/binds.kdl"
 include optional=true "dms/outputs.kdl"
 include optional=true "dms/cursor.kdl"
+// DMS-managed window rules (this file existed but was never included, which is
+// why the brave/discord maximize rules created in DMS did nothing).
+include optional=true "dms/windowrules.kdl"
+// DMS-managed input settings (touchpad tap/natural-scroll/dwt, accel-speed).
+// These override the matching values in the input {} block above.
+include optional=true "dms/input.kdl"
+// Blurred wallpaper layer behind the desktop.
+include optional=true "dms/wpblur.kdl"

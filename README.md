@@ -194,7 +194,8 @@ plasma-toggle-tmux --install
 unit uses the perlbrewed perl that has `Net::DBus`, installs a session
 autostart entry that reloads the script each login (KWin does not reliably
 auto-load user scripts), and daemon-reloads systemd. **SUPER+F9** then spawns a
-centered, always-on-top Konsole running the `opencode` tmux session, and
+centered, always-on-top Konsole running the `opencode` tmux session,
+**SUPER+SHIFT+F9** does the same for `kilo`, and
 **SUPER+\\** (backslash) does the same for the `work` session in Konsole, and
 **SUPER+F11** for the system monitor in kitty (uses `dgop` if present, else
 `htop` → `btop` → `top`); pressing

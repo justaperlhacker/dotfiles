@@ -11,9 +11,9 @@
  */
 var sessions = [
     { key: "Meta+F9", session: "opencode" },
+    { key: "Meta+Shift+F9", session: "kilo" },
     { key: "Meta+\\", session: "work" },
     { key: "Meta+F11", session: "btop" }
-    // { key: "Meta+Shift+F9", session: "kilo" },
     // { key: "Meta+Shift+F11", session: "htop" },
 ];
 

@@ -1,13 +1,13 @@
 [colors]
-background = '#100d11'
-foreground = '#fdf4fa'
+background = '#0a0f10'
+foreground = '#ebeef0'
 
-cursor_bg = '#e3b2f7'
-cursor_fg = '#100d11'
-cursor_border = '#e3b2f7'
+cursor_bg = '#74d1e8'
+cursor_fg = '#0a0f10'
+cursor_border = '#74d1e8'
 
-selection_bg = '#bd90d2'
-selection_fg = '#fdf4fa'
+selection_bg = '#4eadc3'
+selection_fg = '#ebeef0'
 
-ansi = ['#100d11', '#ff7288', '#7bf79a', '#ffdc72', '#d39bea', '#bd90d2', '#e3b2f7', '#faefff']
-brights = ['#413c44', '#ff9fae', '#a5ffbc', '#ffe9a5', '#edc2ff', '#f0cdff', '#f5deff', '#fcf8ff']
+ansi = ['#0a0f10', '#ff72a1', '#74e87f', '#fff572', '#58c2dc', '#4eadc3', '#74d1e8', '#e4f0f3']
+brights = ['#383f40', '#ff9fbf', '#a5ffae', '#fff9a5', '#92e9ff', '#a5edff', '#c5f3ff', '#f8fdff']

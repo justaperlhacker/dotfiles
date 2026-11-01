@@ -97,6 +97,7 @@ return {
   T({ "piyush-ppradhan/naysayer.vim", name = "naysayer" }),
 
   -- Accessible / light-capable (ship light variants or high-legibility palettes)
-  T({ "protesilaos/modus-themes", name = "modus-themes" }),
+  -- Neovim port of Protesilaos' Modus themes (modus_operandi / modus_vivendi).
+  T({ "miikanissi/modus-themes.nvim", name = "modus-themes.nvim" }),
   T({ "NLKNguyen/papercolor-theme", name = "PaperColor" }),
 }

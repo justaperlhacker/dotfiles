@@ -67,25 +67,30 @@ local colorscheme = {}
 -- colorscheme.name = "10x-icing"
 -- colorscheme.name = "10x-vs-plus-vax"
 
--- Active theme
-colorscheme.name = "vague"
--- colorscheme.name = "monochrome"
--- colorscheme.name = "kanso"
--- colorscheme.name = "vscode-red"
--- colorscheme.name = "miniwinter"
--- colorscheme.name = "kraihnight"
--- colorscheme.name = "fleury"
+-- Active theme, one per background. Neovim follows the local clock (dark
+-- between sunset and sunrise; see lua/config/auto-background.lua). Both themes
+-- must be installed; `fallback` is used if either fails to load.
+--
+-- "kitty" reuses vague.nvim's highlight groups, adds the Perl/POD/Raku groups
+-- from kraihnight, and takes the palette from the matching kitty theme
+-- (colors/kitty.lua + lua/config/kitty-palette.lua), so terminal and editor
+-- match. It picks the palette by 'background', hence the same name both sides.
+colorscheme.dark = "kitty"
+colorscheme.light = "kitty"
+-- colorscheme.dark = "vague"
+-- colorscheme.dark = "sequoia-monochrome-dark"
+-- colorscheme.light = "modus_operandi"
+-- colorscheme.dark = "monochrome"
+-- colorscheme.dark = "kanso"
+-- colorscheme.dark = "vscode-red"
+-- colorscheme.dark = "miniwinter"
+-- colorscheme.dark = "kraihnight"
+-- colorscheme.dark = "fleury"
 
 colorscheme.fallback = "default"
-colorscheme.background = "dark"
 
-vim.opt.background = colorscheme.background
-
-local ok, err = pcall(vim.cmd.colorscheme, colorscheme.name)
-if not ok then
-  vim.notify("[colorschemes.lua] colorscheme '" .. tostring(colorscheme.name) .. "' failed: " .. tostring(err))
-  vim.cmd.colorscheme(colorscheme.fallback)
-end
+local auto = require("config.auto-background")
+local applying = false
 
 -- Post-colorscheme overrides: keep the theme's colors, add italic comments,
 -- and strip bold from every highlight group.
@@ -133,8 +138,130 @@ local function apply_overrides()
   strip_bold()
 end
 
-apply_overrides()
-vim.api.nvim_create_autocmd("ColorScheme", {
-  group = vim.api.nvim_create_augroup("ConfigColorOverrides", { clear = true }),
-  callback = apply_overrides,
+local function apply()
+  if applying then
+    return
+  end
+  applying = true
+
+  local background = vim.o.background == "light" and "light" or "dark"
+  local name = background == "light" and colorscheme.light or colorscheme.dark
+
+  if vim.o.background ~= background then
+    auto.internal = true
+    vim.o.background = background
+    auto.internal = false
+  end
+
+  local ok, err = pcall(vim.cmd.colorscheme, name)
+  if not ok then
+    vim.notify(("[colorschemes.lua] colorscheme '%s' failed: %s"):format(tostring(name), tostring(err)))
+    pcall(vim.cmd.colorscheme, colorscheme.fallback)
+  end
+
+  apply_overrides()
+  applying = false
+end
+
+local group = vim.api.nvim_create_augroup("ConfigColorscheme", { clear = true })
+
+-- True while a colorscheme is being sourced. Themes may set 'background'
+-- themselves; that must not be mistaken for a manual `:set background`.
+local switching = false
+
+vim.api.nvim_create_autocmd("ColorSchemePre", {
+  group = group,
+  callback = function()
+    switching = true
+    vim.schedule(function()
+      switching = false
+    end)
+  end,
 })
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = group,
+  callback = function()
+    -- By the time this fires, a colorscheme reload caused by a 'background'
+    -- change is finished, so the OptionSet handler below can tell it apart
+    -- from a theme that is still being sourced (and sets 'background' itself).
+    switching = false
+    apply_overrides()
+    -- A theme picked by hand (e.g. through Telescope) that conflicts with the
+    -- clock is a deliberate override: stop following until `:Theme auto`.
+    if not applying and vim.o.background ~= auto.detect() then
+      auto.lock()
+    end
+  end,
+})
+
+-- `nested` is required: applying a colorscheme triggers ColorSchemePre, which
+-- lazy.nvim needs in order to load the plugin that ships the theme.
+vim.api.nvim_create_autocmd("User", {
+  group = group,
+  pattern = "BackgroundChanged",
+  nested = true,
+  callback = apply,
+})
+
+-- Changing 'background' directly (e.g. unimpaired's `yob`) takes over from the
+-- clock but still swaps in the matching colorscheme.
+vim.api.nvim_create_autocmd("OptionSet", {
+  group = group,
+  pattern = "background",
+  nested = true,
+  callback = function()
+    if applying or switching or auto.internal then
+      return
+    end
+    auto.lock()
+    apply()
+    vim.notify(("[theme] %s background — :Theme auto to follow the clock"):format(vim.o.background))
+  end,
+})
+
+local function clock_string()
+  if auto.options.light_at and auto.options.dark_at then
+    return ("light %s, dark %s (fixed times)"):format(auto.options.light_at, auto.options.dark_at)
+  end
+
+  local sunrise, sunset, polar = auto.sun_times()
+  if sunrise and sunset then
+    local function format(hours)
+      local minutes = math.floor(hours * 60 + 0.5) % (24 * 60)
+      return ("%02d:%02d"):format(math.floor(minutes / 60), minutes % 60)
+    end
+    return ("sunrise %s, sunset %s"):format(format(sunrise), format(sunset))
+  end
+  return polar == "day" and "sun never sets" or "sun never rises"
+end
+
+vim.api.nvim_create_user_command("Theme", function(opts)
+  local arg = opts.args
+
+  if arg == "auto" then
+    auto.follow()
+    vim.notify(("[theme] following the clock (%s background)"):format(vim.o.background))
+  elseif arg == "status" then
+    local mode = auto.is_following() and "following the clock" or "manual override"
+    vim.notify(("[theme] %s / %s — %s, %s"):format(vim.o.background, tostring(vim.g.colors_name), mode, clock_string()))
+  elseif arg == "toggle" then
+    auto.lock()
+    auto.set(vim.o.background == "light" and "dark" or "light")
+  elseif arg == "dark" or arg == "light" then
+    auto.lock()
+    auto.set(arg)
+  else
+    vim.notify("Usage: :Theme [dark|light|toggle|auto|status]", vim.log.levels.WARN)
+  end
+end, {
+  nargs = "?",
+  desc = "Switch Neovim's dark/light theme",
+  complete = function()
+    return { "dark", "light", "toggle", "auto", "status" }
+  end,
+})
+
+-- Pick the theme for the current time, start the clock, and apply it.
+auto.start()
+apply()

@@ -95,8 +95,8 @@ opt.iskeyword:append("-") -- treat dashes as part of words
 -- make sure your terminal supports this
 opt.termguicolors = true
 
--- set backgrounds to dark
-opt.background = "dark"
+-- 'background' follows the desktop's dark/light preference (detected and
+-- applied in lua/config/colorschemes.lua), so don't pin it here.
 
 opt.title = true -- set the terminal title to the value of the titlestring
 opt.titlestring = "%<%F%=%l/%L - nvim" -- what the title will be set to

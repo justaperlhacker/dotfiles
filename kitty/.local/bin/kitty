@@ -1,0 +1,28 @@
+#!/bin/sh
+# Wrapper around kitty that removes alpha channels from config colors.
+#
+# kitty only accepts 3- or 6-digit hex colors. Some themes (for example the
+# upstream Sequoia themes) and tools that auto-generate tab styles emit
+# 8-digit #RRGGBBAA values, which abort startup with:
+#
+#   ValueError: Invalid color name: '#817c9c26'
+#
+# Sanitizing the top-level config files before handing over to the real kitty
+# binary keeps that class of bad theme from breaking the launcher.
+
+confdir=${KITTY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/kitty}
+
+sanitize() {
+    [ -f "$1" ] || return 0
+    grep -qE '#[0-9a-fA-F]{8}\b|#[0-9a-fA-F]{4}\b' "$1" || return 0
+    # --follow-symlinks keeps dotfile-managed symlinked configs intact.
+    sed -i --follow-symlinks -E \
+        -e 's/#([0-9a-fA-F]{6})[0-9a-fA-F]{2}\b/#\1/g' \
+        -e 's/#([0-9a-fA-F]{3})[0-9a-fA-F]\b/#\1/g' "$1"
+}
+
+for f in "$confdir"/*.conf; do
+    sanitize "$f"
+done
+
+exec /usr/bin/kitty "$@"

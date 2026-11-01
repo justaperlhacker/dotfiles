@@ -37,7 +37,7 @@
   "miasma": { "branch": "main", "commit": "627f2e1cac91de0d1d4dd7472b506a30f41b2b7d" },
   "mini.icons": { "branch": "main", "commit": "e56797f90192d81f1fda02e662fc3e8e3d775027" },
   "miniwinter": { "branch": "main", "commit": "5fc2150b64562cd773c3f32e5f1b86f9ae2ec62f" },
-  "modus-themes": { "branch": "main", "commit": "b1647b2980f4f27c3c81ac1531d992a14fefd06a" },
+  "modus-themes.nvim": { "branch": "master", "commit": "15ffb5ab6a12f72ee1e8393fe5810d5317da2d3e" },
   "monochrome": { "branch": "main", "commit": "2de78d9688ea4a177bcd9be554ab9192337d35ff" },
   "moonfly": { "branch": "master", "commit": "2c883835f5b7b380a0a9e80695c420f7efebdfe4" },
   "naysayer": { "branch": "master", "commit": "fc667b47b782d4e7184b00e7dc38c87d301491c7" },

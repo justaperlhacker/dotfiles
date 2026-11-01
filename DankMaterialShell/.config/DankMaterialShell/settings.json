@@ -104,6 +104,10 @@
           "showWorkspaceIndex": true,
           "showOccupiedWorkspacesOnly": true
         },
+        {
+          "id": "dankPomodoroTimer",
+          "enabled": true
+        },
         "focusedWindow"
       ],
       "centerWidgets": [
@@ -113,11 +117,19 @@
       ],
       "rightWidgets": [
         "systemTray",
-        "clipboard",
+        {
+          "id": "clipboard",
+          "enabled": false
+        },
         "cpuUsage",
         "memUsage",
         "notificationButton",
-        "battery",
+        {
+          "id": "battery",
+          "enabled": true,
+          "overflowMode": "section",
+          "showBatteryPercentOnlyOnBattery": true
+        },
         {
           "id": "controlCenterButton",
           "enabled": true,
@@ -164,7 +176,110 @@
       "shadowCustomColor": "#000000",
       "clickThrough": false,
       "followInterfaceStyle": true,
-      "widgetFollowInterfaceStyle": true
+      "widgetFollowInterfaceStyle": true,
+      "island": true,
+      "dot": false,
+      "islandPalette": "default",
+      "islandHomeCompactTight": true,
+      "widgetStyle": "segments",
+      "islandNotch": false,
+      "islandReserveThickness": 36
+    },
+    {
+      "id": "dot1793460496072",
+      "name": "Dot",
+      "enabled": false,
+      "position": 0,
+      "screenPreferences": [
+        "all"
+      ],
+      "showOnLastDisplay": true,
+      "leftWidgets": [
+        "launcherButton",
+        {
+          "id": "workspaceSwitcher",
+          "enabled": true,
+          "showWorkspaceIndex": true,
+          "showOccupiedWorkspacesOnly": true
+        },
+        {
+          "id": "dankPomodoroTimer",
+          "enabled": true
+        },
+        "focusedWindow"
+      ],
+      "centerWidgets": [
+        "music",
+        "clock",
+        "weather"
+      ],
+      "rightWidgets": [
+        "systemTray",
+        {
+          "id": "clipboard",
+          "enabled": false
+        },
+        "cpuUsage",
+        "memUsage",
+        "notificationButton",
+        {
+          "id": "battery",
+          "enabled": true,
+          "overflowMode": "section",
+          "showBatteryPercentOnlyOnBattery": true
+        },
+        {
+          "id": "controlCenterButton",
+          "enabled": true,
+          "showMicPercent": true
+        }
+      ],
+      "spacing": 4,
+      "innerPadding": 4,
+      "bottomGap": 0,
+      "transparency": 1,
+      "widgetTransparency": 1,
+      "squareCorners": false,
+      "noBackground": false,
+      "maximizeWidgetIcons": false,
+      "maximizeWidgetText": false,
+      "widgetPadding": 8,
+      "gothCornersEnabled": false,
+      "gothCornerRadiusOverride": false,
+      "gothCornerRadiusValue": 12,
+      "borderEnabled": false,
+      "borderColor": "surfaceText",
+      "borderOpacity": 1,
+      "borderThickness": 1,
+      "widgetOutlineEnabled": false,
+      "widgetOutlineColor": "primary",
+      "widgetOutlineOpacity": 1,
+      "widgetOutlineThickness": 1,
+      "fontScale": 1,
+      "iconScale": 1,
+      "autoHide": false,
+      "autoHideDelay": 250,
+      "showOnWindowsOpen": false,
+      "openOnOverview": false,
+      "visible": true,
+      "popupGapsAuto": true,
+      "popupGapsManual": 4,
+      "maximizeDetection": true,
+      "scrollEnabled": true,
+      "scrollXBehavior": "focusWindow",
+      "scrollYBehavior": "workspace",
+      "shadowIntensity": 0,
+      "shadowOpacity": 60,
+      "shadowColorMode": "text",
+      "shadowCustomColor": "#000000",
+      "clickThrough": false,
+      "followInterfaceStyle": false,
+      "widgetFollowInterfaceStyle": true,
+      "island": false,
+      "dot": true,
+      "islandPalette": "default",
+      "islandHomeCompactTight": true,
+      "widgetStyle": "segments"
     }
   ],
   "builtInPluginSettings": {
@@ -182,7 +297,7 @@
     }
   },
   "configVersion": 42,
-  "radiusStrength": 38,
+  "radiusStrength": 50,
   "dockConfigs": [
     {
       "id": "dock",
@@ -433,5 +548,42 @@
       "row": 3
     }
   ],
-  "matugenSpec": "dms"
+  "matugenSpec": "dms",
+  "floatingWindowSyncGlobal": true,
+  "floatingWindowTitleBars": true,
+  "niriLayoutGapsOverride": -1,
+  "updaterPauseOnBattery": true,
+  "dashTabs": [
+    {
+      "id": "overview",
+      "enabled": true
+    },
+    {
+      "id": "media",
+      "enabled": true
+    },
+    {
+      "id": "wallpaper",
+      "enabled": true
+    },
+    {
+      "id": "weather",
+      "enabled": true
+    },
+    {
+      "id": "wellbeing",
+      "enabled": true
+    },
+    {
+      "id": "notifications",
+      "enabled": true
+    }
+  ],
+  "connectedFrameBarStyleBackups": {},
+  "frameEnabled": false,
+  "radiusMode": "scale",
+  "blurBorderEnabled": true,
+  "blurBorderOpacity": 0.35,
+  "blurEnabled": false,
+  "blurBorderSeeded": true
 }

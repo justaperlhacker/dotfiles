@@ -7,6 +7,18 @@ window-rule {
     open-floating true
 }
 
+// @id=wr_1793461452944849976 @name=brave-browser
+window-rule {
+    match app-id="^brave-browser$"
+    open-maximized true
+}
+
+// @id=wr_1793461509009771109 @name=discord
+window-rule {
+    match app-id="^discord$"
+    open-maximized true
+}
+
 // @id=dms-window-opaque @name=DMS Window Opaque
 window-rule {
     match app-id="^(dev\\.duxlabs\\.shell|com\\.danklinux\\.dms)$"

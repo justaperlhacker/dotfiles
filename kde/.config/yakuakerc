@@ -17,5 +17,6 @@ toggle-window-state=;\s
 DynamicTabTitles=true
 Height=90
 ShowSystrayIcon=false
+ShowTabBar=false
 ShowTitleBar=false
 Width=100

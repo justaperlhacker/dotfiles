@@ -66,8 +66,8 @@ my %PRESETS = (
     work     => { cmd => undef },
 );
 
-my ( $terminal, $session, $cmd,        $class, $title );
-my ( $width,    $height,  $keep_above, $skip_taskbar );
+my ( $terminal, $session, $cmd,        $class,        $title );
+my ( $width,    $height,  $keep_above, $skip_taskbar, $border );
 my ( $verbose,  $install, $load,       $help );
 
 GetOptions(
@@ -80,6 +80,7 @@ GetOptions(
     'height=i'      => \$height,
     'keep-above!'   => \$keep_above,
     'skip-taskbar!' => \$skip_taskbar,
+    'border!'       => \$border,
     'verbose|v'     => \$verbose,
     'install'       => \$install,
     'load'          => \$load,
@@ -104,6 +105,11 @@ $width    //= 90;
 $height   //= 85;
 $keep_above   = 1 unless defined $keep_above;
 $skip_taskbar = 1 unless defined $skip_taskbar;
+
+# Decorations are on by default so the scratchpad can be resized/moved by its
+# frame.  kitty's global config hides decorations, so the spawn below overrides
+# that for scratchpad windows only.
+$border = 1 unless defined $border;
 
 for my $pair ( [ width => $width ], [ height => $height ] ) {
     my ( $name, $val ) = @$pair;
@@ -188,7 +194,8 @@ sub js_query_windows {
 
 sub js_show_window ($id) {
     my ( $ka, $st ) = ( $keep_above ? 'true' : 'false', $skip_taskbar ? 'true' : 'false' );
-    return sprintf <<~"JS", js_str($id), $ka, $st, $st, $width, $height;
+    my $deco = $border ? 'w.noBorder = false;' : '';
+    return sprintf <<~"JS", js_str($id), $ka, $st, $st, $deco, $width, $height;
         (function () {
             var id = %s;
             var ws = workspace.windowList();
@@ -202,6 +209,7 @@ sub js_show_window ($id) {
                 w.skipTaskbar = %s;
                 w.skipPager = %s;
                 w.setMaximize(false, false);
+                %s
                 w.fullScreen = false;
                 workspace.sendClientToScreen(w, workspace.activeScreen);
                 var scr = workspace.activeScreen.geometry;
@@ -338,8 +346,8 @@ sub spawn_terminal {
     my @args;
     if ( is_kitty($terminal) ) {
         @args = (
-            $terminal, '--instance-group', "tmux-$session", '--class', 'kitty', '-e',
-            'tmux',    'new-session',      '-As',           $session
+            $terminal, ( $border ? ( '-o', 'hide_window_decorations=no' ) : () ),
+            '--instance-group', "tmux-$session", '--class', 'kitty', '-e', 'tmux', 'new-session', '-As', $session
         );
     }
     else {
@@ -419,6 +427,8 @@ sub usage ($code) {
           --height PCT       window height as % of screen (default: 85)
           --keep-above / --no-keep-above      keep window above others (default: on)
           --skip-taskbar / --no-skip-taskbar  hide from taskbar/pager (default: on)
+          --border / --no-border              show window decorations, i.e. a
+                                              titlebar and resize border (default: on)
           -v, --verbose      print what is happening
           --install          enable + load the KWin shortcut script for this session
           -h, --help         show this help

@@ -177,8 +177,10 @@ centered, always-on-top Konsole running the `opencode` tmux session, and
 a binding again while its window is focused closes the window (the tmux session
 survives). The window defaults to 90% width × 85% height of the active screen
 (`--width`/`--height`), and window class matching handles both Wayland app-ids
-(`org.kde.konsole`) and X11 WM_CLASS (`konsole`). Add more scratchpads by
-appending to `sessions` in
+(`org.kde.konsole`) and X11 WM_CLASS (`konsole`). Scratchpads get normal window
+decorations (titlebar and resize border) even though kitty's global config sets
+`hide_window_decorations yes`; pass `--no-border` to keep them frameless. Add
+more scratchpads by appending to `sessions` in
 `plasma/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js`.
 
 #### Dependencies (CachyOS/Arch)

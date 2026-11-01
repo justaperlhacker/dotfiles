@@ -1,0 +1,12 @@
+// Local XKB additions.
+// Right Alt produces a Left Super (Mod4) keysym instead of Alt_R.
+// The stock `pc` layout puts any key producing Super_L on Mod4 and any key
+// producing Alt_R on Mod1, so overriding the keysym is enough to move the
+// key between modifier sets.
+hidden partial modifier_keys
+xkb_symbols "ralt_super" {
+    key <RALT> {
+        type[Group1] = "ONE_LEVEL",
+        symbols[Group1] = [ Super_L ]
+    };
+};

@@ -46,7 +46,7 @@ stow -D bash          # remove symlinks
 | `hypr`            | `.config/hypr/` (Hyprland Lua config + scripts)           |
 | `i3`              | `.config/i3/`, `.xprofile`                                |
 | `kanata`          | `.config/kanata/`, `.config/systemd/user/kanata.service`  |
-| `kde`             | portable `.config/*rc` + `kdeglobals`/`kwalletrc` etc.    |
+| `kde`             | portable `.config/*rc` + `kdeglobals`/`kwalletrc` etc., `.config/xkb/` (keyboard remap) |
 | `kitty`           | `.config/kitty/`, `.config/xdg-terminals.list` (default terminal), `.local/share/applications/kitty.desktop` |
 | `kilo`            | `.config/kilo/`                                           |
 | `LazyVim`         | `.config/LazyVim/`                                        |
@@ -153,6 +153,30 @@ Create `~/.config/bash/local` for machine-specific settings (gitignored).
 `~/.config/brave-flags.conf` keeps the common flags that `/usr/bin/brave`
 applies itself (e.g. `--password-store`). Chromium honours only one
 `--enable-features` value, so keep it to a single comma-separated line per file.
+
+### Keyboard remap (Caps Lock → Ctrl, Right Alt → Super)
+
+The `kde` package ships a Plasma/XKB keyboard remap:
+
+- **Caps Lock** acts as an additional Left Ctrl, with no Caps Lock toggling
+  (`caps:ctrl_modifier`, a stock xkeyboard-config option).
+- **Right Alt** acts as an additional Left Super (`Super_L`), via the local
+  option `custom:ralt_super`.
+- Every other key is unchanged.
+
+Three pieces make this work, all under `kde/.config/`:
+
+- `kxkbrc` sets `Options=caps:ctrl_modifier,custom:ralt_super` and
+  `ResetOldOptions=true` (KWin ignores `Options` without it).
+- `xkb/symbols/custom` defines `ralt_super`, which maps `<RALT>` to `Super_L`.
+- `xkb/rules/evdev` is a per-user overlay of the system rules. It includes
+  `evdev-system`, a symlink to `/usr/share/X11/xkb/rules/evdev`, so
+  xkeyboard-config updates still flow through.
+
+KWin reads `kxkbrc` at startup, so **log out and back in** after changing it.
+`custom:ralt_super` is not part of xkeyboard-config's option list, so saving
+the Keyboard page in System Settings may drop it; re-add it to `Options=` in
+`kxkbrc` if that happens.
 
 ### Plasma tmux scratchpad (SUPER+F9)
 

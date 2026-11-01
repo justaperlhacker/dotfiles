@@ -1,0 +1,9 @@
+// Per-user overlay of the system "evdev" XKB rules, so Plasma/KWin can use a
+// local option (custom:ralt_super) that is not part of xkeyboard-config.
+// evdev-system is a symlink to the system rules file
+// (/usr/share/X11/xkb/rules/evdev), so the system rules keep updating
+// normally; only the line below is added.
+! include evdev-system
+
+! option = symbols
+  custom:ralt_super = +custom(ralt_super)

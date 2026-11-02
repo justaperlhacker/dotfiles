@@ -100,10 +100,11 @@ if ( exists $PRESETS{$session} ) {
 
 $terminal //= first_available('kitty') // 'konsole';
 
-# A per-session app id lets Plasma map each scratchpad to its own pinned
-# launcher (plasma-toggle-tmux-<session>.desktop) instead of merging it into
-# the regular kitty icon.
-$class    //= is_kitty($terminal) ? "tmux-$session" : 'org.kde.konsole';
+# A shared app id pools every scratchpad into one taskbar button (Plasma then
+# shows a window count and lets you cycle through them), instead of giving
+# each session its own pinned icon.  The session is still found by its title,
+# so --class only matters if you want a session kept out of the pool.
+$class    //= is_kitty($terminal) ? 'tmux-scratchpad' : 'org.kde.konsole';
 $title    //= $session;
 $width    //= 90;
 $height   //= 85;
@@ -426,7 +427,7 @@ sub usage ($code) {
           --terminal NAME    terminal emulator (default: kitty if available, else konsole)
           --cmd CMD          command to run inside the tmux session
           --class CLASS      window resourceClass/app id to match
-                              (default: tmux-<session> for kitty, else org.kde.konsole)
+                              (default: tmux-scratchpad for kitty, else org.kde.konsole)
           --title STRING     /proc/<pid>/cmdline substring identifying the window
           --width PCT        window width as % of screen (default: 90)
           --height PCT       window height as % of screen (default: 85)
@@ -470,14 +471,21 @@ sub kwin_on_bus {
     return ( $services // '' ) =~ /org\.kde\.KWin\b/;
 }
 
-# Add our launchers to every Icons-only Task Manager on every panel, so the
-# scratchpads get their own pinned buttons instead of hiding in the kitty icon.
+# Keep exactly one scratchpad launcher pinned to every Icons-only Task Manager
+# on every panel.  All scratchpads share the `tmux-scratchpad` app id, so their
+# windows pool into that button (with the usual window count / scroll cycling).
+# Remove the old per-session launchers if an earlier install created them.
 sub pin_scratchpad_launchers {
-    my @sessions = qw(opencode kilo work btop);
-    my $wanted = join ',', map { qq{"applications:plasma-toggle-tmux-$_.desktop"} } @sessions;
+    my $wanted = 'applications:tmux-scratchpad.desktop';
+    my @stale  = (
+        'applications:plasma-toggle-tmux.desktop',
+        map {"applications:plasma-toggle-tmux-$_.desktop"} qw(opencode kilo work btop)
+    );
+    my $stale  = join ',', map { qq{"$_"} } @stale;
     my $js     = <<~"JS";
         (function () {
-            var wanted = [$wanted];
+            var wanted = "$wanted";
+            var stale  = [$stale];
             var changed = 0;
             panels().forEach(function (p) {
                 p.widgets().forEach(function (a) {
@@ -485,12 +493,15 @@ sub pin_scratchpad_launchers {
                     a.currentConfigGroup = ["General"];
                     var cur  = String(a.readConfig("launchers", ""));
                     var list = cur.length ? cur.split(",") : [];
-                    var add  = [];
-                    for (var i = 0; i < wanted.length; i++) {
-                        if (list.indexOf(wanted[i]) < 0) { add.push(wanted[i]); }
+                    var next = [];
+                    for (var i = 0; i < list.length; i++) {
+                        var item = list[i];
+                        if (!item || item === wanted || stale.indexOf(item) >= 0) { continue; }
+                        next.push(item);
                     }
-                    if (add.length) {
-                        a.writeConfig("launchers", list.concat(add).join(","));
+                    next.push(wanted);
+                    if (next.join(",") !== list.join(",")) {
+                        a.writeConfig("launchers", next.join(","));
                         changed++;
                     }
                 });
@@ -601,15 +612,20 @@ sub do_install {
     qdbus_run( $KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure' );
     load_kwin_script($home);
 
-    my @missing = grep { !-r "$home/.local/share/applications/plasma-toggle-tmux-$_.desktop" }
-        qw(opencode kilo work btop);
-    if (@missing) {
-        warn "plasma-toggle-tmux: launcher(s) missing for @missing; "
-            . "re-run 'install.pl --package plasma' to install the .desktop files\n";
+    my $launcher = "$home/.local/share/applications/tmux-scratchpad.desktop";
+    if ( !-r $launcher ) {
+        warn "plasma-toggle-tmux: launcher missing at $launcher; "
+            . "re-run 'install.pl --package plasma' to install the .desktop file\n";
     }
     else {
         my $pinned = pin_scratchpad_launchers();
-        print "plasma-toggle-tmux: added launchers to $pinned task manager(s)\n" if defined $pinned && $pinned =~ /^[1-9]/;
+        if ( defined $pinned && $pinned =~ /^[1-9]/ ) {
+            # The live icontasks applet drops its rendered pinned buttons when
+            # its launcher list is rewritten, until plasmashell restarts, so
+            # refresh it now rather than leaving an apparently empty taskbar.
+            print "plasma-toggle-tmux: updated the scratchpad taskbar button on $pinned panel(s), refreshing the panel\n";
+            system( 'systemctl', '--user', 'try-restart', 'plasma-plasmashell.service' );
+        }
     }
 
     print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+SHIFT+F9 kilo, SUPER+\\ work, SUPER+F11 btop.\n";

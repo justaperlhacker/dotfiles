@@ -1,0 +1,29 @@
+[Desktop Entry]
+Type=Application
+Name=Scratchpads
+GenericName=tmux scratchpad
+Comment=Toggle a floating tmux scratchpad; all scratchpads share this taskbar button
+Exec=/usr/bin/systemctl --user start plasma-toggle-tmux@opencode.service
+Icon=kitty
+Terminal=false
+StartupNotify=false
+StartupWMClass=tmux-scratchpad
+Categories=Utility;
+Keywords=tmux;scratchpad;terminal;opencode;kilo;work;btop;
+Actions=opencode;kilo;work;btop;
+
+[Desktop Action opencode]
+Name=Toggle opencode scratchpad
+Exec=/usr/bin/systemctl --user start plasma-toggle-tmux@opencode.service
+
+[Desktop Action kilo]
+Name=Toggle kilo scratchpad
+Exec=/usr/bin/systemctl --user start plasma-toggle-tmux@kilo.service
+
+[Desktop Action work]
+Name=Toggle work scratchpad
+Exec=/usr/bin/systemctl --user start plasma-toggle-tmux@work.service
+
+[Desktop Action btop]
+Name=Toggle btop scratchpad
+Exec=/usr/bin/systemctl --user start plasma-toggle-tmux@btop.service

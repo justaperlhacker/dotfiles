@@ -459,13 +459,35 @@ sub load_kwin_script {
     return 1;
 }
 
+sub kwin_on_bus {
+    my $services = `busctl --user --no-pager list 2>/dev/null`;
+    return ( $services // '' ) =~ /org\.kde\.KWin\b/;
+}
+
 sub do_load {
 
     # Nothing to do outside a KWin session (e.g. a niri login); stay quiet.
-    my $services = `busctl --user --no-pager list 2>/dev/null`;
-    return 1 unless ( $services // '' ) =~ /org\.kde\.KWin\b/;
+    my $desktop = $ENV{XDG_CURRENT_DESKTOP} // '';
+    return 1 unless $desktop =~ /KDE|Plasma/i;
+
+    # XDG autostart runs this in parallel with KWin, so org.kde.KWin is usually
+    # not on the bus yet.  Wait for it instead of silently giving up, which
+    # used to leave the SUPER+F9 shortcut dead for the whole session.
+    my $deadline = time + 60;
+    until ( kwin_on_bus() ) {
+        return 1 if time >= $deadline;
+        sleep 0.5;
+    }
+
     my $home = $ENV{HOME} // return 0;
-    return load_kwin_script($home);
+
+    # KWin may still be initialising its scripting interface right after it
+    # appears on the bus, so retry the load a few times.
+    for ( 1 .. 10 ) {
+        return 1 if load_kwin_script($home);
+        sleep 0.5;
+    }
+    return 0;
 }
 
 sub do_install {
@@ -495,8 +517,10 @@ sub do_install {
         warn "plasma-toggle-tmux: could not write $dropin_dir/10-perlbrew.conf: $!\n";
     }
 
-    # KWin does not reliably auto-load user scripts at login, so install a
-    # session autostart entry that loads it explicitly (no-op under niri).
+    # KWin auto-loads enabled scripts from ~/.local/share/kwin/scripts at
+    # startup (and after a compositor restart).  This session autostart is a
+    # belt-and-braces reload for logins where KWin came up before the script
+    # was enabled; it waits for KWin on the bus now, so it no longer races.
     my $autostart_dir = $home . '/.config/autostart';
     mkdir $autostart_dir unless -d $autostart_dir;
     if ( open my $afh, '>', "$autostart_dir/plasma-toggle-tmux.desktop" ) {

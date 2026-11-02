@@ -195,10 +195,14 @@ do the actual toggle. After stowing, run this once:
 plasma-toggle-tmux --install
 ```
 
-`--install` enables and loads the KWin script, writes a systemd drop-in so the
-unit uses the perlbrewed perl that has `Net::DBus`, installs a session
-autostart entry that reloads the script each login (KWin does not reliably
-auto-load user scripts), and daemon-reloads systemd. **SUPER+F9** then spawns a
+`--install` enables the KWin script, writes a systemd drop-in so the unit uses
+the perlbrewed perl that has `Net::DBus`, installs a session autostart entry
+that reloads the script (in case KWin came up before the script was enabled),
+and daemon-reloads systemd. The script's `metadata.json` declares
+`"X-Plasma-API": "javascript"`, so KWin loads it natively at login **and after
+a compositor restart**; without that key KWin silently ignores the script and
+the shortcut only works while it has been loaded by hand. **SUPER+F9** then
+spawns a
 centered, always-on-top Konsole running the `opencode` tmux session,
 **SUPER+SHIFT+F9** does the same for `kilo`, and
 **SUPER+\\** (backslash) does the same for the `work` session in Konsole, and

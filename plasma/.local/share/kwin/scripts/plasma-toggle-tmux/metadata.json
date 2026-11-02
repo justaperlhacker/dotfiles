@@ -12,5 +12,7 @@
                 "Name": "johnm"
             }
         ]
-    }
+    },
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "contents/code/main.js"
 }

@@ -99,12 +99,16 @@ if ( exists $PRESETS{$session} ) {
 }
 
 $terminal //= first_available('kitty') // 'konsole';
-$class    //= is_kitty($terminal) ? 'kitty' : 'org.kde.konsole';
+
+# A per-session app id lets Plasma map each scratchpad to its own pinned
+# launcher (plasma-toggle-tmux-<session>.desktop) instead of merging it into
+# the regular kitty icon.
+$class    //= is_kitty($terminal) ? "tmux-$session" : 'org.kde.konsole';
 $title    //= $session;
 $width    //= 90;
 $height   //= 85;
 $keep_above   = 1 unless defined $keep_above;
-$skip_taskbar = 1 unless defined $skip_taskbar;
+$skip_taskbar = 0 unless defined $skip_taskbar;
 
 # Decorations are on by default so the scratchpad can be resized/moved by its
 # frame.  kitty's global config hides decorations, so the spawn below overrides
@@ -347,7 +351,7 @@ sub spawn_terminal {
     if ( is_kitty($terminal) ) {
         @args = (
             $terminal, ( $border ? ( '-o', 'hide_window_decorations=no' ) : () ),
-            '--instance-group', "tmux-$session", '--class', 'kitty', '-e', 'tmux', 'new-session', '-As', $session
+            '--instance-group', "tmux-$session", '--class', $class, '-e', 'tmux', 'new-session', '-As', $session
         );
     }
     else {
@@ -421,12 +425,14 @@ sub usage ($code) {
           --session NAME     tmux session / scratchpad name (required)
           --terminal NAME    terminal emulator (default: kitty if available, else konsole)
           --cmd CMD          command to run inside the tmux session
-          --class CLASS      window resourceClass to match (default: kitty for kitty, else org.kde.konsole)
+          --class CLASS      window resourceClass/app id to match
+                              (default: tmux-<session> for kitty, else org.kde.konsole)
           --title STRING     /proc/<pid>/cmdline substring identifying the window
           --width PCT        window width as % of screen (default: 90)
           --height PCT       window height as % of screen (default: 85)
           --keep-above / --no-keep-above      keep window above others (default: on)
-          --skip-taskbar / --no-skip-taskbar  hide from taskbar/pager (default: on)
+          --skip-taskbar / --no-skip-taskbar  hide from taskbar/pager (default: off,
+                                              so the pinned launcher shows it)
           --border / --no-border              show window decorations, i.e. a
                                               titlebar and resize border (default: on)
           -v, --verbose      print what is happening
@@ -462,6 +468,39 @@ sub load_kwin_script {
 sub kwin_on_bus {
     my $services = `busctl --user --no-pager list 2>/dev/null`;
     return ( $services // '' ) =~ /org\.kde\.KWin\b/;
+}
+
+# Add our launchers to every Icons-only Task Manager on every panel, so the
+# scratchpads get their own pinned buttons instead of hiding in the kitty icon.
+sub pin_scratchpad_launchers {
+    my @sessions = qw(opencode kilo work btop);
+    my $wanted = join ',', map { qq{"applications:plasma-toggle-tmux-$_.desktop"} } @sessions;
+    my $js     = <<~"JS";
+        (function () {
+            var wanted = [$wanted];
+            var changed = 0;
+            panels().forEach(function (p) {
+                p.widgets().forEach(function (a) {
+                    if (a.type !== "org.kde.plasma.icontasks") { return; }
+                    a.currentConfigGroup = ["General"];
+                    var cur  = String(a.readConfig("launchers", ""));
+                    var list = cur.length ? cur.split(",") : [];
+                    var add  = [];
+                    for (var i = 0; i < wanted.length; i++) {
+                        if (list.indexOf(wanted[i]) < 0) { add.push(wanted[i]); }
+                    }
+                    if (add.length) {
+                        a.writeConfig("launchers", list.concat(add).join(","));
+                        changed++;
+                    }
+                });
+            });
+            print(String(changed));
+        })()
+        JS
+    my $out = qdbus_capture( 'org.kde.plasmashell', '/PlasmaShell', 'org.kde.PlasmaShell.evaluateScript', $js );
+    chomp $out;
+    return $out;
 }
 
 sub do_load {
@@ -561,6 +600,18 @@ sub do_install {
 
     qdbus_run( $KWIN_SVC, '/KWin', 'org.kde.KWin.reconfigure' );
     load_kwin_script($home);
+
+    my @missing = grep { !-r "$home/.local/share/applications/plasma-toggle-tmux-$_.desktop" }
+        qw(opencode kilo work btop);
+    if (@missing) {
+        warn "plasma-toggle-tmux: launcher(s) missing for @missing; "
+            . "re-run 'install.pl --package plasma' to install the .desktop files\n";
+    }
+    else {
+        my $pinned = pin_scratchpad_launchers();
+        print "plasma-toggle-tmux: added launchers to $pinned task manager(s)\n" if defined $pinned && $pinned =~ /^[1-9]/;
+    }
+
     print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+SHIFT+F9 kilo, SUPER+\\ work, SUPER+F11 btop.\n";
     return 1;
 }

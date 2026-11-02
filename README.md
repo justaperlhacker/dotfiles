@@ -58,7 +58,7 @@ stow -D bash          # remove symlinks
 | `nvim`            | `.config/nvim/`                                           |
 | `perl`            | `.perltidyrc`                                             |
 | `pi`              | `.pi/agent/settings.json`, `.pi/agent/auth.json`, `.pi/agent/models-store.json` |
-| `plasma`          | `.local/share/kwin/scripts/`, `.config/systemd/user/plasma-toggle-tmux@.service` |
+| `plasma`          | `.local/share/kwin/scripts/`, `.local/share/applications/plasma-toggle-tmux-*.desktop`, `.config/systemd/user/plasma-toggle-tmux@.service` |
 | `redshift`        | `.config/redshift/`                                       |
 | `scripts`         | `.local/bin/` (incl. `xdg-terminal-exec`)                 |
 | `starship`        | `.config/starship.toml`                                   |
@@ -198,7 +198,14 @@ plasma-toggle-tmux --install
 `--install` enables the KWin script, writes a systemd drop-in so the unit uses
 the perlbrewed perl that has `Net::DBus`, installs a session autostart entry
 that reloads the script (in case KWin came up before the script was enabled),
-and daemon-reloads systemd. The script's `metadata.json` declares
+and daemon-reloads systemd. It also pins one launcher per scratchpad
+(`plasma-toggle-tmux-opencode.desktop`, `-kilo`, `-work`, `-btop`) to every
+Icons-only Task Manager: clicking a button toggles that scratchpad and the
+button lights up while the window is open. Each scratchpad runs kitty with its
+own app id (`--class tmux-<session>`), so these stay separate from the regular
+kitty button; they use kitty's stock `Icon=kitty`, while the custom
+`kitty.desktop` keeps its ember icon, so manual kitty sessions and scratchpads
+are easy to tell apart. The script's `metadata.json` declares
 `"X-Plasma-API": "javascript"`, so KWin loads it natively at login **and after
 a compositor restart**; without that key KWin silently ignores the script and
 the shortcut only works while it has been loaded by hand. **SUPER+F9** then

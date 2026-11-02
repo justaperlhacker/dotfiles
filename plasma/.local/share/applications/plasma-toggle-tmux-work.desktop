@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=work Scratchpad
+GenericName=Work shell scratchpad
+Comment=Toggle the work tmux scratchpad (SUPER+backslash)
+Exec=/usr/bin/systemctl --user start plasma-toggle-tmux@work.service
+Icon=kitty
+Terminal=false
+StartupNotify=false
+StartupWMClass=tmux-work
+Categories=Utility;
+Keywords=work;tmux;scratchpad;terminal;

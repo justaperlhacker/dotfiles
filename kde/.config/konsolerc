@@ -1,10 +1,11 @@
 [Desktop Entry]
-DefaultProfile=_Default.profile
+DefaultProfile=_Default_Light
 
 [General]
 ConfigVersion=1
 
 [KonsoleWindow]
+EnableSecuritySensitiveDBusAPI=true
 RemoveWindowTitleBarAndFrame=true
 
 [MainWindow]

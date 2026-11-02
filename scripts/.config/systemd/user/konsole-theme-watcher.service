@@ -1,0 +1,13 @@
+[Unit]
+Description=Keep Konsole light/dark profiles in sync with the Plasma color scheme
+# Sanes the desktop once at startup (applies the current mode to open windows
+# and to konsolerc's DefaultProfile) and watches for palette changes.
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/konsole --watch
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

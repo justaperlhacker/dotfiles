@@ -1,0 +1,317 @@
+#!/usr/bin/env bash
+#
+# konsole -- wrapper around the real Konsole that launches it with a light or
+# dark profile matching the current Plasma color scheme, plus a watcher that
+# keeps already-open windows (and the profile Konsole itself would use) in
+# sync when the desktop switches light/dark.
+#
+# The two themed profiles (_Default_Dark / _Default_Light) are seeded by
+# duplicating your current default profile the first time, so you can then
+# restyle each of them from Konsole's own settings dialog:
+#   Settings -> Edit Current Profile -> Appearance
+#
+# Usage:
+#   konsole                launch a themed Konsole window (default)
+#   konsole --watch        watch the Plasma color scheme and switch
+#                          running windows whenever it changes
+#   konsole --switch-now   flip running windows onto the current theme once
+#   konsole --mode         print "dark" or "light"
+#   konsole --status       human-readable summary
+#   konsole --seed         create themed profiles if missing
+#   konsole --store        copy the live themed profiles back into
+#                          ~/.dotfiles/kde/.local/share/konsole
+#   konsole <args...>      args are passed through to the real Konsole
+#                          (including --profile, which disables the wrapper)
+#
+# Watch mode is normally run by the stowed systemd unit:
+#   ~/.dotfiles/scripts/.config/systemd/user/konsole-theme-watcher.service
+#   systemctl --user enable --now konsole-theme-watcher.service
+#
+# Note: profiles live in ~/.local/share/konsole (Konsole reads them there);
+# ~/.config/konsolerc only holds the default-profile pointer.
+
+set -u
+
+DARK_PROFILE="${KONSOLE_DARK_PROFILE:-_Default_Dark}"
+LIGHT_PROFILE="${KONSOLE_LIGHT_PROFILE:-_Default_Light}"
+WATCH_INTERVAL="${KONSOLE_WATCH_INTERVAL:-60}"
+SYNC_DEFAULT_PROFILE="${KONSOLE_SYNC_DEFAULT_PROFILE:-1}"  # keep konsolerc's
+                                                           # DefaultProfile in sync
+                                                           # so stock launchers follow too
+PROFILES_DIR="$HOME/.local/share/konsole"
+KONSOLERC="${KONSOLERC:-$HOME/.config/konsolerc}"
+DOTFILES_KONSOLE_DIR="${KONSOLE_DOTFILES_DIR:-$HOME/.dotfiles/kde/.local/share/konsole}"
+
+SELF="$(readlink -f "${BASH_SOURCE[0]:-$0}")"
+
+# ---------------------------------------------------------------- real binary
+real_konsole() {
+    local self dir cand
+    self="$(readlink -f "$SELF")"
+    IFS=: read -r -a dirs <<< "${PATH:-/usr/bin:/bin}"
+    for dir in "${dirs[@]}"; do
+        [ -n "$dir" ] || dir=.
+        [ -x "$dir/konsole" ] || continue
+        cand="$(readlink -f "$dir/konsole")"
+        [ "$cand" = "$self" ] && continue        # don't exec ourselves
+        printf '%s\n' "$dir/konsole"
+        return 0
+    done
+    return 1
+}
+
+in_kde() {
+    [ "${XDG_CURRENT_DESKTOP:-}" = "KDE" ] && [ -n "${KDE_FULL_SESSION:-}" ]
+}
+
+# ------------------------------------------------------------ theme detection
+scheme_name() {
+    command -v kreadconfig6 >/dev/null || return 1
+    kreadconfig6 --file kdeglobals --group General --key ColorScheme 2>/dev/null
+}
+
+normalize() {                       # "Breeze Dark" -> "BreezeDark" etc.
+    printf '%s' "${1:-}" | tr -d '[:space:]._-'
+}
+
+# Locate the .colors file that kdeglobals' ColorScheme value refers to.
+locate_scheme() {
+    local scheme norm f bn dirs=() d item parts=()
+    scheme="$(scheme_name)" || return 1
+    [ -n "$scheme" ] || return 1
+    norm="$(normalize "$scheme")"
+
+    local dd
+    dd="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
+    dirs+=("$HOME/.local/share/color-schemes")
+    [ -n "${XDG_DATA_HOME:-}" ] && dirs+=("$XDG_DATA_HOME/color-schemes")
+    IFS=: read -r -a parts <<< "$dd" || true
+    for d in "${parts[@]}"; do
+        dirs+=("$d/color-schemes")
+    done
+
+    for d in "${dirs[@]}"; do
+        [ -d "$d" ] || continue
+        for f in "$d"/*.colors; do
+            [ -e "$f" ] || continue
+            bn="$(basename "$f")"
+            bn="${bn%.colors}"
+            [ "$(normalize "$bn")" = "$norm" ] && { printf '%s\n' "$f"; return 0; }
+        done
+    done
+    return 1
+}
+
+# Perceived luminance of the [Colors:Window] background (0..1).
+scheme_luminance() {
+    local rgb
+    rgb="$(awk -F= '
+        /^[ \t]*\[/ { ingrp = (tolower($0) ~ /^\[(colors?|colour):window\]/) }
+        ingrp && /^BackgroundNormal=/ { sub(/^[^=]*=/, ""); gsub(/ /, ""); print; exit }
+    ' "$1" 2>/dev/null)" || return 1
+    [ -n "$rgb" ] || return 1
+
+    IFS=, read -r r g b _opts <<< "$rgb"
+    awk -v r="${r//[!0-9]/}" -v g="${g//[!0-9]/}" -v b="${b//[!0-9]/}" 'BEGIN {
+        if (r == "" || g == "" || b == "") exit 1
+        lum = (0.2126*r + 0.7152*g + 0.0722*b) / 255
+        printf "%.3f\n", lum
+    }'
+}
+
+# Print "dark" or "light" for the current desktop color scheme.
+scheme_mode() {
+    local file lum
+    if file="$(locate_scheme)" && lum="$(scheme_luminance "$file")" 2>/dev/null; then
+        awk -v lum="$lum" 'BEGIN { print (lum < 0.5) ? "dark" : "light" }'
+        return 0
+    fi
+    # Fallback: guess from the scheme name, then default to light.
+    local name
+    name="$(scheme_name)" || name=""
+    case "$name" in
+        *[Dd]ark*|*[Nn]ight*|*[Bb]lack*|*[Nn]oir*|*[Mm]idnight*) printf 'dark\n' ;;
+        *) printf 'light\n' ;;
+    esac
+}
+
+# ------------------------------------------------------------------- profiles
+profile_state() {
+    if [ -e "$PROFILES_DIR/$1.profile" ]; then
+        if [ -L "$PROFILES_DIR/$1.profile" ]; then
+            echo "present (stowed)"
+        else
+            echo "present (plain file)"
+        fi
+    else
+        echo "missing"
+    fi
+}
+
+seed_profiles() {
+    local src sf tgt base name origin
+
+    # Source/default profile: whatever konsolerc points at, else _Default,
+    # else the built-in name Konsole uses.
+    src="$(kreadconfig6 --file "$KONSOLERC" --group "Desktop Entry" --key DefaultProfile 2>/dev/null || true)"
+    [ -n "${src:-}" ] || src="Default"
+    sf="$PROFILES_DIR/$src.profile"
+    if [ ! -f "$sf" ] && [ "$src" != "_Default" ] && [ -f "$PROFILES_DIR/_Default.profile" ]; then
+        src="_Default"
+        sf="$PROFILES_DIR/_Default.profile"
+    fi
+    [ -f "$sf" ] || sf=""
+
+    for name in "$DARK_PROFILE" "$LIGHT_PROFILE"; do
+        tgt="$PROFILES_DIR/$name.profile"
+        [ -e "$tgt" ] && continue               # never clobber (incl. stow links)
+        if [ -n "$sf" ]; then
+            cp -- "$sf" "$tgt.part" || continue
+            sed -i -e "s|^Name=.*|Name=$name|" "$tgt.part"
+            if ! grep -q '^Name=' "$tgt.part"; then
+                printf '\n[General]\nName=%s\n' "$name" >> "$tgt.part"
+            fi
+        else
+            printf '[General]\nName=%s\nParent=FALLBACK/\n' "$name" > "$tgt.part"
+        fi
+        mv -- "$tgt.part" "$tgt"
+        if [ -n "$sf" ]; then origin="$src (duplicated)"; else origin="built-in default"; fi
+        echo "seeded profile: $name (from $origin)"
+    done
+}
+
+copy_to_dotfiles() {
+    local name tgt
+    if [ ! -d "$DOTFILES_KONSOLE_DIR" ]; then
+        echo "error: $DOTFILES_KONSOLE_DIR does not exist (stow repo not present?)" >&2
+        return 1
+    fi
+    for name in "$DARK_PROFILE" "$LIGHT_PROFILE"; do
+        tgt="$PROFILES_DIR/$name.profile"
+        [ -f "$tgt" ] || continue               # cp dereferences stow symlinks
+        cp -- "$tgt" "$DOTFILES_KONSOLE_DIR/$name.profile" && \
+            echo "stored $name.profile -> $DOTFILES_KONSOLE_DIR/"
+    done
+}
+
+# ----------------------------------------------------------------- dbus apply
+# Push a profile onto every session of every running Konsole instance.
+# Konsole instances register as "org.kde.konsole[-<pid>]" on the session bus,
+# so discover them instead of assuming a fixed name.
+session_profile_set() {
+    local prof="$1" names name nodes num ses
+    command -v qdbus6 >/dev/null 2>&1 || return 0
+
+    # Every running Konsole instance registers as "org.kde.konsole[-<pid>]".
+    names="$(dbus-send --session --print-reply --dest=org.freedesktop.DBus \
+        /org/freedesktop/DBus org.freedesktop.DBus.ListNames 2>/dev/null \
+        | awk -F'"' '/org\.kde\.konsole/ {print $2}')" || return 0
+    [ -n "$names" ] || return 0
+
+    # Modern Konsole has no listSessions() method; the sessions are the child
+    # nodes of /Sessions (Introspectable.Introspect -> <node name="N"/>).
+    while IFS= read -r name; do
+        [ -n "$name" ] || continue
+        nodes="$(dbus-send --session --print-reply --dest="$name" /Sessions \
+            org.freedesktop.DBus.Introspectable.Introspect 2>/dev/null \
+            | awk -F'"' '/<node name=/ {print $2}')" || continue
+        [ -n "$nodes" ] || continue
+
+        while IFS= read -r num; do
+            [ -n "$num" ] || continue
+            ses="/Sessions/$num"
+            qdbus6 "$name" "$ses" \
+                org.kde.konsole.Session.setProfile "$prof" >/dev/null 2>&1 || true
+        done <<< "$nodes"
+    done <<< "$names"
+}
+
+# Push the current mode everywhere: konsolerc default + running sessions.
+apply_mode() {
+    local mode="$1" prof
+    if [ "$mode" = "dark" ]; then prof="$DARK_PROFILE"; else prof="$LIGHT_PROFILE"; fi
+
+    if [ "$SYNC_DEFAULT_PROFILE" = "1" ]; then
+        if ! kwriteconfig6 --file konsolerc --group "Desktop Entry" \
+                --key DefaultProfile "$prof" 2>/dev/null; then
+            echo "warning: could not update konsolerc DefaultProfile (kwriteconfig6 failed)" >&2
+        fi
+    fi
+    session_profile_set "$prof"
+    # Change detected: log it (stdout lands in the systemd journal). Errors
+    # print to stderr, which the journal captures for fatal/nonefatal races.
+    echo "applied: $mode -> $prof"
+    return 0
+}
+
+watch_loop() {
+    local last="" now
+
+    # Sync once before entering the loop, so the watcher fixes everything up
+    # at startup: konsolerc's DefaultProfile + every running window.
+    now="$(scheme_mode)"
+    apply_mode "$now"
+    last="$now"
+
+    while :; do
+        sleep "$WATCH_INTERVAL"
+        now="$(scheme_mode)"
+        [ "$now" != "$last" ] || continue
+        apply_mode "$now"
+        last="$now"
+    done
+}
+
+# -------------------------------------------------------------------- launcher
+launch() {
+    local real args=() a prof
+    real="$(real_konsole)" || {
+        echo "error: cannot find a real konsole binary to exec" >&2
+        exit 1
+    }
+
+    if in_kde; then
+        seed_profiles >/dev/null 2>&1
+        prof="$(scheme_mode)"
+        if [ "$prof" = "dark" ]; then prof="$DARK_PROFILE"; else prof="$LIGHT_PROFILE"; fi
+        # If the user picked their own profile, respect it.
+        for a in "$@"; do
+            if [ "$a" = "--profile" ]; then prof=""; break; fi
+        done
+        [ -n "$prof" ] && args=(--profile "$prof")
+    fi
+
+    exec "$real" ${args[@]+"${args[@]}"} "$@"
+}
+
+status_report() {
+    local mode prof default real watched
+    mode="$(scheme_mode)"
+    if [ "$mode" = "dark" ]; then prof="$DARK_PROFILE"; else prof="$LIGHT_PROFILE"; fi
+
+    echo "color scheme : $(scheme_name || echo '(unknown)')"
+    echo "desktop mode : $mode"
+    echo "profile used : $prof"
+    echo "dark profile : $DARK_PROFILE  ($(profile_state "$DARK_PROFILE"))"
+    echo "light profile: $LIGHT_PROFILE  ($(profile_state "$LIGHT_PROFILE"))"
+    echo "konsolerc    : DefaultProfile=$(kreadconfig6 --file "$KONSOLERC" --group "Desktop Entry" --key DefaultProfile 2>/dev/null || echo '(unset)')"
+    echo "watcher      : $(pgrep -f "konsole --watch" >/dev/null 2>&1 && echo running || echo 'not running')"
+}
+
+usage() {
+    sed -n '2,32p' "$SELF" | sed 's/^# \{0,1\}//'
+}
+
+# ------------------------------------------------------------------------ main
+cmd="${1:-launch}"
+case "$cmd" in
+    --watch)      watch_loop ;;
+    --switch-now) prof="$(scheme_mode)"; apply_mode "$prof" ;;
+    --mode)       scheme_mode ;;
+    --status)     status_report ;;
+    --seed)       seed_profiles ;;
+    --store)      copy_to_dotfiles ;;
+    -h|--help|help) usage ;;
+    *)            launch "$@" ;;
+esac

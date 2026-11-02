@@ -154,6 +154,11 @@ Create `~/.config/bash/local` for machine-specific settings (gitignored).
 applies itself (e.g. `--password-store`). Chromium honours only one
 `--enable-features` value, so keep it to a single comma-separated line per file.
 
+On `destro`, `brave-flags.d/destro.conf` pins the GL ANGLE backend (Vulkan
+ANGLE crashes the GPU process on this machine) and enables VA-API
+decode/encode on the RX 6700 XT, while keeping the headless RTX 3060 out of the
+VA-API path.
+
 ### Keyboard remap (Caps Lock → Ctrl, Right Alt → Super)
 
 The `kde` package ships a Plasma/XKB keyboard remap:

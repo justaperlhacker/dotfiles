@@ -5,8 +5,12 @@ DefaultProfile=_Default_Light
 ConfigVersion=1
 
 [KonsoleWindow]
-EnableSecuritySensitiveDBusAPI=true
 RemoveWindowTitleBarAndFrame=true
+
+[LightDarkTheme]
+DarkThemeProfile=_Default_Dark
+LightThemeProfile=_Default_Light
+SyncProfileWithSystemTheme=true
 
 [MainWindow]
 MenuBar=Disabled

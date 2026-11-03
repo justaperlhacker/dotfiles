@@ -11,7 +11,13 @@ font-family = JetBrainsMono Nerd Font
 # Cursor animations ("trails"): a GPU shader that animates the cursor's
 # movement between frames. Comment/uncomment to switch styles, or point at
 # any other .glsl in ~/.config/ghostty/shaders/. Changes reload live.
-custom-shader = shaders/cursor_blaze.glsl
+# Smooth cursor motion: eased smear between the previous and current cursor
+# position (sahaj-b's cursor_warp; easing style & length tunable at the top
+# of the .glsl). Alternatives in shaders/: cursor_blaze.glsl (fire trail),
+# smear_cursor_blocks.glsl (blocky), cursor_sweep/tail etc — only one
+# custom-shader line runs at a time.
+custom-shader = shaders/cursor_warp.glsl
+# custom-shader = shaders/cursor_blaze.glsl
 # custom-shader = shaders/smear_cursor_blocks.glsl
 
 # With a trail active, animate unfocused windows too (default: focused only).

@@ -1,8 +1,12 @@
 # Ghostty configuration
 # See https://ghostty.org/docs/config/reference
 
-# Color scheme from DankMaterialShell's palette (stowed theme file).
-theme = dankcolors
+# Color scheme from the Gogh "Tokyo Night Terminal Dark" palette
+# (stowed theme file; also stowed: dankcolors from DankMaterialShell).
+theme = TokyoNight Terminal Dark
+
+# Font
+font-family = JetBrainsMono Nerd Font
 
 # Cursor animations ("trails"): a GPU shader that animates the cursor's
 # movement between frames. Comment/uncomment to switch styles, or point at

@@ -1,17 +1,23 @@
 # Ghostty configuration
 # See https://ghostty.org/docs/config/reference
 
-# Color scheme from the Gogh "Tokyo Night Terminal Dark" palette
-# (stowed theme file; also stowed: dankcolors from DankMaterialShell).
 theme = TokyoNight Terminal Dark
 
 # Font
 font-family = JetBrainsMono Nerd Font
 
-# Cursor
+# Cursor (trail shader is designed around the block cursor)
 cursor-style = block
+
+# Cursor animations: kitty-matched trail — mapped from kitty cursor_trail
+# settings: (no movement threshold — all moves incl. single-cell typing
+# animate, like kitty start_threshold=1), decay ~0.3s, trail color =
+# the cursor color. Tuning lives at the bottom of the .glsl.
+# Earlier attempts & their verdicts: git history + README.
+custom-shader = shaders/cursor_smear_fade-kittymatch.glsl
 
 # Behaviour basics:
 mouse-hide-while-typing = true
+
 # keep the shell prompt from overriding block w/ a bar cursor
 shell-integration-features = no-cursor

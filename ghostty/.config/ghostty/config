@@ -28,3 +28,5 @@ custom-shader = shaders/cursor_warp.glsl
 
 # Behaviour basics:
 mouse-hide-while-typing = true
+# keep the shell prompt from overriding block w/ a bar cursor
+shell-integration-features = no-cursor

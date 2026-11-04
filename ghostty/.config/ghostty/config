@@ -8,6 +8,9 @@ theme = TokyoNight Terminal Dark
 # Font
 font-family = JetBrainsMono Nerd Font
 
+# Cursor (block default is also what the cursor shader is designed around)
+cursor-style = block
+
 # Cursor animations ("trails"): a GPU shader that animates the cursor's
 # movement between frames. Comment/uncomment to switch styles, or point at
 # any other .glsl in ~/.config/ghostty/shaders/. Changes reload live.

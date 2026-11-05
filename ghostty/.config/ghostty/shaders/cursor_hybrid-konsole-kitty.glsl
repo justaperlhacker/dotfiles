@@ -252,18 +252,20 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         corners[i] = mix(konsoleCorners[i], kittyCorners[i], blend);
     }
 
-    // Stop when the quad is within half a cell of the target.
+    // Kitty stops within half a cell. Konsole must keep going for its full
+    // duration, otherwise one-cell typing looks much faster than Konsole.
     float dxThreshold = cell.x * 0.5;
     float dyThreshold = cell.y * 0.5;
-    bool needsRender = false;
+    bool kittyNeedsRender = false;
     for (int i = 0; i < 4; ++i) {
         if (abs(kittyTarget[i].x - corners[i].x) >= dxThreshold ||
             abs(kittyTarget[i].y - corners[i].y) >= dyThreshold) {
-            needsRender = true;
+            kittyNeedsRender = true;
             break;
         }
     }
-    if (!needsRender) {
+    bool konsoleNeedsRender = t < KONSOLE_DURATION;
+    if (!kittyNeedsRender && !(blend < 1.0 && konsoleNeedsRender)) {
         return;
     }
 

@@ -1,22 +1,38 @@
 # Ghostty configuration
 # See https://ghostty.org/docs/config/reference
 
-theme = TokyoNight Terminal Dark
+#theme = dark:Catppuccin Frappe,light:Catppuccin Latte
+theme = dark:TokyoNight Terminal Dark,light:TokyoNight Terminal Light
 
 # Font
-font-family = JetBrainsMono Nerd Font
+#font-family = JetBrainsMono Nerd Font
+font-family = BerkeleyMono Nerd Font
+font-size = 12
+background-opacity = 0.70
+background-blur = true
 
 # Cursor animation: hybrid Konsole (typing) + kitty (large jumps).
 # Style is auto-detected: block, bar, or underline.
 # Alternatives:
 #   custom-shader = shaders/cursor_morph-konsole.glsl
 #   custom-shader = shaders/cursor_trail-kitty.glsl
+#   custom-shader = shaders/cursor_ghost-crt.glsl
 #   custom-shader = shaders/cursor_smear_fade-kittymatch.glsl
 cursor-style = bar
-custom-shader = shaders/cursor_hybrid-konsole-kitty.glsl
+custom-shader = shaders/cursor_ghost-crt.glsl
 
 # Behaviour basics:
 #mouse-hide-while-typing = true
 
 # keep the shell prompt from overriding the cursor style
 #shell-integration-features = no-cursor
+
+window-decoration = auto
+window-theme = system
+#gtk-titlebar = true
+gtk-titlebar-style = native
+#gtk-titlebar-style = tabs
+gtk-titlebar-hide-when-maximized = false
+gtk-toolbar-style = flat
+gtk-wide-tabs = true
+maximize = true

@@ -29,7 +29,7 @@ auto-detected from Ghostty.
 Active config:
 
 ```ini
-cursor-style = block
+cursor-style = bar
 custom-shader = shaders/cursor_hybrid-konsole-kitty.glsl
 ```
 
@@ -69,10 +69,26 @@ cutoff, and the `kitty/shaders/trail.slang` current-cursor mask.
 # custom-shader = shaders/cursor_trail-kitty.glsl
 ```
 
+`shaders/cursor_ghost-crt.glsl` emulates the Cool-Retro-Term "Ghost
+Terminal" cursor persistence. It keeps the previous cursor as a fading
+ghost while typing and repeats copies along the path of a long jump, with
+a soft phosphor glow. Cool-Retro-Term gets this from its full-screen
+`burn_in.frag` feedback buffer; Ghostty has no previous-frame buffer, so
+this is a cursor-only approximation using the previous/current cursor and
+the movement path.
+
+Tunables at the top of the shader: `GHOST_DURATION` (default 0.45 s,
+matching the Ghost Terminal preset's `burnIn` 0.2), `GHOST_COUNT`,
+`GHOST_SPACING_CELLS`, `GHOST_*_ALPHA`, and `GHOST_GLOW`.
+
+```ini
+# custom-shader = shaders/cursor_ghost-crt.glsl
+```
+
 `shaders/cursor_smear_fade-kittymatch.glsl` is the older kitty-inspired
 approximation (fixed ~0.3 s hexagon trail with a distance fade). It is
-kept for comparison. All three kitty-family shaders draw over text and
-mask the current cursor rect, which is what kitty's built-in trail does.
+kept for comparison. All cursor shaders here draw over text and mask the
+current cursor rect.
 
 ## Limitations
 
@@ -82,6 +98,11 @@ current cursor rects, not kitty's persistent in-flight corner state or its
 closely; rapid successive moves restart from the previous cursor rect.
 Kitty's `cursor_trail` millisecond trigger delay is also not exposed by
 Ghostty.
+
+The ghost shader can't reproduce Cool-Retro-Term's full-screen burn-in
+feedback buffer. It only draws cursor ghosts from the previous/current
+cursor and the movement path, so the text itself does not leave
+phosphor trails.
 
 The cursor uniforms are only updated while the cursor glyph is rendered,
 so a move made during the cursor's blink-off phase can miss the animation.

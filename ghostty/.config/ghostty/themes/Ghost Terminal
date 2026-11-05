@@ -1,0 +1,29 @@
+# Ghost Terminal
+# Colors from cool-retro-term's "Ghost Terminal" preset:
+# background #0b1014, foreground #a6b3c0.
+# ANSI palette from qmltermwidget's cool-retro-term scheme.
+
+background = #0b1014
+foreground = #a6b3c0
+cursor-color = #a6b3c0
+cursor-text = #0b1014
+cursor-style-blink = false
+selection-background = #a6b3c0
+selection-foreground = #0b1014
+
+palette = 0=#000000
+palette = 1=#ff2b2b
+palette = 2=#1cac78
+palette = 3=#f8d568
+palette = 4=#2b6cc4
+palette = 5=#ff1dce
+palette = 6=#18a7b5
+palette = 7=#b3b3b3
+palette = 8=#6a6a6a
+palette = 9=#fd5e53
+palette = 10=#a8e4a0
+palette = 11=#fefe22
+palette = 12=#9aceeb
+palette = 13=#fc74fd
+palette = 14=#eceabe
+palette = 15=#ffffff

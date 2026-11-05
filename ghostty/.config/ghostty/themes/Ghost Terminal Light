@@ -1,0 +1,28 @@
+# Ghost Terminal Light
+# Light variant of the Ghost Terminal theme: background and foreground
+# swapped, cursor darkened for contrast.
+
+background = #a6b3c0
+foreground = #0b1014
+cursor-color = #4c505e
+cursor-text = #a6b3c0
+cursor-style-blink = false
+selection-background = #0b1014
+selection-foreground = #a6b3c0
+
+palette = 0=#a6b3c0
+palette = 1=#8c2f2f
+palette = 2=#2f6b4f
+palette = 3=#7a5a1f
+palette = 4=#2b4c8a
+palette = 5=#7a3a6a
+palette = 6=#1f5f6a
+palette = 7=#0b1014
+palette = 8=#4c505e
+palette = 9=#a63a3a
+palette = 10=#3f8a63
+palette = 11=#9a7020
+palette = 12=#3f6ac4
+palette = 13=#a34a8a
+palette = 14=#2f7f8a
+palette = 15=#1a1b26

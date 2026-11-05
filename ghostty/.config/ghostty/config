@@ -2,30 +2,43 @@
 # See https://ghostty.org/docs/config/reference
 
 #theme = dark:Catppuccin Frappe,light:Catppuccin Latte
-theme = dark:TokyoNight Terminal Dark,light:TokyoNight Terminal Light
+#theme = dark:TokyoNight Terminal Dark,light:TokyoNight Terminal Light
+theme = dark:Ghost Terminal,light:Ghost Terminal Light
+# dark only
+#theme = Ghost Terminal
+# light only (preview)
+#theme = Ghost Terminal Light
 
 # Font
 #font-family = JetBrainsMono Nerd Font
 font-family = BerkeleyMono Nerd Font
 font-size = 12
-background-opacity = 0.70
-background-blur = true
+#background-opacity = 0.70
+#background-blur = true
 
 # Cursor animation: hybrid Konsole (typing) + kitty (large jumps).
 # Style is auto-detected: block, bar, or underline.
 # Alternatives:
 #   custom-shader = shaders/cursor_morph-konsole.glsl
+#   custom-shader = shaders/cursor_smear_fade-kittymatch.glsl
+#   custom-shader = shaders/cursor_hybrid-konsole-kitty.glsl
 #   custom-shader = shaders/cursor_trail-kitty.glsl
 #   custom-shader = shaders/cursor_ghost-crt.glsl
-#   custom-shader = shaders/cursor_smear_fade-kittymatch.glsl
-cursor-style = bar
+
+cursor-style = block
 custom-shader = shaders/cursor_ghost-crt.glsl
+# CRT static noise; stacks after the ghost shader.
+custom-shader = shaders/crt_noise.glsl
+# CRT sliding scanline; stacks last.
+custom-shader = shaders/crt_scanlines.glsl
 
 # Behaviour basics:
+custom-shader-animation = always
 #mouse-hide-while-typing = true
+bell-features = no-system,no-audio,no-attention,no-title,no-border
 
 # keep the shell prompt from overriding the cursor style
-#shell-integration-features = no-cursor
+shell-integration-features = no-cursor
 
 window-decoration = auto
 window-theme = system

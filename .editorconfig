@@ -3,6 +3,7 @@
 # top-most EditorConfig file
 root = true
 
+# Global fallback: 4-wide spaces (PEP 8 / PBP / zig fmt / c3 conventions).
 [*]
 indent_style = space
 indent_size = 4
@@ -11,21 +12,43 @@ charset = utf-8
 trim_trailing_whitespace = false
 insert_final_newline = false
 
-[*.lua]
+# C / C++: 2-wide spaces (LLVM / GNU / modern-C camp, e.g. raddbg & mr4th).
+# Projects providing their own root .editorconfig (Google, Unreal, LLVM...)
+# override this where conventions differ.
+[*.{c,h,cpp,hpp,cc,cxx,hxx}]
 indent_style = space
 indent_size = 2
 
-[*.{yml,yaml}]
+# Lua / web / data: 2-wide spaces (ecosystem conventions: prettier, Google,
+# VS Code defaults).
+[*.{lua,js,json,html,yml,yaml}]
 indent_style = space
 indent_size = 2
 
+# Python: 4 spaces, never tabs (PEP 8).
+[*.py]
+indent_style = space
+indent_size = 4
+
+# Perl family: 4 spaces (Perl Best Practices / perltidy defaults).
 [*.{pl,pm,pod,t}]
 indent_style = space
 indent_size = 4
 
+[*.{raku,rakumod,rakutest,rakudoc,pm6,p6}]
+indent_style = space
+indent_size = 4
+
+# Zig / C3: 4 spaces (upstream formatter / style conventions).
+[*.{zig,zir,c3,c3t}]
+indent_style = space
+indent_size = 4
+
+# Makefiles: POSIX requires literal tabs in recipes.
 [Makefile]
 indent_style = tab
+tab_width = 4
 
 [*.mk]
 indent_style = tab
-
+tab_width = 4

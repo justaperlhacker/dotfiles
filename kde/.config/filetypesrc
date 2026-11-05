@@ -1,4 +1,7 @@
 [EmbedSettings]
+embed-application/json=false
+embed-application/x-docbook+xml=false
+embed-application/x-yaml=false
 embed-audio/aac=false
 embed-audio/mp4=false
 embed-audio/mpeg=false
@@ -18,6 +21,9 @@ embed-audio/x-speex=false
 embed-audio/x-vorbis=false
 embed-audio/x-vorbis+ogg=false
 embed-audio/x-wav=false
+embed-text/markdown=false
+embed-text/plain=false
+embed-text/x-cmake=false
 embed-x-scheme-handler/http=false
 embed-x-scheme-handler/https=false
 embed-x-scheme-handler/mailto=false

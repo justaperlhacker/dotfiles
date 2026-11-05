@@ -43,6 +43,7 @@ stow -D bash          # remove symlinks
 | `brave`           | `.config/brave-flags.conf`, `.config/brave-flags.d/`, `.local/bin/brave` |
 | `DankMaterialShell`| `.config/DankMaterialShell/`                              |
 | `doom`            | `.config/doom/`                                           |
+| `ghostty`         | `.config/ghostty/` (incl. cursor-trail shaders)           |
 | `hypr`            | `.config/hypr/` (Hyprland Lua config + scripts)           |
 | `i3`              | `.config/i3/`, `.xprofile`                                |
 | `kanata`          | `.config/kanata/`, `.config/systemd/user/kanata.service`  |
@@ -82,6 +83,44 @@ hardcoded list in which `gnome-terminal` wins over kitty/konsole.
 To use the packaged reference implementation instead, install `xdg-terminal-exec`
 from `extra` and remove `~/.local/bin/xdg-terminal-exec` — it shadows the package
 because `~/.local/bin` comes first on `PATH`.
+
+### kitty cursor animations (`cursor_trail`)
+
+Cursor animations are the builtin `cursor_trail` feature (kitty 0.37+, custom
+shader styles from 0.49). They are **enabled** in `kitty.conf` — `cursor_trail`
+set to a value larger than zero turns them on, `0` turns them off:
+
+```conf
+# Cursor trail
+cursor_trail 2                    # enable; <ms> a cursor must hold still before
+                                  # its movement gets a trail (lower = chattier)
+cursor_trail_decay 0.2 0.6        # fade-out time range in seconds
+                                  # (fastest slowest); lower = snappier fade
+cursor_trail_start_threshold 1    # cells moved before the trail starts,
+                                  # per axis; default 2 skips tiny steps
+# cursor_trail_color #ff9e64      # trail color; default = cursor's color
+```
+
+Differences from the stock defaults (`0`, `0.1 0.4`, `2`): trails trigger on
+smaller moves and fade a bit slower, tuned for trying to track big cursor
+jumps around large code buffers. To tune live, press `CTRL+SHIFT+F5`
+(`load_config_file`) to reload `kitty.conf` in the current window; no restart
+needed. (`kitty @ load-config` also works, but needs `allow_remote_control`
+enabled, which this config leaves off.)
+
+Custom trail styles are set via `custom_shaders` in `kitty.conf`:
+
+| Value                        | Effect                                  |
+|------------------------------|-----------------------------------------|
+| (none)                       | plain trail (current setup)             |
+| `cursor-trail-motion-blur`   | smooths fast moves with motion blur     |
+| `cursor-trail-blaze`         | fiery blaze style                       |
+| `cursor-trail-railgun`       | particle stream flying off the cursor   |
+| `cursor-trail-torpedo`       | torpedo-like particle burst             |
+| `cursor-trail-pixiedust`     | fairy-dust particles                    |
+
+The trail follows the text cursor only, and never appears while the cursor is
+resting; only movement you can see gets animated.
 
 ### niri tray icons (XEmbed → SNI bridge)
 

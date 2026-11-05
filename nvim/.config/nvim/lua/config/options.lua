@@ -175,9 +175,8 @@ opt.pumblend = 10 -- Popup menu transparency
 opt.winblend = 0 -- Floating window transparency
 
 -- folds
-opt.foldmethod = "expr" -- fold based on expression
-opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- use treesitter for folding
-opt.foldlevel = 99 -- start with all folds open
+opt.foldmethod = "expr" -- fold based on treesitter grammar
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 opt.foldlevelstart = 99 -- start with all folds open
 
 

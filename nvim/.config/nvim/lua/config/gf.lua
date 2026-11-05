@@ -92,4 +92,24 @@ function M.c(fname)
 	return resolve(dedup(list))
 end
 
+-- C3 import: `import "file.c3";` keeps its path, `import mylib;` gets a .c3
+-- suffix appended if none present, mirroring the C/C++ header resolver.
+function M.c3(fname)
+	local base = fname:match("^<(.+)>$") or fname:match("^\"(.+)\"$") or fname
+	local suffixed = { base }
+	if not base:match("%.") then
+		suffixed = {}
+		for _, suf in ipairs({ ".c3" }) do
+			suffixed[#suffixed + 1] = base .. suf
+		end
+	end
+	local list = {}
+	for _, r in ipairs(roots()) do
+		for _, c in ipairs(suffixed) do
+			list[#list + 1] = r .. "/" .. c
+		end
+	end
+	return resolve(dedup(list))
+end
+
 return M

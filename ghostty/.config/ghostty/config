@@ -6,18 +6,17 @@ theme = TokyoNight Terminal Dark
 # Font
 font-family = JetBrainsMono Nerd Font
 
-# Cursor (trail shader is designed around the block cursor)
-cursor-style = block
-
-# Cursor animations: kitty-matched trail — mapped from kitty cursor_trail
-# settings: (no movement threshold — all moves incl. single-cell typing
-# animate, like kitty start_threshold=1), decay ~0.3s, trail color =
-# the cursor color. Tuning lives at the bottom of the .glsl.
-# Earlier attempts & their verdicts: git history + README.
-custom-shader = shaders/cursor_smear_fade-kittymatch.glsl
+# Cursor animation: hybrid Konsole (typing) + kitty (large jumps).
+# Style is auto-detected: block, bar, or underline.
+# Alternatives:
+#   custom-shader = shaders/cursor_morph-konsole.glsl
+#   custom-shader = shaders/cursor_trail-kitty.glsl
+#   custom-shader = shaders/cursor_smear_fade-kittymatch.glsl
+cursor-style = bar
+custom-shader = shaders/cursor_hybrid-konsole-kitty.glsl
 
 # Behaviour basics:
-mouse-hide-while-typing = true
+#mouse-hide-while-typing = true
 
-# keep the shell prompt from overriding block w/ a bar cursor
-shell-integration-features = no-cursor
+# keep the shell prompt from overriding the cursor style
+#shell-integration-features = no-cursor

@@ -61,6 +61,11 @@
         //     "editor.lineHighlightBackground": "#00000008",
         //     "editor.lineHighlightBorder": "#00000040"
         // },
+        // light counterpart for the auto light/dark switch
+        "[Tokyo Night Light]": {
+            "editor.lineHighlightBackground": "#00000008",
+            "editor.lineHighlightBorder": "#00000040"
+        },
         "[Fleury Theme]": {
             "sideBar.border": "#7a6b5a",
             "sideBar.background": "#020202",
@@ -258,5 +263,11 @@
 
     "vsicons.dontShowNewVersionMessage": true,
     "workbench.colorTheme": "Tokyo Night",
+    // Follow the desktop's light/dark scheme. KDE Plasma exposes its
+    // day/night switch through the XDG desktop portal, so this tracks it.
+    "window.autoDetectColorScheme": true,
+    "workbench.preferredDarkColorTheme": "Tokyo Night",
+    "workbench.preferredLightColorTheme": "Tokyo Night Light",
+    "window.density.layout": "compact",
 
 }

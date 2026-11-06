@@ -39,6 +39,11 @@ custom-shader-animation = always
 #mouse-hide-while-typing = true
 bell-features = no-system,no-audio,no-attention,no-title,no-border
 
+# Scrollback: cap retained history at 10k lines (matches kitty).
+# The default is `unlimited`; the separate scrollback-limit-bytes (50 MB
+# default) still applies, and whichever limit is hit first wins.
+scrollback-limit-lines = 10000
+
 # keep the shell prompt from overriding the cursor style
 #shell-integration-features = no-cursor
 

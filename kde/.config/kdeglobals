@@ -138,6 +138,7 @@ ThemeName=Breeze-Dark
 [General]
 AccentColor=196,125,83
 Bell=0
+ColorScheme=BreezeDark
 ColorSchemeHash=27363f5706202c1c8261fbda7381ddaab8ad48f3
 LastUsedCustomAccentColor=143,188,187
 XftAntialias=true

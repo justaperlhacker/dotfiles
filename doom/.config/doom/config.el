@@ -79,6 +79,14 @@
 
 (setq doom-modeline-icon t)
 
+;; ==================== MENU BAR ====================
+;; Doom disables the menu bar at startup (lisp/doom-emacs.el sets
+;; `menu-bar-mode' to nil and pushes `(menu-bar-lines . 0)' onto
+;; `default-frame-alist'). Turn it back on here, after Doom's core has run, so
+;; both the initial frame and any frames created later get one. On a TTY this
+;; just enables the F10 menu, since terminal frames have no visible bar.
+(menu-bar-mode +1)
+
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `with-eval-after-load' block, otherwise Doom's defaults may override your
 ;; settings. E.g.

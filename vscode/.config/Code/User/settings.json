@@ -266,7 +266,7 @@
     // Follow the desktop's light/dark scheme. KDE Plasma exposes its
     // day/night switch through the XDG desktop portal, so this tracks it.
     "window.autoDetectColorScheme": true,
-    "workbench.preferredDarkColorTheme": "Tokyo Night",
+    "workbench.preferredDarkColorTheme": "Kimbie2 Dark",
     "workbench.preferredLightColorTheme": "Tokyo Night Light",
     "window.density.layout": "compact",
 

@@ -145,7 +145,7 @@
       "noBackground": false,
       "maximizeWidgetIcons": false,
       "maximizeWidgetText": false,
-      "widgetPadding": 8,
+      "widgetPadding": 5,
       "gothCornersEnabled": false,
       "gothCornerRadiusOverride": false,
       "gothCornerRadiusValue": 12,
@@ -183,7 +183,13 @@
       "islandHomeCompactTight": true,
       "widgetStyle": "segments",
       "islandNotch": false,
-      "islandReserveThickness": 36
+      "islandReserveThickness": 36,
+      "islandCompactThickness": 32,
+      "islandSatelliteGap": 6,
+      "islandRouteLauncher": "island",
+      "islandRouteControlCenter": "island",
+      "islandInteractionMode": "hybrid",
+      "islandDashTabs": true
     },
     {
       "id": "dot1793460496072",
@@ -243,7 +249,7 @@
       "noBackground": false,
       "maximizeWidgetIcons": false,
       "maximizeWidgetText": false,
-      "widgetPadding": 8,
+      "widgetPadding": 5,
       "gothCornersEnabled": false,
       "gothCornerRadiusOverride": false,
       "gothCornerRadiusValue": 12,
@@ -279,7 +285,9 @@
       "dot": true,
       "islandPalette": "default",
       "islandHomeCompactTight": true,
-      "widgetStyle": "segments"
+      "widgetStyle": "segments",
+      "islandCompactThickness": 32,
+      "islandSatelliteGap": 6
     }
   ],
   "builtInPluginSettings": {
@@ -297,7 +305,7 @@
     }
   },
   "configVersion": 42,
-  "radiusStrength": 50,
+  "radiusStrength": 25,
   "dockConfigs": [
     {
       "id": "dock",
@@ -309,6 +317,7 @@
       "showOnLastDisplay": true,
       "position": 1,
       "mode": "compact",
+      "middleClickAction": "close",
       "taskbarAlign": "center",
       "widgetExpansion": "popout",
       "iconSize": 40,
@@ -585,5 +594,17 @@
   "blurBorderEnabled": true,
   "blurBorderOpacity": 0.35,
   "blurEnabled": false,
-  "blurBorderSeeded": true
+  "blurBorderSeeded": true,
+  "density": "dense",
+  "interfaceStyle": "expressive",
+  "niriLayoutRadiusOverride": -1,
+  "matugenTemplateFoot": false,
+  "matugenTemplateHyprland": false,
+  "matugenTemplateMangowc": false,
+  "matugenTemplateFirefox": false,
+  "matugenTemplatePywalfox": false,
+  "matugenTemplateZenBrowser": false,
+  "matugenTemplateVesktop": false,
+  "matugenTemplateVencord": false,
+  "matugenTemplateAlacritty": false
 }

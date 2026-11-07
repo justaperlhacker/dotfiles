@@ -1,0 +1,31 @@
+[02828133-e62e-46f3-b195-f9ef013ef55a]
+Description=Konsole (Maximized) launcher
+maximizehoriz=true
+maximizehorizrule=2
+maximizevert=true
+maximizevertrule=2
+title=KONSOLEMAX
+titlematch=2
+types=1
+
+[6c75fd8b-38f1-4c5a-9656-690d06b6eaa1]
+Description=Cool Retro Term (Maximized)
+decorationpolicy=none
+decorationpolicyrule=2
+maximizehoriz=true
+maximizehorizrule=2
+maximizevert=true
+maximizevertrule=2
+types=1
+wmclass=retro
+wmclasscomplete=false
+wmclassmatch=2
+
+[General]
+Order=c98d52e9-3ef5-4df5-90f4-7bd8116666cf,02828133-e62e-46f3-b195-f9ef013ef55a,6c75fd8b-38f1-4c5a-9656-690d06b6eaa1
+
+[c98d52e9-3ef5-4df5-90f4-7bd8116666cf]
+Description=all windows start on primary monitor
+Enabled=false
+screenrule=3
+types=289

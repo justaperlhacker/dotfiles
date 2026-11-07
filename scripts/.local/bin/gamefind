@@ -1,0 +1,365 @@
+#!/usr/bin/env python3
+"""gamefind - fuzzy search across your Steam + Heroic (Epic/GOG/Amazon) libraries.
+
+  gamefind                    interactive picker (fuzzy, searches game names)
+  gamefind witcher            picker pre-filled with a query
+  gamefind -q "witcher 3"     print the top matches, no UI (good for scripts)
+  gamefind -l witcher         pick a game and launch it
+  gamefind --source gog -q doom
+  gamefind --installed        only installed games
+  gamefind --any -q gog       match store / app id too, not just the name
+"""
+
+import argparse
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+HOME = Path.home()
+
+STEAM_ROOTS = [
+    HOME / ".local/share/Steam",
+    HOME / ".steam/steam",
+    HOME / ".steam/root",
+    HOME / ".var/app/com.valvesoftware.Steam/.local/share/Steam",
+]
+
+HEROIC_DIRS = [
+    HOME / ".config/heroic",
+    HOME / ".var/app/com.heroicgameslauncher.hgl/config/heroic",
+]
+
+STORE_LABEL = {
+    "steam": "Steam",
+    "legendary": "Epic",
+    "gog": "GOG",
+    "nile": "Amazon",
+    "zoom": "Zoom",
+    "sideload": "Sideload",
+}
+
+# Steam entries that are runtimes / tools rather than games.
+STEAM_NOISE = re.compile(
+    r"^(Proton|Steam Linux Runtime|Steamworks Common Redistributables)", re.I
+)
+
+WORD_BREAK = set(" -_.:/\\|()[]{}'&+,")
+
+
+@dataclass
+class Game:
+    name: str
+    store: str          # steam / legendary / gog / nile / zoom / sideload
+    gid: str            # appid for steam, app_name for heroic
+    installed: bool = True
+
+    @property
+    def label(self):
+        return STORE_LABEL.get(self.store, self.store.title())
+
+
+# --------------------------------------------------------------------------- steam
+
+def _steam_library_paths():
+    paths = set()
+    for root in STEAM_ROOTS:
+        if (root / "steamapps").is_dir():
+            paths.add(root)
+        vdf = root / "steamapps" / "libraryfolders.vdf"
+        try:
+            text = vdf.read_text(errors="replace")
+        except OSError:
+            continue
+        for m in re.finditer(r'"path"\s*"([^"]+)"', text):
+            p = Path(m.group(1))
+            if (p / "steamapps").is_dir():
+                paths.add(p)
+    return paths
+
+
+def collect_steam(include_tools=False):
+    games = []
+    for lib in sorted(_steam_library_paths()):
+        for acf in (lib / "steamapps").glob("appmanifest_*.acf"):
+            try:
+                text = acf.read_text(errors="replace")
+            except OSError:
+                continue
+            name = re.search(r'"name"\s*"([^"]*)"', text)
+            appid = re.search(r'"appid"\s*"(\d+)"', text)
+            if not name or not appid:
+                continue
+            if not include_tools and STEAM_NOISE.match(name.group(1)):
+                continue
+            games.append(Game(name.group(1).strip(), "steam", appid.group(1), True))
+    return games
+
+
+# -------------------------------------------------------------------------- heroic
+
+def _iter_entries(node):
+    """Yield every dict that looks like a library entry."""
+    if isinstance(node, dict):
+        title = node.get("title")
+        app = node.get("app_name")
+        if isinstance(title, str) or isinstance(app, str):
+            yield node
+        else:
+            for value in node.values():
+                yield from _iter_entries(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _iter_entries(value)
+
+
+def collect_heroic():
+    games = []
+    for base in HEROIC_DIRS:
+        cache = base / "store_cache"
+        if not cache.is_dir():
+            continue
+        for path in sorted(cache.glob("*_library.json")):
+            runner = path.name[: -len("_library.json")]
+            try:
+                data = json.loads(path.read_text(errors="replace"))
+            except (OSError, ValueError):
+                continue
+            for entry in _iter_entries(data):
+                name = entry.get("title") or entry.get("app_name")
+                app = entry.get("app_name")
+                if not isinstance(name, str) or not isinstance(app, str):
+                    continue
+                # Skip redistributables / DLC stubs.
+                install = entry.get("install")
+                if isinstance(install, dict) and install.get("is_dlc"):
+                    continue
+                if app in ("gog-redist",) or "Redistributable" in name:
+                    continue
+                games.append(
+                    Game(
+                        name.strip(),
+                        entry.get("runner") or runner,
+                        app,
+                        bool(entry.get("is_installed")),
+                    )
+                )
+    return games
+
+
+# -------------------------------------------------------------------------- search
+
+def score(query, target):
+    """Fuzzy score: None if `query` is not a subsequence of `target`."""
+    if not query:
+        return 0.0
+    q, t = query.lower(), target.lower()
+    if q == t:
+        return 1000.0
+
+    idx = t.find(q)
+    if idx >= 0:  # exact substring
+        s = 500.0 - idx * 2.0 - (len(t) - len(q)) * 0.5
+        if idx == 0 or t[idx - 1] in WORD_BREAK:
+            s += 100.0
+        return s
+
+    total, prev, run, pos = 0.0, -2, 0, 0
+    for ch in q:
+        i = t.find(ch, pos)
+        if i < 0:
+            return None
+        if i == prev + 1:
+            run += 1
+            total += 12.0 + run * 4.0
+        else:
+            run = 0
+            total += 2.0 - min(i - (prev + 1), 20) * 0.5
+        if i == 0 or t[i - 1] in WORD_BREAK:
+            total += 25.0
+        prev, pos = i, i + 1
+    return total - (len(t) - len(q)) * 0.05
+
+
+def rank(games, query, match_any=False):
+    hits = []
+    for g in games:
+        hay = g.name if not match_any else f"{g.name} {g.label} {g.gid}"
+        s = score(query, hay)
+        if s is not None:
+            hits.append((s, g))
+    hits.sort(key=lambda pair: (-pair[0], pair[1].name.lower()))
+    return [g for _, g in hits]
+
+
+# ----------------------------------------------------------------------- launching
+
+def launch(game, dry_run=False):
+    if game.store == "steam":
+        cmd = ["steam", f"steam://rungameid/{game.gid}"]
+    else:
+        cmd = ["xdg-open", f"heroic://launch/{game.store}/{game.gid}"]
+    if dry_run:
+        print("would run:", " ".join(cmd))
+        return
+    try:
+        subprocess.Popen(
+            cmd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+    except OSError as exc:
+        sys.exit(f"gamefind: could not launch {game.name}: {exc}")
+    print(f"launching {game.name} ({game.label})")
+
+
+# --------------------------------------------------------------------------- picker
+
+def _row(g, width):
+    status = "installed" if g.installed else "not installed"
+    return f"{g.name:<{width}}\t{g.label} · {status}\t{g.gid}\t{g.store}"
+
+
+def pick_fzf(games, query, match_any):
+    width = min(max((len(g.name) for g in games), default=10), 60)
+    payload = "\n".join(_row(g, width) for g in games)
+    cmd = [
+        "fzf",
+        "--prompt=game> ",
+        "--height=70%",
+        "--reverse",
+        "--delimiter=\t",
+        "--with-nth=1,2",
+        "--tiebreak=index",
+        "--header=type to fuzzy-match a name  ·  enter to select  ·  esc to quit",
+    ]
+    if not match_any:
+        cmd.append("--nth=1")  # search names only
+    if query:
+        cmd.append(f"--query={query}")
+    proc = subprocess.run(cmd, input=payload, text=True, capture_output=True)
+    if proc.returncode != 0:
+        return None
+    fields = proc.stdout.rstrip("\n").split("\t")
+    if len(fields) < 4:
+        return None
+    gid, store = fields[2], fields[3]
+    return next((g for g in games if g.gid == gid and g.store == store), None)
+
+
+def pick_builtin(games, query, match_any, limit=15):
+    while True:
+        hits = rank(games, query, match_any)
+        if not hits:
+            print(f"no match for {query!r}")
+        else:
+            for i, g in enumerate(hits[:limit], 1):
+                status = "installed" if g.installed else "not installed"
+                print(f"{i:2}) {g.name}  [{g.label} · {status}]")
+            if len(hits) > limit:
+                print(f"    … {len(hits) - limit} more, keep typing to narrow down")
+        try:
+            answer = input("select # / refine query (empty = quit): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return None
+        if not answer:
+            return None
+        if answer.isdigit() and hits and 1 <= int(answer) <= min(len(hits), limit):
+            return hits[int(answer) - 1]
+        query = answer
+
+
+# ----------------------------------------------------------------------------- main
+
+def main():
+    ap = argparse.ArgumentParser(
+        prog="gamefind",
+        description="Fuzzy search your Steam and Heroic game libraries.",
+    )
+    ap.add_argument("query", nargs="?", default="", help="initial search text")
+    ap.add_argument("-q", "--query-only", action="store_true",
+                    help="print matches instead of opening the picker")
+    ap.add_argument("-n", "--limit", type=int, default=15,
+                    help="max results for -q / builtin picker (default 15)")
+    ap.add_argument("-l", "--launch", action="store_true",
+                    help="launch the selected game")
+    ap.add_argument("-s", "--source", action="append", default=None,
+                    metavar="STORE",
+                    help="limit to a store: steam, epic/legendary, gog, amazon/nile")
+    ap.add_argument("-i", "--installed", action="store_true",
+                    help="only show installed games")
+    ap.add_argument("-a", "--all", action="store_true",
+                    help="include Steam runtimes/Proton and other tools")
+    ap.add_argument("--any", action="store_true",
+                    help="match store and app id too, not just the name")
+    ap.add_argument("--list", action="store_true",
+                    help="dump every game as name<TAB>store<TAB>id and exit")
+    ap.add_argument("--json", action="store_true", help="json output for -q/--list")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="with -l, print the launch command instead of running it")
+    args = ap.parse_args()
+
+    games = collect_steam(include_tools=args.all) + collect_heroic()
+
+    if args.source:
+        wanted = {s.lower() for s in args.source}
+        alias = {"epic": "legendary", "amazon": "nile"}
+        wanted = {alias.get(s, s) for s in wanted}
+        games = [g for g in games if g.store in wanted]
+
+    if args.installed:
+        games = [g for g in games if g.installed]
+
+    # de-duplicate (same name + store, e.g. multiple Steam libraries)
+    seen, unique = set(), []
+    for g in games:
+        key = (g.name.lower(), g.store)
+        if key not in seen:
+            seen.add(key)
+            unique.append(g)
+    games = unique
+
+    if not games:
+        sys.exit("gamefind: no games found (check Steam / Heroic paths)")
+
+    if args.list:
+        if args.json:
+            print(json.dumps([g.__dict__ for g in games], indent=2))
+        else:
+            for g in sorted(games, key=lambda g: g.name.lower()):
+                print(f"{g.name}\t{g.label}\t{g.gid}")
+        return
+
+    if args.query_only:
+        hits = rank(games, args.query, args.any)[: args.limit]
+        if args.json:
+            print(json.dumps([g.__dict__ for g in hits], indent=2))
+        else:
+            for g in hits:
+                status = "" if g.installed else "  (not installed)"
+                print(f"{g.name}\t{g.label}{status}")
+        sys.exit(0 if hits else 1)
+
+    use_fzf = bool(shutil.which("fzf")) and sys.stdin.isatty()
+    game = (
+        pick_fzf(games, args.query, args.any)
+        if use_fzf
+        else pick_builtin(games, args.query, args.any, args.limit)
+    )
+    if game is None:
+        return
+    print(f"{game.name}  [{game.label} · {game.gid}]")
+    if args.launch:
+        launch(game, dry_run=args.dry_run)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(130)

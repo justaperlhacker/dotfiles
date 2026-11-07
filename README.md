@@ -235,10 +235,11 @@ do the actual toggle. After stowing, run this once:
 plasma-toggle-tmux --install
 ```
 
-`--install` enables the KWin script, writes a systemd drop-in so the unit uses
-the perlbrewed perl that has `Net::DBus`, installs a session autostart entry
-that reloads the script (in case KWin came up before the script was enabled),
-and daemon-reloads systemd. It also pins a single **Scratchpads** button
+`--install` enables the KWin script, writes a systemd drop-in pinning the
+`PATH` of the perl that ran it (so `Net::DBus` is found even with a perlbrew
+perl), installs a session autostart entry that reloads the script (in case KWin
+came up before the script was enabled), and daemon-reloads systemd. It also
+pins a single **Scratchpads** button
 (`tmux-scratchpad.desktop`) to every Icons-only Task Manager. All
 scratchpads run kitty with the same `--class tmux-scratchpad`, so their windows
 pool under that one button: Plasma shows the window count and scrolling over
@@ -265,6 +266,11 @@ decorations (titlebar and resize border) even though kitty's global config sets
 more scratchpads by appending to `sessions` in
 `plasma/.local/share/kwin/scripts/plasma-toggle-tmux/contents/code/main.js`.
 
+> **Do not enable** the `plasma-toggle-tmux@*.service` units. They have no
+> `[Install]` section on purpose: they are one-shot toggle actions started on
+> demand by the KWin shortcut. Enabling them runs a toggle at every login and
+> fails, because no scratchpad window exists yet.
+
 #### Dependencies (CachyOS/Arch)
 
 Everything the helper uses at runtime, mapped to the package that provides it.
@@ -272,7 +278,7 @@ On a normal Plasma install these are already present except `Net::DBus`.
 
 | Dependency        | Package         | Notes                                                          |
 |-------------------|-----------------|----------------------------------------------------------------|
-| `Net::DBus` (Perl)| `perl-net-dbus` | Or `cpan -T -i Net::DBus` into the perlbrew perl (what this box uses). |
+| `Net::DBus` (Perl)| `perl-net-dbus` | Or `cpan -T -i Net::DBus` into a local perlbrew/local::lib perl. |
 | `qdbus6`          | `qt6-tools`     | KWin scripting and KGlobalAccel D-Bus calls.                   |
 | `kwriteconfig6`   | `kconfig`       | Writes `kwinrc`/`kglobalshortcutsrc` and configures systemd.   |
 | `busctl`, `systemctl` | `systemd`   | Session probe (`--load`) and the scratchpad unit.              |

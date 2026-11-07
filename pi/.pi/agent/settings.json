@@ -2,13 +2,11 @@
   "lastChangelogVersion": "1.5.0",
   "theme": "light/dark",
   "packages": [
+    "npm:plan-build",
     "npm:pi-permission-system",
     "npm:pi-undo-redo",
     "npm:pi-web-access",
-    "npm:@juicesharp/rpiv-todo",
-    "npm:pi-mcp-adapter",
-    "npm:pi-background-tasks",
-    "npm:pi-multi-account"
+    "npm:pi-mcp-adapter"
   ],
   "terminal": {
     "showTerminalProgress": true
@@ -21,7 +19,6 @@
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-permission-system\",\"scope\":\"user\"}": "0.8.0",
     "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
-    "{\"source\":\"npm:pi-mcp-adapter\",\"scope\":\"user\"}": "7.0.1",
-    "{\"source\":\"npm:pi-multi-account\",\"scope\":\"user\"}": "1.28.1"
+    "{\"source\":\"npm:pi-mcp-adapter\",\"scope\":\"user\"}": "7.0.1"
   }
 }

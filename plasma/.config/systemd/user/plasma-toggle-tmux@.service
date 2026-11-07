@@ -7,6 +7,7 @@ Type=oneshot
 KillMode=process
 ExecStart=%h/.local/bin/plasma-toggle-tmux --session %i
 
-[Install]
-WantedBy=default.target
-DefaultInstance=opencode
+# Deliberately no [Install] section. This is a toggle *action*, started on
+# demand by the KWin shortcut script via systemd1.Manager.StartUnit. Enabling
+# it would run the toggle once at every login (and fail, since nothing is open
+# yet). Do not add WantedBy=default.target back.

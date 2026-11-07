@@ -371,6 +371,17 @@ window-rule {
     match app-id=r#"(?i)whatsie"#
     open-maximized true
 }
+// Steam main window — open maximized (title-scoped so the friends list,
+// popups and notification toasts stay as they are).
+window-rule {
+    match app-id=r#"^steam$"# title=r#"^Steam$"#
+    open-maximized true
+}
+// Heroic Games Launcher — open maximized.
+window-rule {
+    match app-id=r#"^com\.heroicgameslauncher\.hgl$"#
+    open-maximized true
+}
 
 // Include dms files
 include optional=true "dms/colors.kdl"

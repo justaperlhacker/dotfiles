@@ -42,6 +42,9 @@ _darcs
 ^pi/.pi/agent/npm
 ^pi/.pi/agent/sessions
 
+# pi agent credentials (API keys / OAuth tokens) — local only, never stow
+^pi/.pi/agent/auth\.json
+
 # Hyprland: DMS-generated fragments and per-host monitor overrides (never stow)
 ^hypr/.config/hypr/dms/
 ^hypr/.config/hypr/local\.lua

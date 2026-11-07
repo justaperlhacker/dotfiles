@@ -59,7 +59,7 @@ stow -D bash          # remove symlinks
 | `NvChad`          | `.config/NvChad/`                                         |
 | `nvim`            | `.config/nvim/`                                           |
 | `perl`            | `.perltidyrc`                                             |
-| `pi`              | `.pi/agent/settings.json`, `.pi/agent/auth.json`, `.pi/agent/models-store.json` |
+| `pi`              | `.pi/agent/settings.json`, `.pi/agent/models-store.json`  |
 | `plasma`          | `.local/share/kwin/scripts/`, `.local/share/applications/tmux-scratchpad.desktop`, `.config/systemd/user/plasma-toggle-tmux@.service` |
 | `redshift`        | `.config/redshift/`                                       |
 | `scripts`         | `.local/bin/` (incl. `xdg-terminal-exec`)                 |

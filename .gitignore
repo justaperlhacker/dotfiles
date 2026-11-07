@@ -62,7 +62,7 @@ hypr/.config/hypr/local.lua
 # KDE secrets (device pairing keys/certs) — never commit
 kde/.config/kdeconnect/
 
-# pi agent secrets (API keys) — never commit; still deployed by stow
+# pi agent secrets (API keys / OAuth tokens) — never commit, never stow
 pi/.pi/agent/auth.json
 
 # OpenWeatherMap API key — never commit; still deployed by stow

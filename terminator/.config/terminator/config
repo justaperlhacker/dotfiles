@@ -12,6 +12,7 @@
     scrollbar_position = hidden
     scrollback_lines = 10000
     use_system_font = False
+    use_theme_colors = True
   [[Batman]]
     icon_bell = False
     background_color = "#1b1d1e"

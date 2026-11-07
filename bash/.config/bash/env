@@ -84,5 +84,6 @@ if [[ -d "$HOME/.cargo/bin" && :$PATH: != *":$HOME/.cargo/bin:"* ]]; then
     PATH="$HOME/.cargo/bin:$PATH"
 fi
 
+export RAKUDO_LINE_EDITOR=LineEditor
 # source rakubrew
 #[[ -f "$HOME/.rakubrew/bin/rakubrew" ]] && eval "$($HOME/.rakubrew/bin/rakubrew init Bash)"

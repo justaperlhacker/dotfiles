@@ -166,7 +166,11 @@ else {
 }
 
 print "Stowing: @pkgs\n";
-system( 'stow', '-d', $DOTFILES, '-t', $TARGET, @pkgs ) == 0
+# --no-folding: create real directories with per-file symlinks instead of
+# folding whole directories into one symlink. systemd ignores drop-in
+# directories (e.g. niri.service.d) that are symlinks, and folding also
+# makes it impossible to mix repo files with machine-local ones.
+system( 'stow', '--no-folding', '-d', $DOTFILES, '-t', $TARGET, @pkgs ) == 0
     or die "error: stow failed (exit ", ( $? >> 8 ), ")\n";
 
 print "Done. Backups in: $BACKUP_DIR\n";

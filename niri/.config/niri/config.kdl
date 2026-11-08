@@ -157,28 +157,13 @@ overview {
         off
     }
 }
-// Add lines like this to spawn processes at startup.
-// Note that running niri as a session supports xdg-desktop-autostart,
-// which may be more convenient to use.
-// See the binds section below for more spawn examples.
-// This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-at-startup "kwalletd6"
-// Unlock the wallet via the password stashed by SDDM's pam_kwallet5.so
-spawn-at-startup "/usr/lib/pam_kwallet_init"
-// Wait for DMS to export its StatusNotifierWatcher before starting Discord,
-// otherwise the tray icon fails to register (DMS startup race).
-spawn-at-startup "/home/johnm/.config/niri/scripts/exec-after-sni" "discord"
-
-// niri:KDE:gnome so we use niri-portals.conf for the portal backends, while Qt apps still get
-// Plasma/Breeze dark theme and GTK portal reads color-scheme (KDE is the second component)
-spawn-at-startup "dbus-update-activation-environment" "--systemd" "XDG_CURRENT_DESKTOP=niri:KDE:gnome" "KDE_SESSION_VERSION=6" "KDE_FULL_SESSION=true" "QT_QPA_PLATFORMTHEME=kde" "QT_STYLE_OVERRIDE=Breeze"
-
-// VMware user tools for Wayland clipboard (clipway backend); only spawn if installed
-spawn-at-startup "sh" "-c" "command -v vmtoolsd >/dev/null 2>&1 && vmtoolsd -n vmusr"
-
-// Restart xdg-desktop-portal-gnome once niri's Mutter.ScreenCast interface is ready, fixes the
-// startup race that otherwise leaves screencasting (OBS) with a black screen / no source picker
-spawn-at-startup "sh" "-c" "while ! busctl --user status org.gnome.Mutter.ScreenCast >/dev/null 2>&1; do sleep 0.2; done; pkill -f xdg-desktop-portal-gnome"
+// All ordering-sensitive startup lives in niri-autostart.sh: wallet unlock,
+// Discord after the tray host, xdg-desktop-portal-gnome restart, Xwayland
+// settings and host-specific extras. Waits are shared via scripts/wait-lib.sh.
+// The script is safe to re-run; it skips already-running processes.
+// Note that running niri as a session also supports xdg-desktop-autostart
+// (OneDriveGUI.desktop), which is handled by systemd.
+spawn-sh-at-startup "~/.config/niri/scripts/niri-autostart.sh"
 
 environment {
     // niri:KDE:gnome so we use niri-portals.conf for portal backends, while Qt apps still get
@@ -350,9 +335,6 @@ recent-windows {
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
 }
-
-// X11/Xwayland setup (keyboard rate, bell off, dpms, Xresources)
-spawn-at-startup "sh" "-c" "/home/johnm/.config/niri/scripts/niri-autostart.sh"
 
 // Apps that should open maximized (full width + height of the workspace).
 // Rules only run when a window opens, so restart the app to see the change.

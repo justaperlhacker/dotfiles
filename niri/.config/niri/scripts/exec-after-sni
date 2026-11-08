@@ -10,23 +10,15 @@ if [ "$#" -eq 0 ]; then
     exit 2
 fi
 
-# 40 * 0.25s = 10s max wait
-tries=40
-interval=0.25
+self=$0
+[ -L "$self" ] && self=$(readlink -f "$self")
+script_dir=$(unset CDPATH; cd -- "$(dirname -- "$self")" && pwd -P)
 
-i=0
-while [ "$i" -lt "$tries" ]; do
-    if busctl --user get-property \
-        org.kde.StatusNotifierWatcher /StatusNotifierWatcher \
-        org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered 2>/dev/null \
-        | grep -q true; then
-        break
-    fi
-    i=$((i + 1))
-    sleep "$interval"
-done
+. "$script_dir/wait-lib.sh"
 
-[ "$i" -eq "$tries" ] && \
-    echo "${0##*/}: no StatusNotifierWatcher after $((tries * 25 / 100))s, starting anyway" >&2
+# 40 * 0.25s = 10s max wait. Start the app anyway on timeout: a missing tray
+# icon is better than a missing app.
+wait_for_prop org.kde.StatusNotifierWatcher /StatusNotifierWatcher \
+    org.kde.StatusNotifierWatcher IsStatusNotifierHostRegistered true 40 0.25
 
 exec "$@"

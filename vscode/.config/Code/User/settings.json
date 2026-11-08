@@ -177,7 +177,7 @@
 
     // Terminal
     "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
-    "terminal.integrated.fontSize": 14,
+    "terminal.integrated.fontSize": 15,
     "terminal.integrated.fontLigatures.enabled": false,
     "terminal.integrated.stickyScroll.enabled": false,
 
@@ -266,7 +266,7 @@
     // Follow the desktop's light/dark scheme. KDE Plasma exposes its
     // day/night switch through the XDG desktop portal, so this tracks it.
     "window.autoDetectColorScheme": true,
-    "workbench.preferredDarkColorTheme": "Kimbie2 Dark",
+    "workbench.preferredDarkColorTheme": "Nord",
     "workbench.preferredLightColorTheme": "Tokyo Night Light",
     "window.density.layout": "compact",
 

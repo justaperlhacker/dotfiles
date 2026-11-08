@@ -53,7 +53,7 @@ stow -D bash          # remove symlinks
 | `LazyVim`         | `.config/LazyVim/`                                        |
 | `nano`            | `.config/nano/`                                           |
 | `neovide`         | `.config/neovide/`                                        |
-| `niri`            | `.config/niri/`, `.config/xdg-desktop-portal/`, `.config/autostart/OneDriveGUI.desktop`, `.config/systemd/user/xembedsniproxy.service` |
+| `niri`            | `.config/niri/`, `.config/xdg-desktop-portal/`, `.config/autostart/OneDriveGUI.desktop`, `.config/environment.d/`, `.config/systemd/user/{xembedsniproxy,dms-theme-sync}.service`, `niri.service.d/`, `dms.service.d/` |
 | `noctalia`        | `.config/noctalia/`                                       |
 | `NvChad`          | `.config/NvChad/`                                         |
 | `nvim`            | `.config/nvim/`                                           |
@@ -178,6 +178,48 @@ by Stow.
 ### Per-machine overrides
 
 Create `~/.config/bash/local` for machine-specific settings (gitignored).
+
+### DMS light/dark sync (niri + GTK + Ghostty)
+
+The `niri` package ships `dms-theme-sync.service`. It is enabled through
+`niri.service.wants` (a local `systemctl --user enable` symlink, not stowed),
+and keeps the rest of the session in step with DMS's location/sunset mode:
+
+- writes `org.gnome.desktop.interface color-scheme` as `prefer-dark` or
+  `prefer-light`. DMS writes `default` when going back to light, which makes
+  the XDG portal report "no preference" and Electron apps (Discord) stop
+  following the system.
+- updates `gtk-application-prefer-dark-theme` in
+  `~/.config/gtk-{3,4}.0/settings.ini` and keeps `gtk.css` importing only
+  DMS's `dank-colors.css`. GTK3 has no `color-scheme` support, and Plasma's
+  `colors.css` otherwise pins the Breeze palette to the last Plasma session.
+- sends `SIGUSR2` to running Ghostty instances when DMS regenerates
+  `~/.config/ghostty/themes/dankcolors` (Ghostty does not watch theme files).
+
+After stowing on a new machine:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable dms-theme-sync.service
+```
+
+DMS must also have `terminalsAlwaysDark=false` for the generated terminal
+palettes (Ghostty, kitty, …) to follow light mode.
+
+The DMS-generated theme outputs (`ghostty/.../dankcolors`,
+`kitty/.../dank-*.conf`, `wezterm` colors, `zed` theme, `zen.css`) are
+gitignored and stow-ignored. On machines installed before `install.pl`
+switched to `stow --no-folding`, `~/.config/{ghostty,kitty,wezterm,zed}` may
+still be folded symlinks into the repo, so DMS writes those files inside the
+repo tree (ignored by git). To have DMS write to real home config dirs
+instead, remove the folded symlink and re-stow the package:
+
+```bash
+rm ~/.config/ghostty        # removes only the directory symlink
+./install.pl --package ghostty
+```
+
+Repeat for `kitty`, `wezterm`, and `zed` as needed.
 
 ### Brave flags
 

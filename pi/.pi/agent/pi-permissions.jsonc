@@ -14,8 +14,21 @@
         "write": "ask",
         "edit": "ask"
     },
+    "skills": {
+        // Silent skill loads/reads. The `ask` default here only produced
+        // prompts during normal skill use (user-invoked /skill:<name> already
+        // bypassed it). Tighten with specific patterns, e.g. "dangerous-*": "deny".
+        "*": "allow"
+    },
     "bash": {
-        "*": "ask",
+        // Broad fallback. PLAN mode read-only enforcement is handled by the
+        // plan-build extension (hard-blocks mutating commands there), so bash
+        // is left open in BUILD mode to avoid per-command approvals.
+        // Flip back to "ask" to re-arm the allowlist below.
+        "*": "allow",
+
+        // Redundant while "*" is "allow" (last matching rule wins, "*" wins
+        // first). Kept so reverting the line above restores the allowlist.
 
         // File inspection
         "cat *": "allow",

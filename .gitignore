@@ -67,6 +67,3 @@ pi/.pi/agent/auth.json
 
 # OpenWeatherMap API key — never commit; still deployed by stow
 i3/.config/i3/scripts/.env
-
-# cool-retro-term SQLite runtime sidecars (the database itself is tracked)
-cool-retro-term/.local/share/cool-retro-term/cool-retro-term/QML/OfflineStorage/Databases/*.sqlite-*

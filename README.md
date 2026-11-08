@@ -41,7 +41,6 @@ stow -D bash          # remove symlinks
 |-------------------|-----------------------------------------------------------|
 | `bash`            | `.bashrc`, `.bash_profile`, `.bash_logout`, `.inputrc`, `.config/bash/` |
 | `brave`           | `.config/brave-flags.conf`, `.config/brave-flags.d/`, `.local/bin/brave` |
-| `cool-retro-term` | `.local/share/cool-retro-term/` (settings database + profiles) |
 | `DankMaterialShell`| `.config/DankMaterialShell/`                              |
 | `doom`            | `.config/doom/`                                           |
 | `ghostty`         | `.config/ghostty/` (incl. cursor-trail shaders)           |

@@ -606,5 +606,6 @@
   "matugenTemplateZenBrowser": false,
   "matugenTemplateVesktop": false,
   "matugenTemplateVencord": false,
-  "matugenTemplateAlacritty": false
+  "matugenTemplateAlacritty": false,
+  "matugenSmartMode": false
 }

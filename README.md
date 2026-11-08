@@ -62,7 +62,7 @@ stow -D bash          # remove symlinks
 | `pi`              | `.pi/agent/settings.json`, `.pi/agent/models-store.json`  |
 | `plasma`          | `.local/share/kwin/scripts/`, `.local/share/applications/tmux-scratchpad.desktop`, `.config/systemd/user/plasma-toggle-tmux@.service` |
 | `redshift`        | `.config/redshift/`                                       |
-| `scripts`         | `.local/bin/` (incl. `xdg-terminal-exec`)                 |
+| `scripts`         | `.local/bin/` (incl. `xdg-terminal-exec`, `ocs`)          |
 | `starship`        | `.config/starship.toml`                                   |
 | `terminator`      | `.config/terminator/` (incl. `terminator-themes` plugin)  |
 | `tmux`            | `.config/tmux/`                                           |
@@ -84,6 +84,34 @@ hardcoded list in which `gnome-terminal` wins over kitty/konsole.
 To use the packaged reference implementation instead, install `xdg-terminal-exec`
 from `extra` and remove `~/.local/bin/xdg-terminal-exec` — it shadows the package
 because `~/.local/bin` comes first on `PATH`.
+
+### OpenCode session picker (`ocs`)
+
+OpenCode scopes its session list to the directory you launch it from, so sessions
+from other projects are invisible to `/sessions` and `opencode session list`.
+`ocs` (in `scripts`) reads the local OpenCode database directly and shows every
+top-level session in an fzf picker, grouped by project folder with the most
+recently used first.
+
+```bash
+ocs                     # fzf picker; Enter resumes in the session's directory
+ocs rust                # picker pre-filled with "rust"
+ocs -l                  # plain list (no picker)
+ocs --ids               # session IDs only
+ocs --json              # full session data as JSON
+ocs --show ses_abc123   # details for one session, incl. its last prompt
+ocs -a                  # include archived sessions
+ocs -d ~/Projects       # only that directory and below
+ocs -n 20               # show at most N sessions
+ocs --dry-run           # print the resume command instead of running it
+```
+
+The selection resumes with `opencode -s <id>` after changing into the session's
+recorded directory — resuming from the wrong directory can 404 or create a
+shadow session with the same ID. Ctrl-/ toggles the preview pane; without `fzf`
+the script falls back to a numbered prompt. It honours `OPENCODE_DB`, `--db`,
+and `NO_COLOR`, and refuses to resume a session whose directory no longer
+exists.
 
 ### kitty cursor animations (`cursor_trail`)
 

@@ -3,4 +3,6 @@ RepeatDelay=300
 RepeatRate=50
 
 [Mouse]
+cursorTheme=Qogir-Recolored-Gruvbox-Orange
+cursorSize=24
 X11LibInputXAccelProfileFlat=true

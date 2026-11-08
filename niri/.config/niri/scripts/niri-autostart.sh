@@ -20,8 +20,15 @@ script_dir=$(unset CDPATH; cd -- "$(dirname -- "$self")" && pwd -P)
 
 uid=$(id -u)
 runtime=${XDG_RUNTIME_DIR:-/tmp}
+logdir=${XDG_STATE_HOME:-$HOME/.local/state}/niri
+logfile=$logdir/autostart.log
+mkdir -p "$logdir" 2>/dev/null
 
-log()        { echo "${0##*/}: $*" >&2; }
+log() {
+    _log_line="$(date '+%F %T') ${0##*/}: $*"
+    printf '%s\n' "$_log_line" >&2
+    printf '%s\n' "$_log_line" >> "$logfile" 2>/dev/null
+}
 have()       { command -v "$1" >/dev/null 2>&1; }
 is_running() { pgrep -u "$uid" -x "$1" >/dev/null 2>&1; }
 is_pending() { pgrep -u "$uid" -f "$1" >/dev/null 2>&1; }
@@ -53,6 +60,8 @@ if command -v flock >/dev/null 2>&1; then
     }
 fi
 
+log "starting"
+
 # --- session environment ---------------------------------------------------
 # systemd units get this from environment.d and niri.service.d before niri
 # starts; this covers services activated through the D-Bus daemon instead.
@@ -70,6 +79,7 @@ if is_running Discord || is_running discord ||
     is_pending "$script_dir/exec-after-sni discord"; then
     log "discord already running or queued; skipping"
 else
+    log "launching discord via exec-after-sni"
     start_bg "$script_dir/exec-after-sni" discord
 fi
 
@@ -83,7 +93,12 @@ else
     (
         exec 9>&-
         wait_for_bus org.gnome.Mutter.ScreenCast 150 &&
-            pkill -f xdg-desktop-portal-gnome
+            wait_for_bus org.freedesktop.impl.portal.desktop.gnome 150 &&
+            {
+                systemctl --user try-restart xdg-desktop-portal-gnome.service ||
+                    pkill -f xdg-desktop-portal-gnome
+            } &&
+            log "restarted xdg-desktop-portal-gnome"
     ) &
 fi
 
@@ -142,3 +157,5 @@ for host in "$(hostname -s 2>/dev/null)" "$(hostname 2>/dev/null)"; do
         break
     fi
 done
+
+log "startup complete"

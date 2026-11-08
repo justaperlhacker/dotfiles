@@ -1,0 +1,14 @@
+[Unit]
+Description=Sync system color-scheme and GTK dark preference with DMS light/dark mode
+# DMS is the niri shell; under Plasma this unit is not pulled in.
+PartOf=niri.service
+After=niri.service dms.service
+
+[Service]
+Type=simple
+ExecStart=/home/johnm/.config/niri/scripts/dms-theme-sync.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=niri.service

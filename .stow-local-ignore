@@ -32,7 +32,14 @@ _darcs
 ^DankMaterialShell/.config/DankMaterialShell/.changelog-.*
 ^DankMaterialShell/.config/DankMaterialShell/.firstlaunch
 ^DankMaterialShell/.config/DankMaterialShell/firefox\.css
+^DankMaterialShell/.config/DankMaterialShell/zen\.css
 ^DankMaterialShell/.config/DankMaterialShell/plugins/
+
+# DMS-generated theme outputs (never stow; generated per session)
+^ghostty/.config/ghostty/themes/dankcolors
+^kitty/.config/kitty/dank-(tabs|theme)\.conf
+^wezterm/.config/wezterm/colors/dank-theme\.toml
+^zed/.config/zed/themes/dank-zed-theme\.json
 
 # Midnight Commander runtime state (rewritten each session) — never stow
 #^mc/.config/mc/ini

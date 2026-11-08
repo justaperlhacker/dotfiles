@@ -161,6 +161,7 @@ overview {
 // Discord after the tray host, xdg-desktop-portal-gnome restart, Xwayland
 // settings and host-specific extras. Waits are shared via scripts/wait-lib.sh.
 // The script is safe to re-run; it skips already-running processes.
+// Startup log: ~/.local/state/niri/autostart.log
 // Note that running niri as a session also supports xdg-desktop-autostart
 // (OneDriveGUI.desktop), which is handled by systemd.
 spawn-sh-at-startup "~/.config/niri/scripts/niri-autostart.sh"

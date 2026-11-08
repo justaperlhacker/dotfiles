@@ -77,7 +77,7 @@
   "fontFamily": "Adwaita Sans",
   "monoFontFamily": "JetBrainsMono NF",
   "soundLogin": true,
-  "terminalsAlwaysDark": true,
+  "terminalsAlwaysDark": false,
   "osdPowerProfileEnabled": true,
   "powerMenuActions": [
     "reboot",

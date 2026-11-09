@@ -34,6 +34,11 @@ Environment variables `I3_DARK_THEME` and `I3_LIGHT_THEME` override those
 values (useful for testing). If the KDE daemon cannot provide a schedule, the
 script falls back to the `[Times]` values in `~/.config/knighttimerc`.
 
+The running daemon re-reads `theme-sync.conf` on every poll. If you change it
+while the session is active, the current mode is re-applied with the new theme
+within 60 seconds. To apply immediately, run `i3-theme-sync --mode dark` or
+`i3-theme-sync --mode light`.
+
 GTK and KDE/Qt do not have GitHub-specific themes installed, so the sync uses
 Breeze Dark/Light for applications. The i3, i3bar, rofi, dunst and terminal
 palettes use the GitHub themes.

@@ -24,7 +24,6 @@ my $HOME = $ENV{HOME} // die "i3-theme-sync: HOME is not set\n";
 my $I3_DIR       = "$HOME/.config/i3";
 my $SWITCH_THEME = "$I3_DIR/scripts/switch-theme";
 my $THEME_CONFIG = "$I3_DIR/theme-sync.conf";
-my %THEME_CONFIG;
 my $STATE_DIR    = ( $ENV{XDG_STATE_HOME} // "$HOME/.local/state" ) . '/i3-theme-sync';
 my $STATE_FILE   = "$STATE_DIR/mode";
 my $LOG_FILE     = "$STATE_DIR/log";
@@ -32,17 +31,34 @@ my $LOCK_FILE    = $ENV{XDG_RUNTIME_DIR}
   ? "$ENV{XDG_RUNTIME_DIR}/i3-theme-sync.lock"
   : "/tmp/i3-theme-sync-$<.lock";
 
-if ( open my $fh, '<', $THEME_CONFIG ) {
-    while ( my $line = <$fh> ) {
-        chomp $line;
+my $DARK_THEME;
+my $LIGHT_THEME;
+my $theme_config_last = '';
+
+sub load_theme_config {
+    my $content = '';
+    if ( open my $fh, '<', $THEME_CONFIG ) {
+        local $/;
+        $content = <$fh>;
+        close $fh;
+    }
+
+    my $changed = $content ne $theme_config_last;
+    $theme_config_last = $content;
+
+    my %config;
+    for my $line ( split /\n/, $content ) {
         my ( $key, $value ) = $line =~ /^\s*([A-Za-z_]+)\s*=\s*(.*?)\s*$/
           or next;
-        $THEME_CONFIG{ uc $key } = $value;
+        $config{ uc $key } = $value;
     }
-    close $fh;
+
+    $DARK_THEME  = $ENV{I3_DARK_THEME}  // $config{DARK}  // 'github-dark';
+    $LIGHT_THEME = $ENV{I3_LIGHT_THEME} // $config{LIGHT} // 'github-light';
+    return $changed;
 }
-my $DARK_THEME  = $ENV{I3_DARK_THEME}  // $THEME_CONFIG{DARK}  // 'github-dark';
-my $LIGHT_THEME = $ENV{I3_LIGHT_THEME} // $THEME_CONFIG{LIGHT} // 'github-light';
+
+load_theme_config();
 
 my $GHOSTTY_SESSION  = "$HOME/.config/ghostty/theme-session.conf";
 my $KITTY_SESSION_DIR = "$HOME/.config/kitty/theme-session.d";
@@ -558,7 +574,8 @@ exit 0 if $once;
 
 while (1) {
     sleep $POLL_SECONDS;
+    my $config_changed = load_theme_config();
     my $next = current_mode();
     next unless defined $next;
-    apply_mode( $next, 0 );
+    apply_mode( $next, $config_changed ? 1 : 0 );
 }

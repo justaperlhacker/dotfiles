@@ -27,7 +27,10 @@ if blink_ok and blink.get_lsp_capabilities then
   capabilities = blink.get_lsp_capabilities(capabilities)
 end
 
-local servers = { "lua_ls", "ts_ls", "basedpyright" }
+-- zls is installed through Mason (see plugins/lsp.lua) so its version tracks
+-- a release that matches the system Zig compiler; distro zls packages often
+-- lag behind Zig and refuse to serve the newer std library.
+local servers = { "lua_ls", "ts_ls", "basedpyright", "zls" }
 for _, server in ipairs(servers) do
   vim.lsp.config(server, {
     on_attach = on_attach,

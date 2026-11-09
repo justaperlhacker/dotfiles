@@ -16,6 +16,7 @@ return {
           "basedpyright",
           "roslyn_ls",
           "raku_navigator",
+          "zls",
         },
       })
     end,

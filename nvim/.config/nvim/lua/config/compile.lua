@@ -2,6 +2,7 @@ local M = {}
 
 local c_exts = { c = true }
 local cpp_exts = { cpp = true, cc = true, cxx = true, ["c++"] = true }
+local zig_exts = { zig = true }
 
 local term ---@type snacks.win?
 
@@ -29,6 +30,8 @@ local function lang()
     return "c"
   elseif cpp_exts[ext] then
     return "cpp"
+  elseif zig_exts[ext] then
+    return "zig"
   end
   return nil
 end
@@ -39,6 +42,7 @@ local function root()
     "Makefile",
     "CMakeLists.txt",
     "meson.build",
+    "build.zig",
     "build.sh",
     ".git",
   }) or vim.fn.getcwd()
@@ -74,6 +78,17 @@ local function cc_cmd(with_debug)
   return cmd, out
 end
 
+-- zig build-exe type-checks the whole file (including @imports) without
+-- leaving a binary behind; debug builds emit one next to the source.
+local function zig_cmd(with_debug)
+  local src = vim.fn.shellescape(file())
+  local out = vim.fn.fnamemodify(file(), ":r") .. (with_debug and "_debug" or "")
+  if with_debug then
+    return ("zig build-exe -O Debug -femit-bin=%s %s"):format(vim.fn.shellescape(out), src), out
+  end
+  return ("zig build-exe -fno-emit-bin %s"):format(src), out
+end
+
 local function perl_cmd(check)
   local flags = "-Ilib"
   local r = root()
@@ -90,6 +105,8 @@ local function compile()
   local l = lang()
   if l == "perl" then
     run(perl_cmd(true))
+  elseif l == "zig" then
+    run((zig_cmd(false)))
   elseif l then
     run((cc_cmd(false)))
   else
@@ -100,7 +117,9 @@ end
 local function compile_debug()
   local l = lang()
   if l == "perl" then
-    notify("Debug builds are only available for C/C++")
+    notify("Debug builds are only available for C/C++ and Zig")
+  elseif l == "zig" then
+    run((zig_cmd(true)))
   elseif l then
     run((cc_cmd(true)))
   else
@@ -116,6 +135,8 @@ local function run_current()
     else
       run(perl_cmd())
     end
+  elseif l == "zig" then
+    run("zig run " .. vim.fn.shellescape(file()))
   elseif l then
     local cmd, out = cc_cmd(false)
     run(cmd .. " && " .. vim.fn.shellescape(out))
@@ -131,6 +152,8 @@ local function build()
     cmd = "perl Makefile.PL && make"
   elseif vim.fn.filereadable(r .. "/build.sh") == 1 then
     cmd = "./build.sh"
+  elseif vim.fn.filereadable(r .. "/build.zig") == 1 then
+    cmd = "zig build"
   elseif vim.fn.filereadable(r .. "/Makefile") == 1 then
     cmd = "make"
   elseif vim.fn.filereadable(r .. "/CMakeLists.txt") == 1 then
@@ -148,6 +171,14 @@ end
 local function test()
   local l = lang()
   local r = root()
+  if vim.fn.filereadable(r .. "/build.zig") == 1 then
+    run(in_dir(r, "zig build test"))
+    return
+  end
+  if l == "zig" then
+    run("zig test " .. vim.fn.shellescape(file()))
+    return
+  end
   if l == "perl" or vim.fn.filereadable(r .. "/Makefile.PL") == 1 then
     if file() and vim.fn.fnamemodify(file(), ":e") == "t" then
       run(in_dir(r, "prove -lv " .. vim.fn.shellescape(file())))

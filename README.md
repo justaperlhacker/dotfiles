@@ -329,10 +329,11 @@ do the actual toggle. After stowing, run this once:
 plasma-toggle-tmux --install
 ```
 
-`--install` enables the KWin script, writes a systemd drop-in pinning the
-`PATH` of the perl that ran it (so `Net::DBus` is found even with a perlbrew
-perl), installs a session autostart entry that reloads the script (in case KWin
-came up before the script was enabled), and daemon-reloads systemd. It also
+`--install` enables the KWin script, removes the old perlbrew-pinned drop-in,
+and installs a session autostart entry that reloads the script (in case KWin
+came up before the script was enabled). The helper runs with
+`#!/usr/bin/env perl`, so it uses the perl from the session `PATH` (the system
+perl has `Net::DBus`); no perlbrew path is written anywhere. It also
 pins a single **Scratchpads** button
 (`tmux-scratchpad.desktop`) to every Icons-only Task Manager. All
 scratchpads run kitty with the same `--class tmux-scratchpad`, so their windows

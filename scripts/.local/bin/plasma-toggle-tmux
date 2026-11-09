@@ -552,20 +552,11 @@ sub do_install {
 
     system( 'kwriteconfig6', '--file', 'kwinrc', '--group', 'Plugins', '--key', 'plasma-toggle-tmuxEnabled', 'true' );
 
-    # The systemd user manager does not inherit perlbrew's PATH, so drop in an
-    # Environment= override pointing at the perl that actually has Net::DBus.
-    my $perl       = abs_path($^X) // $^X;
-    my $perl_bin   = dirname($perl);
-    my $dropin_dir = $home . '/.config/systemd/user/plasma-toggle-tmux@.service.d';
-    mkdir $dropin_dir unless -d $dropin_dir;
-    my $path = join ':', $perl_bin, "$home/.local/bin", '/usr/local/bin', '/usr/bin', '/bin';
-    if ( open my $efh, '>', "$dropin_dir/10-perlbrew.conf" ) {
-        print $efh "[Service]\nEnvironment=PATH=$path\n";
-        close $efh;
-    }
-    else {
-        warn "plasma-toggle-tmux: could not write $dropin_dir/10-perlbrew.conf: $!\n";
-    }
+    # The service and autostart entry use `#!/usr/bin/env perl`, so they pick
+    # up the perl from the session PATH. Remove the old perlbrew-pinned
+    # drop-in from earlier installs.
+    my $dropin = $home . '/.config/systemd/user/plasma-toggle-tmux@.service.d/10-perlbrew.conf';
+    unlink $dropin if -e $dropin;
 
     # KWin auto-loads enabled scripts from ~/.local/share/kwin/scripts at
     # startup (and after a compositor restart).  This session autostart is a
@@ -579,7 +570,7 @@ sub do_install {
             Type=Application
             Name=Plasma Toggle Tmux
             Comment=Load the KWin shortcut script for the tmux scratchpad toggles
-            Exec=$perl $home/.local/bin/plasma-toggle-tmux --load
+            Exec=/usr/bin/env plasma-toggle-tmux --load
             OnlyShowIn=KDE;
             NoDisplay=true
             X-GNOME-Autostart-enabled=true

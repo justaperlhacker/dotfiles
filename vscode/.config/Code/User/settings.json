@@ -269,5 +269,6 @@
     "workbench.preferredLightColorTheme": "Tokyo Night Light",
     "window.density.layout": "compact",
     "pendant.subagents.delegation": "automatic",
+    "pendant.sessionRailPosition": "right",
 
 }

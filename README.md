@@ -265,6 +265,55 @@ rm ~/.config/ghostty        # removes only the directory symlink
 
 Repeat for `kitty`, `wezterm`, and `zed` as needed.
 
+### i3 automatic light/dark mode
+
+i3 is X11 and does not run DMS, so `i3-theme-sync` reads the same KDE
+NightTime D-Bus schedule that Plasma's Night Light and automatic
+look-and-feel use:
+
+```sh
+gdbus call --session \
+  --dest org.kde.NightTime \
+  --object-path /org/kde/NightTime/Manager \
+  --method org.kde.NightTime.Manager.Subscribe '{}'
+```
+
+The service is D-Bus-activatable, so it works from an i3 session once a
+location has been stored (KDE keeps the location in
+`~/.local/state/knighttimestaterc`). If the daemon cannot provide a
+schedule, the script falls back to the `[Times]` values in
+`~/.config/knighttimerc` (06:00/18:00 by default).
+
+`i3/.config/i3/scripts/i3-theme-sync` is started from i3's autostart with
+`exec_always` (a lock keeps reloads from starting a second copy) and polls
+every 60 seconds. On a mode change it:
+
+- switches the i3 theme symlink to `gruvbox` (dark) or `gruvbox-light`
+  (light) via `switch-theme`, which also updates rofi and dunst and reloads
+  i3. i3bar colors come from `set` variables in the active theme's
+  `i3.conf`, with dark fallbacks in `appearance.conf`.
+- sets GTK to `Breeze-Dark` / `Breeze` plus the matching icon theme, and
+  temporarily removes the DMS `dank-colors.css` import from `gtk.css` so
+  the real Breeze GTK theme is used. `dms-theme-sync` recognizes the
+  `i3-theme-sync` marker and restores the DMS palette in niri.
+- applies KDE's `BreezeDark` / `BreezeLight` color scheme, updates the
+  look-and-feel/icon keys, and restarts both XDG desktop portals.
+- switches kitty and Ghostty palettes through the shared
+  `theme-session.d/active.conf` and `theme-session.conf` overrides. niri's
+  `dms-theme-sync` writes the DMS palette back into those files, so the two
+  sessions do not fight over the tracked terminal configs.
+
+The `themes/active` symlink, `rofi/theme-active.rasi` and
+`dunst/dunstrc.active` are generated and gitignored, so automatic switching
+does not dirty the repo. For testing:
+
+```sh
+i3-theme-sync --get-mode            # current dark/light decision
+i3-theme-sync --once                # apply the current mode and exit
+i3-theme-sync --mode dark           # force dark for one application
+i3-theme-sync --mode light
+```
+
 ### Brave flags
 
 `/usr/bin/brave` only ever reads `~/.config/brave-flags.conf`, so a
@@ -305,17 +354,23 @@ The shared pieces live under `kde/.config/`:
 
 niri uses the same options in `config.kdl`. i3 cannot use
 `setxkbmap -option custom:ralt_super` because X11's `setxkbmap` does not
-search `~/.config/xkb/rules`; its autostart instead passes the symbols
-component explicitly:
+search `~/.config/xkb/rules` and does not forward `-I` to `xkbcomp`. Its
+autostart runs `i3/.config/i3/scripts/set-keymap`, which generates the keymap
+with `setxkbmap -print` and loads it with the local include path:
 
 ```sh
-setxkbmap -I$HOME/.config/xkb -model pc105 -layout us \
-  -symbols "pc+us+inet(evdev)+capslock(ctrl_modifier)+custom(ralt_super)"
+setxkbmap -model pc105 -layout us \
+  -symbols "pc+us+inet(evdev)+capslock(ctrl_modifier)+custom(ralt_super)" \
+  -print >"$tmp"
+xkbcomp -w 0 -I"$HOME/.config/xkb" "$tmp" "$DISPLAY"
 ```
 
 Log out and back in after changing the keyboard options. If saving the
 Plasma Keyboard page drops `custom:ralt_super`, re-add it to `Options=` in
 `kxkbrc`.
+
+Kanata is no longer used. Its package is kept in the repo for optional use,
+but `kanata.service` is disabled and nothing starts it.
 
 ### Plasma tmux scratchpad (SUPER+F9)
 

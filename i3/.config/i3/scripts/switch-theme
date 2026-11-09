@@ -6,12 +6,13 @@ use POSIX qw(:sys_wait_h);
 my $I3_DIR       = path( $ENV{HOME} )->child('.config/i3');
 my $THEMES_DIR   = $I3_DIR->child('themes');
 my $SYMLINK_PATH = $THEMES_DIR->child('active');
-my $ROFI_CONFIG  = $I3_DIR->child('rofi/config.rasi');
-my $DUNSTRC      = $I3_DIR->child('dunst/dunstrc');
+my $ROFI_ACTIVE  = $I3_DIR->child('rofi/theme-active.rasi');
+my $DUNSTRC        = $I3_DIR->child('dunst/dunstrc');
+my $DUNSTRC_ACTIVE = $DUNSTRC->sibling('dunstrc.active');
 
 sub list_themes () {
     say "Available themes:";
-    for my $d ( sort grep { -d && -e $_->child('i3.conf') } $THEMES_DIR->children ) {
+    for my $d ( sort grep { -d && $_->basename ne 'active' && -e $_->child('i3.conf') } $THEMES_DIR->children ) {
         my $name     = $d->basename;
         my $has_rofi = -e $d->child('rofi.rasi')                                ? ' rofi'  : '';
         my $has_dst  = -e $d->child('dunst.conf')                               ? ' dunst' : '';
@@ -38,21 +39,24 @@ sub apply_dunst ( $theme_name, $theme_dir ) {
     die "Theme missing urgency sections\n"        unless $urgency_block;
     die "Theme missing [urgency_normal] colors\n" unless $bg && $fg;
 
-    $DUNSTRC->copy( $DUNSTRC->sibling('dunstrc.bak') );
+    # Keep the tracked dunstrc as a base template and write the generated
+    # config beside it, so automatic switching never dirties the repo.
     my $dunst_content = $DUNSTRC->slurp_utf8;
     $dunst_content
         =~ s/#\s*DUNST_THEME_COLOR_START\n\s*frame_color\s*=\s*"[^"]*"\n(\s*#\s*DUNST_THEME_COLOR_END)/#\ DUNST_THEME_COLOR_START\n    frame_color = "$frame_color"\n$1/;
     $dunst_content
         =~ s/#\s*DUNST_THEME_URGENCY_START\n.+?#\s*DUNST_THEME_URGENCY_END/# DUNST_THEME_URGENCY_START\n$urgency_block# DUNST_THEME_URGENCY_END/s;
-    $dunst_content =~ s{(dmenu\s*=\s*/usr/bin/dmenu -p dunst:).+}{$1 -nb '$bg' -nf '$fg' -sb '$frame_color' -sf '$bg'};
-    $DUNSTRC->spew_utf8($dunst_content);
+    # dunst's dmenu command is split without shell quote handling, so the
+    # colour values must be unquoted (they are plain #rrggbb tokens).
+    $dunst_content =~ s{(dmenu\s*=\s*/usr/bin/dmenu -p dunst:).+}{$1 -nb $bg -nf $fg -sb $frame_color -sf $bg};
+    $DUNSTRC_ACTIVE->spew_utf8($dunst_content);
 
     system( 'killall', 'dunst' ) if `pidof dunst 2>/dev/null` =~ /\S/;
     if ( my $pid = fork // die "fork: $!" ) {
         waitpid( $pid, WNOHANG );
     }
     else {
-        exec( 'dunst', '-config', "$DUNSTRC" );
+        exec( 'dunst', '-config', "$DUNSTRC_ACTIVE" );
         exit 1;
     }
     say "  ✓ dunst: applied $theme_name";
@@ -60,12 +64,11 @@ sub apply_dunst ( $theme_name, $theme_dir ) {
 
 sub apply_rofi ( $theme_name, $theme_dir ) {
     my $rofi_src = '~/.config/i3/themes/' . $theme_name . '/rofi.rasi';
-    if ( -e $theme_dir->child('rofi.rasi') ) {
-        $ROFI_CONFIG->spew_utf8(
-            qq{\@import "$rofi_src"\n/* Rofi-only themes still available: arc_dark_colors, arc_dark_transparent_colors, deep-purple */\n}
-        );
-        say "  ✓ rofi: applied $theme_name";
-    }
+    my $import   = -e $theme_dir->child('rofi.rasi')
+        ? qq{\@import "$rofi_src"\n}
+        : qq{\@import "~/.config/i3/rofi/fallback.rasi"\n};
+    $ROFI_ACTIVE->spew_utf8($import);
+    say "  ✓ rofi: applied $theme_name";
 }
 
 sub apply_theme ($theme_name) {
@@ -94,7 +97,7 @@ sub apply_theme ($theme_name) {
 }
 
 sub pick_from_rofi () {
-    my @themes = sort grep { -d && -e $_->child('i3.conf') } $THEMES_DIR->children;
+    my @themes = sort grep { -d && $_->basename ne 'active' && -e $_->child('i3.conf') } $THEMES_DIR->children;
     my @names  = map       { $_->basename } @themes;
     return unless @names;
 

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Apply the same keyboard options as niri and Plasma:
+#   Caps Lock -> additional Left Control
+#   Right Alt -> additional Left Super
+#
+# `setxkbmap -I` only affects its own rules search; it does not pass the
+# include path to xkbcomp, so `custom(ralt_super)` is reported as missing.
+# Generate the keymap description with setxkbmap, then load it with xkbcomp
+# while pointing xkbcomp at the local symbols directory.
+set -eu
+
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+
+setxkbmap -model pc105 -layout us \
+    -symbols "pc+us+inet(evdev)+capslock(ctrl_modifier)+custom(ralt_super)" \
+    -print >"$tmp"
+
+# -w 0 suppresses xkbcomp's noisy "Key <Ixxx> not found" warnings; real
+# errors still make xkbcomp exit non-zero.
+xkbcomp -w 0 -I"$HOME/.config/xkb" "$tmp" "$DISPLAY"

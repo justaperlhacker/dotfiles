@@ -1,0 +1,413 @@
+#!/usr/bin/env perl
+# Keep the i3 session in sync with KDE's dark/light schedule.
+#
+# KDE's `knighttimed` exposes the same sunrise/sunset schedule that Plasma's
+# Night Light and automatic look-and-feel use.  i3 is X11, but the D-Bus
+# service is session-independent, so we can read the schedule and apply it to
+# i3, GTK, Qt/KDE, rofi/dunst and the terminals.
+#
+# The script is started from i3's autostart with `exec_always` so it also
+# comes back after an i3 restart; a lock keeps reloads from starting a second
+# copy.  It polls the schedule and only does work when the mode changes.
+use v5.36;
+use strict;
+use warnings;
+
+use Fcntl qw(:flock);
+use File::Basename qw(dirname);
+use File::Copy qw(copy);
+use File::Path qw(make_path);
+use Time::HiRes qw(sleep);
+
+my $HOME = $ENV{HOME} // die "i3-theme-sync: HOME is not set\n";
+
+my $I3_DIR       = "$HOME/.config/i3";
+my $SWITCH_THEME = "$I3_DIR/scripts/switch-theme";
+my $STATE_DIR    = ( $ENV{XDG_STATE_HOME} // "$HOME/.local/state" ) . '/i3-theme-sync';
+my $STATE_FILE   = "$STATE_DIR/mode";
+my $LOG_FILE     = "$STATE_DIR/log";
+my $LOCK_FILE    = $ENV{XDG_RUNTIME_DIR}
+  ? "$ENV{XDG_RUNTIME_DIR}/i3-theme-sync.lock"
+  : "/tmp/i3-theme-sync-$<.lock";
+
+my $DARK_THEME  = $ENV{I3_DARK_THEME}  // 'gruvbox';
+my $LIGHT_THEME = $ENV{I3_LIGHT_THEME} // 'gruvbox-light';
+
+my $GHOSTTY_SESSION  = "$HOME/.config/ghostty/theme-session.conf";
+my $KITTY_SESSION_DIR = "$HOME/.config/kitty/theme-session.d";
+my $KITTY_SESSION     = "$KITTY_SESSION_DIR/active.conf";
+
+my $POLL_SECONDS = 60;
+my $schedule_failed_logged = 0;
+
+make_path($STATE_DIR);
+
+sub logmsg {
+    my ($msg) = @_;
+    my @t = localtime;
+    my $ts = sprintf '%04d-%02d-%02d %02d:%02d:%02d',
+      $t[5] + 1900, $t[4] + 1, $t[3], $t[2], $t[1], $t[0];
+    if ( open my $fh, '>>', $LOG_FILE ) {
+        print $fh "$ts $msg\n";
+        close $fh;
+    }
+    print STDERR "i3-theme-sync: $msg\n" if $ENV{I3_THEME_SYNC_VERBOSE};
+}
+
+sub command_exists {
+    my ($name) = @_;
+    for my $dir ( split /:/, ( $ENV{PATH} // '' ) ) {
+        return 1 if -x "$dir/$name";
+    }
+    return 0;
+}
+
+sub read_state {
+    return undef unless -r $STATE_FILE;
+    open my $fh, '<', $STATE_FILE or return undef;
+    my $mode = <$fh>;
+    close $fh;
+    return undef unless defined $mode;
+    chomp $mode;
+    return $mode eq 'dark' || $mode eq 'light' ? $mode : undef;
+}
+
+sub write_state {
+    my ($mode) = @_;
+    open my $fh, '>', $STATE_FILE or return;
+    print $fh "$mode\n";
+    close $fh;
+}
+
+sub time_to_minutes {
+    my ($value) = @_;
+    return undef unless defined $value;
+    my ( $h, $m ) = $value =~ /^(\d{1,2}):(\d{2})/ or return undef;
+    return $h * 60 + $m;
+}
+
+# Fallback matching knighttimed's own timed scheduler.  This keeps i3 usable
+# if the D-Bus service is not activatable (for example before a Plasma login
+# has ever stored a location).
+sub fallback_mode {
+    my $sunrise = '06:00';
+    my $sunset  = '18:00';
+    my $rc      = "$HOME/.config/knighttimerc";
+
+    if ( open my $fh, '<', $rc ) {
+        local $/;
+        my $content = <$fh>;
+        close $fh;
+        if ( defined $content && $content =~ /^\[Times\](.*?)(?=^\[|\z)/ms ) {
+            my $times = $1;
+            ($sunrise) = $times =~ /^SunriseStart\s*=\s*(\d{1,2}:\d{2}(?::\d{2})?)/m
+              if $times =~ /^SunriseStart\s*=/m;
+            ($sunset) = $times =~ /^SunsetStart\s*=\s*(\d{1,2}:\d{2}(?::\d{2})?)/m
+              if $times =~ /^SunsetStart\s*=/m;
+        }
+    }
+
+    my $rise = time_to_minutes($sunrise) // ( 6 * 60 );
+    my $set  = time_to_minutes($sunset)  // ( 18 * 60 );
+    my ( undef, undef, undef, undef, undef, $hour, $min ) = localtime;
+    my $now = $hour * 60 + $min;
+    return ( $now < $rise || $now >= $set ) ? 'dark' : 'light';
+}
+
+sub mode_from_schedule {
+    my ($cycles) = @_;
+    return undef unless $cycles && @$cycles;
+
+    my $now = int( time() * 1000 );
+    my ($cycle) = sort { abs( $a->[0] - $now ) <=> abs( $b->[0] - $now ) } @$cycles;
+    return undef unless $cycle;
+
+    my ( undef, $morning_start, undef, $evening_start, undef ) = @$cycle;
+    return ( $now >= $evening_start || $now < $morning_start ) ? 'dark' : 'light';
+}
+
+sub schedule_from_knighttime {
+    return undef unless command_exists('gdbus');
+
+    my $call = q{gdbus call --session }
+      . q{--dest org.kde.NightTime }
+      . q{--object-path /org/kde/NightTime/Manager }
+      . q{--method org.kde.NightTime.Manager.Subscribe '{}' 2>/dev/null};
+    my $out = qx{$call};
+    return undef if $? != 0 || !defined $out || $out eq '';
+
+    my ($cookie) = $out =~ /'Cookie':\s*<uint32\s+(\d+)>/;
+    my @numbers = $out =~ /\b(\d{13})\b/g;
+    return undef unless @numbers && @numbers % 5 == 0;
+
+    if ( defined $cookie ) {
+        my $unsubscribe = q{gdbus call --session }
+          . q{--dest org.kde.NightTime }
+          . q{--object-path /org/kde/NightTime/Manager }
+          . q{--method org.kde.NightTime.Manager.Unsubscribe }
+          . $cookie
+          . q{ >/dev/null 2>&1};
+        qx{$unsubscribe};
+    }
+
+    my @cycles;
+    while (@numbers) {
+        my @cycle = splice @numbers, 0, 5;
+        push @cycles, \@cycle;
+    }
+    return \@cycles;
+}
+
+sub current_mode {
+    my $cycles = schedule_from_knighttime();
+    if ($cycles) {
+        $schedule_failed_logged = 0;
+        my $mode = mode_from_schedule($cycles);
+        return $mode if defined $mode;
+    }
+
+    if ( !$schedule_failed_logged ) {
+        logmsg('KDE NightTime schedule unavailable; using knighttimerc times');
+        $schedule_failed_logged = 1;
+    }
+    return fallback_mode();
+}
+
+sub set_ini_key {
+    my ( $file, $key, $value ) = @_;
+    return unless -f $file;
+
+    open my $in, '<', $file or return;
+    my @lines = <$in>;
+    close $in;
+    chomp @lines;
+
+    my $found    = 0;
+    my $settings = 0;
+    my $insert_at;
+    for my $i ( 0 .. $#lines ) {
+        my $line = $lines[$i];
+        if ( $line =~ /^\[/ ) {
+            $settings = $line eq '[Settings]';
+            $insert_at = $i + 1 if $settings && !defined $insert_at;
+        }
+        if ( $settings && $line =~ /^\Q$key\E=/ ) {
+            $lines[$i] = "$key=$value";
+            $found = 1;
+        }
+    }
+
+    if ( !$found ) {
+        if ( defined $insert_at ) {
+            splice @lines, $insert_at, 0, "$key=$value";
+        }
+        else {
+            push @lines, '[Settings]', "$key=$value";
+        }
+    }
+
+    open my $out, '>', $file or return;
+    print $out map { "$_\n" } @lines;
+    close $out;
+}
+
+sub set_gtk_theme {
+    my ($dark) = @_;
+    my $color_scheme = $dark ? 'prefer-dark' : 'prefer-light';
+    my $gtk_theme    = $dark ? 'Breeze-Dark' : 'Breeze';
+    my $icon_theme   = $dark ? 'breeze-dark' : 'breeze';
+
+    system( 'gsettings', 'set', 'org.gnome.desktop.interface', 'color-scheme', $color_scheme );
+    system( 'gsettings', 'set', 'org.gnome.desktop.interface', 'gtk-theme',    $gtk_theme );
+    system( 'gsettings', 'set', 'org.gnome.desktop.interface', 'icon-theme',   $icon_theme );
+
+    for my $file ( "$HOME/.config/gtk-3.0/settings.ini", "$HOME/.config/gtk-4.0/settings.ini" ) {
+        next unless -f $file;
+        set_ini_key( $file, 'gtk-application-prefer-dark-theme', 'false' );
+        set_ini_key( $file, 'gtk-theme-name', $gtk_theme );
+        set_ini_key( $file, 'gtk-icon-theme-name', $icon_theme );
+    }
+
+    # niri's dms-theme-sync owns the DMS-generated palette; while i3 is in
+    # charge, let the real Breeze GTK theme provide the colors.  The marker is
+    # recognised by dms-theme-sync, which restores dank-colors.css in niri.
+    my $marker = "/* i3-theme-sync: use the Breeze GTK theme; niri restores the DMS palette */\n";
+    for my $file ( "$HOME/.config/gtk-3.0/gtk.css", "$HOME/.config/gtk-4.0/gtk.css" ) {
+        next unless -f $file;
+        open my $in, '<', $file or next;
+        local $/;
+        my $content = <$in>;
+        close $in;
+        next unless defined $content;
+        next if $content =~ /i3-theme-sync/;
+        next unless $content =~ /dank-colors\.css|Generated with Matugen|colors\.css/;
+
+        my $backup = "$file.i3-sync-backup";
+        copy( $file, $backup ) unless -e $backup;
+        open my $out, '>', $file or next;
+        print $out $marker;
+        close $out;
+    }
+}
+
+sub ensure_kdeglobals {
+    my $live = "$HOME/.config/kdeglobals";
+    return if !-l $live && -e $live;
+
+    if ( -l $live ) {
+        my $tmp = "$live.i3-sync";
+        if ( copy( $live, $tmp ) ) {
+            rename $tmp, $live
+              or logmsg("could not replace the kdeglobals symlink: $!");
+        }
+        return;
+    }
+
+    my $dotfiles = $ENV{DOTFILES} // "$HOME/.dotfiles";
+    my $base     = "$dotfiles/kde/.config/kdeglobals";
+    copy( $base, $live ) if -r $base;
+}
+
+sub set_kde_theme {
+    my ($dark) = @_;
+    ensure_kdeglobals();
+
+    my $scheme = $dark ? 'BreezeDark' : 'BreezeLight';
+    if ( command_exists('plasma-apply-colorscheme') ) {
+        system( 'plasma-apply-colorscheme', $scheme );
+    }
+
+    if ( command_exists('kwriteconfig6') ) {
+        my $lnf = $dark ? 'org.kde.breezedark.desktop' : 'org.kde.breeze.desktop';
+        my $icon = $dark ? 'breeze-dark' : 'breeze';
+        my $gtk  = $dark ? 'Breeze-Dark' : 'Breeze';
+        system( 'kwriteconfig6', '--file', 'kdeglobals', '--group', 'General', '--key', 'ColorScheme',      $scheme );
+        system( 'kwriteconfig6', '--file', 'kdeglobals', '--group', 'KDE',   '--key', 'LookAndFeelPackage', $lnf );
+        system( 'kwriteconfig6', '--file', 'kdeglobals', '--group', 'Icons', '--key', 'ThemeName',         $icon );
+        system( 'kwriteconfig6', '--file', 'kdeglobals', '--group', 'GTK',   '--key', 'ThemeName',         $gtk );
+    }
+}
+
+sub set_terminal_theme {
+    my ($dark) = @_;
+
+    my $kitty_source = "$HOME/.config/kitty/" . ( $dark ? 'gruvbox-dark.conf' : 'gruvbox-light.conf' );
+    make_path($KITTY_SESSION_DIR);
+    if ( -r $kitty_source ) {
+        copy( $kitty_source, $KITTY_SESSION )
+          or logmsg("could not write $KITTY_SESSION: $!");
+    }
+    else {
+        logmsg("missing kitty palette $kitty_source");
+    }
+
+    my $ghostty_theme = $dark ? 'gruvbox-dark' : 'gruvbox-light';
+    if ( -d "$HOME/.config/ghostty/themes" ) {
+        if ( open my $fh, '>', $GHOSTTY_SESSION ) {
+            print $fh "theme = $ghostty_theme\n";
+            close $fh;
+        }
+        else {
+            logmsg("could not write $GHOSTTY_SESSION: $!");
+        }
+    }
+
+    system( 'pkill', '-USR1', '-x', 'kitty' );
+    system( 'pkill', '-USR2', '-x', 'ghostty' );
+}
+
+sub apply_mode {
+    my ( $mode, $force ) = @_;
+    my $last = read_state();
+    return if !$force && defined $last && $last eq $mode;
+
+    logmsg("switching to $mode mode");
+
+    my $theme = $mode eq 'dark' ? $DARK_THEME : $LIGHT_THEME;
+    if ( -x $SWITCH_THEME ) {
+        system( $SWITCH_THEME, $theme ) == 0
+          or logmsg("switch-theme $theme failed");
+    }
+    else {
+        logmsg("missing $SWITCH_THEME");
+    }
+
+    my $dark = $mode eq 'dark';
+    set_gtk_theme($dark);
+    set_kde_theme($dark);
+    system( 'systemctl', '--user', 'try-restart', 'xdg-desktop-portal-gtk.service' );
+    system( 'systemctl', '--user', 'try-restart', 'plasma-xdg-desktop-portal-kde.service' );
+    set_terminal_theme($dark);
+
+    write_state($mode);
+    logmsg("applied $mode mode");
+}
+
+sub i3_running {
+    my $out = qx{i3-msg -t get_version 2>/dev/null};
+    return defined $out && $out =~ /"major"/;
+}
+
+sub usage {
+    say "usage: i3-theme-sync [--once] [--get-mode] [--mode dark|light] [--help]";
+}
+
+my $once     = grep { $_ eq '--once' } @ARGV;
+my $get_mode = grep { $_ eq '--get-mode' } @ARGV;
+my $help     = grep { $_ eq '--help' || $_ eq '-h' } @ARGV;
+my $forced_mode;
+for my $i ( 0 .. $#ARGV ) {
+    if ( $ARGV[$i] eq '--mode' ) {
+        $forced_mode = $ARGV[ $i + 1 ];
+    }
+}
+
+if ($help) {
+    usage();
+    exit 0;
+}
+
+if ( defined $forced_mode && $forced_mode !~ /^(dark|light)$/ ) {
+    warn "i3-theme-sync: --mode must be dark or light\n";
+    exit 2;
+}
+
+my $mode = $forced_mode // current_mode();
+if ($get_mode) {
+    say $mode;
+    exit 0;
+}
+
+my $lock_fh;
+if ( !$get_mode && !$forced_mode ) {
+    open $lock_fh, '>', $LOCK_FILE or do {
+        warn "i3-theme-sync: cannot open $LOCK_FILE: $!\n";
+        exit 1;
+    };
+    if ( !flock( $lock_fh, LOCK_EX | LOCK_NB ) ) {
+        # exec_always re-runs us after every reload; the existing daemon owns
+        # the lock, so this copy can exit silently.
+        exit 0;
+    }
+}
+
+if ($forced_mode) {
+    apply_mode( $forced_mode, 1 );
+    exit 0;
+}
+
+my $i3_wait = 0;
+until ( i3_running() ) {
+    last if ++$i3_wait > 50;
+    sleep 0.2;
+}
+
+apply_mode( $mode, 1 );
+exit 0 if $once;
+
+while (1) {
+    sleep $POLL_SECONDS;
+    my $next = current_mode();
+    next unless defined $next;
+    apply_mode( $next, 0 );
+}

@@ -67,7 +67,7 @@ set_gtk_css() {
     for file in "$HOME/.config/gtk-3.0/gtk.css" \
         "$HOME/.config/gtk-4.0/gtk.css"; do
         [ -f "$file" ] || continue
-        grep -qE 'Generated with Matugen|dank-colors\.css|colors\.css' "$file" || continue
+        grep -qE 'Generated with Matugen|dank-colors\.css|colors\.css|i3-theme-sync' "$file" || continue
         [ "$(cat "$file")" = '@import url("dank-colors.css");' ] && continue
 
         [ -e "$file.niri-sync-backup" ] || cp -p "$file" "$file.niri-sync-backup"
@@ -90,6 +90,53 @@ reload_ghostty() {
         fi
     fi
     ghostty_theme_hash=$_g_hash
+}
+
+# Session-local terminal overrides.  i3 writes gruvbox palettes here; when
+# niri is in charge, restore the DMS-generated palette.  Keeping the override
+# in a separate file preserves the real DMS outputs (dankcolors/dank-theme)
+# for the next niri/DMS run.
+ghostty_session=$HOME/.config/ghostty/theme-session.conf
+kitty_theme=$HOME/.config/kitty/dank-theme.conf
+kitty_tabs=$HOME/.config/kitty/dank-tabs.conf
+kitty_session_dir=$HOME/.config/kitty/theme-session.d
+kitty_session=$kitty_session_dir/active.conf
+kitty_theme_hash=
+last_terminal_mode=
+
+ensure_terminal_session() {
+    case $mode in
+        dark|light) ;;
+        *) return 0 ;;
+    esac
+
+    changed=0
+
+    want='theme = dankcolors'
+    if [ "$(cat "$ghostty_session" 2>/dev/null)" != "$want" ]; then
+        mkdir -p "$(dirname "$ghostty_session")"
+        printf '%s\n' "$want" > "$ghostty_session"
+        changed=1
+    fi
+
+    if [ -f "$kitty_theme" ]; then
+        hash=$(cat "$kitty_tabs" "$kitty_theme" 2>/dev/null | sha256sum | cut -d' ' -f1)
+        if [ -n "$hash" ] && { [ "$hash" != "$kitty_theme_hash" ] || [ ! -f "$kitty_session" ]; }; then
+            mkdir -p "$kitty_session_dir"
+            {
+                [ -f "$kitty_tabs" ] && cat "$kitty_tabs"
+                cat "$kitty_theme"
+            } > "$kitty_session"
+            changed=1
+        fi
+        kitty_theme_hash=$hash
+    fi
+
+    if [ "$changed" = 1 ] || [ "$mode" != "$last_terminal_mode" ]; then
+        pkill -USR2 -x ghostty 2>/dev/null && echo "ghostty: session theme refreshed"
+        pkill -USR1 -x kitty 2>/dev/null && echo "kitty: session theme refreshed"
+    fi
+    last_terminal_mode=$mode
 }
 
 # The GTK portal (Settings + FileChooser) reads the GTK settings at startup, so
@@ -180,6 +227,7 @@ while :; do
 
     set_gtk_css
     reload_ghostty
+    ensure_terminal_session
 
     sleep 2
 done

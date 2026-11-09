@@ -16,6 +16,12 @@ theme = dankcolors
 # light only (preview)
 #theme = Ghost Terminal Light
 
+# Session-local override written by the i3/niri theme services. Loaded after
+# this config so i3 can select a gruvbox light/dark theme, while niri keeps
+# the DMS-generated `dankcolors` palette. The leading ? means "ignore if the
+# file has not been created yet".
+config-file = "?theme-session.conf"
+
 # Font
 #font-family = JetBrainsMono Nerd Font
 font-family = BerkeleyMono Nerd Font

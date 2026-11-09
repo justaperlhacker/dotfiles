@@ -75,7 +75,7 @@
     history_length = 0
 
     ### Misc/Advanced ###
-    dmenu = /usr/bin/dmenu -p dunst: -nb '#282828' -nf '#ebdbb2' -sb '#d65d0e' -sf '#282828'
+    dmenu = /usr/bin/dmenu -p dunst: -nb #282828 -nf #ebdbb2 -sb #d65d0e -sf #282828
     browser = /usr/bin/xdg-open
     always_run_script = true
     title = Dunst

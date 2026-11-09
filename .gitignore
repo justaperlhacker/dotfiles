@@ -76,3 +76,14 @@ pi/.pi/agent/auth.json
 
 # OpenWeatherMap API key — never commit; still deployed by stow
 i3/.config/i3/scripts/.env
+
+# i3 active theme symlink (managed by switch-theme/i3-theme-sync)
+/i3/.config/i3/themes/active
+
+# Session-selected terminal themes (written by i3-theme-sync/dms-theme-sync)
+/kitty/.config/kitty/theme-session.d/
+/ghostty/.config/ghostty/theme-session.conf
+
+# i3 theme-generated runtime files (switch-theme)
+/i3/.config/i3/rofi/theme-active.rasi
+/i3/.config/i3/dunst/dunstrc.active

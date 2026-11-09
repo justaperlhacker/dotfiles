@@ -31,13 +31,13 @@
   "theme": {
     "mode": "system",
     "light": "DankShell Light",
-    "dark": "Naysayer",
+    "dark": "Pure Black High Contrast",
   },
   "buffer_font_family": "BerkeleyMono Nerd Font",
   //"buffer_font_family": "HE_TERMINAL Nerd Font",
   "buffer_font_fallbacks": ["JetBrainsMono Nerd Font", "BerkeleyMono Nerd Font"],
   //"buffer_font_weight": 400,
-  "disable_ai": true,
+  "disable_ai": false,
   //"buffer_line_height": "standard",
   "auto_indent": "syntax_aware",
   "auto_install_extensions": {

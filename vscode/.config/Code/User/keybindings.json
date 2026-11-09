@@ -42,4 +42,16 @@
       ]
     }
   },
+
+  {
+    "key": "alt+shift+o",
+    "command": "runCommands",
+    "when": "editorTextFocus",
+    "args": {
+      "commands": [
+        "workbench.action.splitEditorRight",
+        "C_Cpp.SwitchHeaderSource"
+      ]
+    }
+  }
 ]

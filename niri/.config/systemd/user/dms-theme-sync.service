@@ -1,5 +1,5 @@
 [Unit]
-Description=Sync system color-scheme and GTK dark preference with DMS light/dark mode
+Description=Sync system color-scheme, GTK/KDE themes and Ghostty with DMS light/dark mode
 # DMS is the niri shell; under Plasma this unit is not pulled in.
 PartOf=niri.service
 After=niri.service dms.service

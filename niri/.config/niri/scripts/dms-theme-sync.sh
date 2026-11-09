@@ -103,6 +103,52 @@ restart_gtk_portal() {
     last_mode=$mode
 }
 
+# KDE/Qt: apply DMS's generated color scheme so KDE apps follow light/dark.
+# The tracked repo copy of kdeglobals is only a base template (stow ignores
+# it); the live ~/.config/kdeglobals is a real file owned by this service.
+dotfiles=${DOTFILES:-$HOME/.dotfiles}
+kde_base=$dotfiles/kde/.config/kdeglobals
+kde_live=$HOME/.config/kdeglobals
+kde_scheme=
+kde_scheme_hash=
+
+ensure_kdeglobals() {
+    if [ -L "$kde_live" ]; then
+        # Migrate the stow symlink to a real file so applying a scheme does
+        # not rewrite the tracked base.
+        cp -L "$kde_live" "$kde_live.niri-sync" 2>/dev/null &&
+            mv -f "$kde_live.niri-sync" "$kde_live" 2>/dev/null &&
+            echo "kde theme: migrated $kde_live from stow symlink to real file"
+    elif [ ! -e "$kde_live" ] && [ -r "$kde_base" ]; then
+        cp "$kde_base" "$kde_live" 2>/dev/null &&
+            echo "kde theme: seeded $kde_live from the tracked base"
+    fi
+}
+
+apply_kde_scheme() {
+    case $mode in
+        dark)  scheme=DankMatugenDark ;;
+        light) scheme=DankMatugenLight ;;
+        *)     return 0 ;;
+    esac
+
+    file=$HOME/.local/share/color-schemes/$scheme.colors
+    [ -r "$file" ] || return 0
+
+    hash=$(sha256sum "$file" 2>/dev/null | cut -d' ' -f1)
+    [ -n "$hash" ] || return 0
+    [ "$scheme" = "$kde_scheme" ] && [ "$hash" = "$kde_scheme_hash" ] && return 0
+
+    ensure_kdeglobals
+    if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
+        if plasma-apply-colorscheme "$scheme" >/dev/null 2>&1; then
+            echo "kde theme: applied $scheme"
+            kde_scheme=$scheme
+            kde_scheme_hash=$hash
+        fi
+    fi
+}
+
 while :; do
     mode=$(dms ipc call theme getMode 2>/dev/null) || mode=
 
@@ -122,6 +168,7 @@ while :; do
 
         set_gtk_dark "$gtk_dark"
         restart_gtk_portal
+        apply_kde_scheme
     fi
 
     set_gtk_css

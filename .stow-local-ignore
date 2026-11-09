@@ -42,6 +42,10 @@ _darcs
 ^zed/.config/zed/themes/dank-zed-theme\.json
 ^niri/.config/niri/dms/colors\.kdl
 
+# KDE color scheme is applied at runtime by dms-theme-sync; the tracked
+# kdeglobals is only a base template for a fresh install.
+^kde/.config/kdeglobals$
+
 # Midnight Commander runtime state (rewritten each session) — never stow
 #^mc/.config/mc/ini
 #^mc/.config/mc/panels\.ini

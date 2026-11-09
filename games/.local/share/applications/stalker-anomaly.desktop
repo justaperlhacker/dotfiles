@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=S.T.A.L.K.E.R. Anomaly
+Comment=Standalone S.T.A.L.K.E.R. mod running under Lutris/Wine
+Exec=stalker-anomaly run
+Icon=applications-games
+Terminal=false
+Categories=Game;
+Keywords=stalker;anomaly;

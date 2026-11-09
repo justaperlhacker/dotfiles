@@ -43,6 +43,7 @@ stow -D bash          # remove symlinks
 | `brave`           | `.config/brave-flags.conf`, `.config/brave-flags.d/`, `.local/bin/brave` |
 | `DankMaterialShell`| `.config/DankMaterialShell/`                              |
 | `doom`            | `.config/doom/`                                           |
+| `games`           | `.local/bin/stalker-anomaly`, `.local/share/applications/stalker-anomaly.desktop` |
 | `ghostty`         | `.config/ghostty/` (incl. cursor-trail shaders)           |
 | `hypr`            | `.config/hypr/` (Hyprland Lua config + scripts)           |
 | `i3`              | `.config/i3/`, `.xprofile`                                |
@@ -448,3 +449,30 @@ sudo pacman -S --needed qt6-tools kconfig systemd konsole kitty tmux perl-net-db
 ```
 
 
+### S.T.A.L.K.E.R. Anomaly (`games`)
+
+Anomaly is a standalone Windows build, so it runs through Lutris/GE-Proton.
+`stalker-anomaly` automates the whole install: unpack the 7z release, create a
+Win10 prefix, and register the game in Lutris with gamescope + the dGPU pinned.
+
+```bash
+stalker-anomaly status     # what it found (dest, prefix, exe, runner, Lutris id)
+stalker-anomaly setup      # extract + prefix + register (idempotent)
+stalker-anomaly register   # rewrite only the Lutris entry (--force to replace)
+stalker-anomaly run        # launch via `lutris lutris:rungame/stalker-anomaly`
+```
+
+Notes:
+
+- The shipped launcher (`AnomalyLauncher.exe`) is a .NET app, so the script
+  bypasses it and runs `AnomalyDX11AVX.exe` directly (falling back to
+  non-AVX/older renderers when the CPU/files don't support them). Renderer and
+  resolution live in `~/Games/Anomaly/appdata/user.ltx`.
+- `--runner` overrides the Wine build; the default is the newest `GE-Proton*`
+  under `~/.local/share/lutris/runners/wine`. `--gpu` changes the
+  `DXVK_FILTER_DEVICE_NAME` substring used to pick the dGPU on dual-GPU boxes.
+- Wayland: the game is wrapped in gamescope (`-f`), which avoids X-Ray's
+  fullscreen quirks under Xwayland. `--no-gamescope` disables that.
+- If Lutris was already running during registration, restart it to see the entry.
+
+Requires `7z` (p7zip), `sqlite3`, and `lutris`; `gamescope` is optional.

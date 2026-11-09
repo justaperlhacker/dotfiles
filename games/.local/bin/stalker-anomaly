@@ -1,0 +1,300 @@
+#!/usr/bin/env bash
+# stalker-anomaly - install / register S.T.A.L.K.E.R. Anomaly for Lutris.
+#
+# Anomaly is a standalone Windows build (no original games needed), so this
+# unpacks the release archive, makes a Win10 Wine prefix, and registers the
+# game in Lutris with GE-Proton + gamescope + the dGPU pinned by DXVK.
+#
+#   stalker-anomaly setup [options]   extract, create prefix, register (default)
+#   stalker-anomaly register          (re)register only
+#   stalker-anomaly run               launch through Lutris
+#   stalker-anomaly status            show what it can find
+#
+# Options for setup/register:
+#   -a, --archive FILE   Anomaly 7z release (default: newest in ~/Downloads)
+#   -d, --dest DIR       install dir (default: ~/Games/Anomaly)
+#   -p, --prefix DIR     Wine prefix (default: ~/Games/Anomaly-wineprefix)
+#   -r, --runner VER     Lutris Wine version (default: newest GE-Proton found)
+#       --gpu NAME       DXVK_FILTER_DEVICE_NAME substring (default: 6700 XT)
+#       --no-gamescope   don't wrap the game in gamescope
+#       --force          replace an existing Lutris entry for the same dir
+#   -n, --dry-run        print what would happen
+#
+# Requires: 7z (p7zip), sqlite3, lutris; gamescope optional.
+# The launcher needs .NET, so we skip it and run AnomalyDX11*.exe directly.
+# Renderer/resolution live in <dest>/appdata/user.ltx.
+
+set -euo pipefail
+
+NAME='S.T.A.L.K.E.R. Anomaly'
+SLUG='stalker-anomaly'
+YEAR=2018
+
+LUTRIS_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/lutris"
+DB="$LUTRIS_DIR/pga.db"
+RUNNER_DIR="$LUTRIS_DIR/runners/wine"
+
+DEST="$HOME/Games/Anomaly"
+PREFIX="$HOME/Games/Anomaly-wineprefix"
+ARCHIVE=""
+RUNNER=""
+GPU="6700 XT"
+GAMESCOPE=1
+FORCE=0
+DRY=0
+
+die()  { printf 'stalker-anomaly: %s\n' "$*" >&2; exit 1; }
+info() { printf '==> %s\n' "$*"; }
+warn() { printf 'warning: %s\n' "$*" >&2; }
+run()  { if (( DRY )); then printf '    +'; printf ' %q' "$@"; printf '\n'; else "$@"; fi; }
+
+usage() {
+    cat <<'EOF'
+stalker-anomaly - install / register S.T.A.L.K.E.R. Anomaly for Lutris
+
+  stalker-anomaly setup [options]   extract, create prefix, register (default)
+  stalker-anomaly register          (re)register only
+  stalker-anomaly run               launch through Lutris
+  stalker-anomaly status            show what it can find
+
+Options for setup/register:
+  -a, --archive FILE   Anomaly 7z release (default: newest in ~/Downloads)
+  -d, --dest DIR       install dir (default: ~/Games/Anomaly)
+  -p, --prefix DIR     Wine prefix (default: ~/Games/Anomaly-wineprefix)
+  -r, --runner VER     Lutris Wine version (default: newest GE-Proton)
+      --gpu NAME       DXVK_FILTER_DEVICE_NAME substring (default: 6700 XT)
+      --no-gamescope   don't wrap the game in gamescope
+      --force          replace an existing Lutris entry for the same dir
+  -n, --dry-run        print what would happen
+
+The launcher needs .NET, so this skips it and runs AnomalyDX11*.exe directly.
+Renderer/resolution live in <dest>/appdata/user.ltx.
+EOF
+}
+
+# --- helpers ---------------------------------------------------------------
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+seven_zip() {
+    for z in 7z 7zz 7za; do have "$z" && { echo "$z"; return; }; done
+    die "7-Zip not found (install p7zip)"
+}
+
+newest_file() {  # newest_file DIR GLOB
+    local dir="$1" glob="$2"
+    # shellcheck disable=SC2086
+    ls -t "$dir"/$glob 2>/dev/null | head -1
+}
+
+wine_exe() {  # wine_exe RUNNER_VERSION -> path to wine binary
+    local r="$RUNNER_DIR/$1"
+    if [[ -x "$r/files/bin/wine" ]]; then echo "$r/files/bin/wine"
+    elif [[ -x "$r/bin/wine" ]]; then echo "$r/bin/wine"
+    else die "no wine binary under $r"
+    fi
+}
+
+runner_usable() {  # runner_usable VERSION
+    [[ -x "$RUNNER_DIR/$1/files/bin/wine" || -x "$RUNNER_DIR/$1/bin/wine" ]]
+}
+
+runner_candidates() {  # runner_candidates REGEX -> newest first
+    find "$RUNNER_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null |
+        grep -E "$1" | sort -V | tac
+}
+
+detect_runner() {
+    local name
+    [[ -d "$RUNNER_DIR" ]] || die "Lutris has no Wine runners in $RUNNER_DIR"
+
+    # Prefer Proton builds (they ship protonfixes + DXVK), newest first,
+    # then fall back to any other wine build.
+    for name in $(runner_candidates '^GE-Proton') \
+                $(runner_candidates '^Proton-GE') \
+                $(runner_candidates '[Pp]roton') \
+                $(runner_candidates '.')
+    do
+        runner_usable "$name" && { echo "$name"; return 0; }
+    done
+    die "no usable Wine runner in $RUNNER_DIR"
+}
+
+# Picks the fastest executable the CPU can actually run.
+pick_exe() {
+    local d="$1/bin" exe
+    if grep -qw avx /proc/cpuinfo 2>/dev/null; then
+        for exe in "$d"/AnomalyDX11AVX.exe "$d"/AnomalyDX10AVX.exe; do
+            [[ -f "$exe" ]] && { echo "$exe"; return 0; }
+        done
+    fi
+    for exe in "$d"/AnomalyDX11.exe "$d"/AnomalyDX10.exe "$d"/AnomalyDX9.exe; do
+        [[ -f "$exe" ]] && { echo "$exe"; return 0; }
+    done
+    return 1
+}
+
+registered_rows() {  # -> "id configpath" for our slug, optionally scoped to $DEST
+    have sqlite3 || die "sqlite3 not found"
+    [[ -f "$DB" ]] || return 0
+    sqlite3 -separator ' ' "$DB" \
+        "select id, configpath from games where slug='$SLUG';" 2>/dev/null || true
+}
+
+# --- steps ----------------------------------------------------------------
+
+do_extract() {
+    [[ -n "$ARCHIVE" ]] || ARCHIVE="$(newest_file "$HOME/Downloads" 'Anomaly-*.7z')"
+    if [[ -z "$ARCHIVE" ]]; then
+        warn "no archive given and none found in ~/Downloads"
+        return 0
+    fi
+    [[ -f "$ARCHIVE" ]] || die "archive not found: $ARCHIVE"
+
+    if [[ -f "$DEST/bin/AnomalyDX11.exe" || -f "$DEST/bin/AnomalyDX9.exe" ]]; then
+        info "already extracted: $DEST"
+        return 0
+    fi
+
+    # Two identical downloads are common; say so rather than quietly picking one.
+    local dups
+    dups=$(find "$(dirname "$ARCHIVE")" -maxdepth 1 -name 'Anomaly-*.7z' -samefile "$ARCHIVE" 2>/dev/null | wc -l)
+    (( dups > 1 )) && warn "$dups identical copies of the archive found; keeping only $ARCHIVE in use"
+
+    info "extracting $(basename "$ARCHIVE") -> $DEST (this is slow: ~9 GB solid archive)"
+    run mkdir -p "$DEST"
+    run "$(seven_zip)" x -y "-o$DEST" "$ARCHIVE"
+}
+
+do_prefix() {
+    local wine
+    wine="$(wine_exe "$RUNNER")"
+
+    if [[ -d "$PREFIX/drive_c" ]]; then
+        if WINEPREFIX="$PREFIX" WINEDEBUG=-all "$wine" reg query \
+                'HKCU\Software\Wine' /v Version 2>/dev/null | grep -q win10; then
+            info "prefix ready: $PREFIX (win10)"
+            return 0
+        fi
+        info "prefix exists, setting Windows version to win10"
+    else
+        info "creating 64-bit prefix: $PREFIX"
+        run env WINEPREFIX="$PREFIX" WINEDEBUG=-all WINEDLLOVERRIDES='mscoree,mshtml=' \
+            "$wine" wineboot -i
+    fi
+    run env WINEPREFIX="$PREFIX" WINEDEBUG=-all \
+        "$wine" reg add 'HKCU\Software\Wine' /v Version /d win10 /f
+}
+
+do_register() {
+    local exe config yml id old_cfg
+    exe="$(pick_exe "$DEST")" || die "no Anomaly executable in $DEST/bin (run 'setup' first)"
+    have sqlite3 || die "sqlite3 not found"
+
+    while read -r id old_cfg; do
+        [[ -n "$id" ]] || continue
+        if (( FORCE )); then
+            info "removing existing entry id=$id"
+            run sqlite3 "$DB" "delete from games where id=$id;"
+            [[ -n "$old_cfg" ]] && run rm -f "$LUTRIS_DIR/games/$old_cfg.yml"
+        else
+            info "already registered (id=$id); use --force to replace"
+            return 0
+        fi
+    done < <(registered_rows)
+
+    config="$SLUG-$(date +%s)"
+    yml="$LUTRIS_DIR/games/$config.yml"
+    run mkdir -p "$LUTRIS_DIR/games"
+
+    if (( DRY )); then
+        info "would write $yml"
+    else
+        {
+            printf 'game:\n'
+            printf '  arch: win64\n'
+            printf '  exe: %s\n' "$exe"
+            printf '  prefix: %s\n' "$PREFIX"
+            printf '  working_dir: %s\n' "$DEST"
+            printf 'system:\n'
+            printf '  env:\n    DXVK_FILTER_DEVICE_NAME: %s\n' "$GPU"
+            if (( GAMESCOPE )); then
+                printf '  gamescope: true\n'
+                printf '  gamescope_output_res: 1920x1080\n'
+                printf '  gamescope_game_res: 1920x1080\n'
+                printf '  gamescope_window_mode: -f\n'
+            fi
+            printf 'wine:\n'
+            printf '  version: %s\n' "$RUNNER"
+            printf '  dxvk: true\n  esync: true\n  fsync: true\n  Desktop: false\n'
+        } > "$yml"
+    fi
+
+    run sqlite3 "$DB" <<SQL
+INSERT INTO games (name, sortname, slug, runner, executable, directory, updated,
+                   lastplayed, installed, installed_at, year, configpath, platform, playtime)
+VALUES ('$NAME', '', '$SLUG', 'wine', '$exe', '$DEST',
+        datetime('now'), 0, 1, $(date +%s), $YEAR, '$config', 'Windows', 0);
+SQL
+
+    info "registered: $yml"
+    info "game dir:   $DEST"
+    info "prefix:     $PREFIX"
+    info "runner:     $RUNNER"
+    info "exe:        $exe"
+    if pgrep -x lutris >/dev/null 2>&1 || pgrep -f '/usr/bin/lutris' >/dev/null 2>&1; then
+        warn "Lutris is running; restart it to see the entry"
+    fi
+}
+
+# --- main -----------------------------------------------------------------
+
+cmd="setup"
+case "${1:-}" in
+    setup|register|run|status) cmd="$1"; shift ;;
+    -h|--help) usage; exit 0 ;;
+esac
+
+while (( $# )); do
+    case "$1" in
+        -a|--archive)   ARCHIVE="${2:?}"; shift 2 ;;
+        -d|--dest)      DEST="${2:?}"; shift 2 ;;
+        -p|--prefix)    PREFIX="${2:?}"; shift 2 ;;
+        -r|--runner)    RUNNER="${2:?}"; shift 2 ;;
+        --gpu)          GPU="${2:?}"; shift 2 ;;
+        --no-gamescope) GAMESCOPE=0; shift ;;
+        --force)        FORCE=1; shift ;;
+        -n|--dry-run)   DRY=1; shift ;;
+        -h|--help)      usage; exit 0 ;;
+        *)              die "unknown option: $1 (try --help)" ;;
+    esac
+done
+
+case "$cmd" in
+    status)
+        echo "dest:     $DEST $([[ -f "$DEST/bin/AnomalyDX11.exe" ]] && echo '(extracted)' || echo '(missing)')"
+        echo "prefix:   $PREFIX $([[ -d "$PREFIX/drive_c" ]] && echo '(ok)' || echo '(missing)')"
+        if exe="$(pick_exe "$DEST" 2>/dev/null)"; then echo "exe:      $exe"; fi
+        echo "runner:   ${RUNNER:-$(detect_runner 2>/dev/null || echo none)}"
+        row="$(registered_rows | head -1)"
+        if [[ -n "$row" ]]; then
+            printf 'lutris:   id %s (%s)\n' "${row%% *}" "${row#* }"
+        else
+            echo "lutris:   not registered"
+        fi
+        ;;
+    setup)
+        : "${RUNNER:=$(detect_runner)}"
+        do_extract
+        do_prefix
+        do_register
+        ;;
+    register)
+        : "${RUNNER:=$(detect_runner)}"
+        do_register
+        ;;
+    run)
+        info "launching $NAME via Lutris"
+        exec lutris "lutris:rungame/$SLUG"
+        ;;
+esac

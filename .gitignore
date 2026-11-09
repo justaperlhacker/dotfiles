@@ -24,6 +24,7 @@ kitty/.config/kitty/dank-tabs.conf
 kitty/.config/kitty/dank-theme.conf
 wezterm/.config/wezterm/colors/dank-theme.toml
 zed/.config/zed/themes/dank-zed-theme.json
+niri/.config/niri/dms/colors.kdl
 
 # user enablement state (managed locally by `systemctl --user enable`,
 # ignored by stow via .stow-local-ignore) — never commit.

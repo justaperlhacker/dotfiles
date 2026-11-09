@@ -40,6 +40,7 @@ _darcs
 ^kitty/.config/kitty/dank-(tabs|theme)\.conf
 ^wezterm/.config/wezterm/colors/dank-theme\.toml
 ^zed/.config/zed/themes/dank-zed-theme\.json
+^niri/.config/niri/dms/colors\.kdl
 
 # Midnight Commander runtime state (rewritten each session) — never stow
 #^mc/.config/mc/ini

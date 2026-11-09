@@ -15,20 +15,48 @@
 
 set_gtk_dark() {
     dark=$1
+    if [ "$dark" = true ]; then
+        theme=Breeze-Dark
+    else
+        theme=Breeze
+    fi
+
     for file in "$HOME/.config/gtk-3.0/settings.ini" \
         "$HOME/.config/gtk-4.0/settings.ini"; do
         [ -f "$file" ] || continue
 
+        # Keep prefer-dark false: it is startup-only and cannot be changed in
+        # a running app. The explicit Breeze/Breeze-Dark theme name is the
+        # live channel Chromium/Brave watches (notify::gtk-theme-name).
         current=$(sed -n 's/^gtk-application-prefer-dark-theme=//p' "$file" | tail -1)
-        [ "$current" = "$dark" ] && continue
-
-        if [ -n "$current" ]; then
-            sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=$dark/" "$file"
-        else
-            printf 'gtk-application-prefer-dark-theme=%s\n' "$dark" >> "$file"
+        if [ "$current" != false ]; then
+            if [ -n "$current" ]; then
+                sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=false/" "$file"
+            else
+                printf 'gtk-application-prefer-dark-theme=false\n' >> "$file"
+            fi
+            echo "gtk theme: $file gtk-application-prefer-dark-theme=false"
         fi
-        echo "gtk theme: $file gtk-application-prefer-dark-theme=$dark"
+
+        current_theme=$(sed -n 's/^gtk-theme-name=//p' "$file" | tail -1)
+        if [ "$current_theme" != "$theme" ]; then
+            if [ -n "$current_theme" ]; then
+                sed -i "s/^gtk-theme-name=.*/gtk-theme-name=$theme/" "$file"
+            else
+                printf 'gtk-theme-name=%s\n' "$theme" >> "$file"
+            fi
+            echo "gtk theme: $file gtk-theme-name=$theme"
+        fi
     done
+
+    # Running apps (Chromium/Brave) watch notify::gtk-theme-name, so switch
+    # the name itself as well; rewriting settings.ini alone is not noticed.
+    current_theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'")
+    if [ "$current_theme" != "$theme" ]; then
+        if gsettings set org.gnome.desktop.interface gtk-theme "$theme" 2>/dev/null; then
+            echo "gtk theme: gsettings gtk-theme $current_theme -> $theme"
+        fi
+    fi
 }
 
 # Plasma's colors.css pins the Breeze color map to the last Plasma scheme, and
@@ -64,6 +92,17 @@ reload_ghostty() {
     ghostty_theme_hash=$_g_hash
 }
 
+# The GTK portal (Settings + FileChooser) reads the GTK settings at startup, so
+# restart it on mode changes to keep the file dialog in the current theme.
+last_mode=
+restart_gtk_portal() {
+    [ "$mode" = "$last_mode" ] && return 0
+    if systemctl --user try-restart xdg-desktop-portal-gtk.service 2>/dev/null; then
+        echo "restarted xdg-desktop-portal-gtk for $mode theme"
+    fi
+    last_mode=$mode
+}
+
 while :; do
     mode=$(dms ipc call theme getMode 2>/dev/null) || mode=
 
@@ -82,6 +121,7 @@ while :; do
         fi
 
         set_gtk_dark "$gtk_dark"
+        restart_gtk_portal
     fi
 
     set_gtk_css

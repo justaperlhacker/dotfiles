@@ -175,6 +175,26 @@ in a standalone project, `justaperlhacker/vscode-themes`, and are installed into
 VS Code as the `justaperlhacker.vscode-themes` extension. They are not managed
 by Stow.
 
+### Brave appearance (niri)
+
+In Brave's **Appearance** settings choose **Theme → GTK**, not the internal
+**Dark** theme. Brave's Dark theme mixes Chromium's own menu colours with the
+GTK menu background, which produces white-on-white hamburger menus with the
+Breeze theme. GTK mode delegates the UI to the system theme, which
+`dms-theme-sync` keeps in step with DMS.
+
+The service switches `gtk-theme` between `Breeze` and `Breeze-Dark` (not just
+the `gtk-application-prefer-dark-theme` flag) because running Chromium/Brave
+windows only react to `notify::gtk-theme-name`. The flag is kept `false`
+because it is read only at startup, so the explicit theme name is the live
+channel. Brave therefore follows the sunset schedule without a restart. The
+Brave file chooser is routed through the GTK portal for the same reason (see
+`niri-portals.conf`).
+
+After first setting this up (or after switching the GTK theme in a running
+session), restart Brave once so it starts with the flag cleared; later
+light/dark transitions are live.
+
 ### Per-machine overrides
 
 Create `~/.config/bash/local` for machine-specific settings (gitignored).
@@ -207,9 +227,9 @@ DMS must also have `terminalsAlwaysDark=false` for the generated terminal
 palettes (Ghostty, kitty, …) to follow light mode.
 
 The DMS-generated theme outputs (`ghostty/.../dankcolors`,
-`kitty/.../dank-*.conf`, `wezterm` colors, `zed` theme, `zen.css`) are
-gitignored and stow-ignored. On machines installed before `install.pl`
-switched to `stow --no-folding`, `~/.config/{ghostty,kitty,wezterm,zed}` may
+`kitty/.../dank-*.conf`, `wezterm` colors, `zed` theme, `zen.css`, and
+`niri/.config/niri/dms/colors.kdl`) are gitignored and stow-ignored. On
+machines installed before `install.pl` switched to `stow --no-folding`, `~/.config/{ghostty,kitty,wezterm,zed}` may
 still be folded symlinks into the repo, so DMS writes those files inside the
 repo tree (ignored by git). To have DMS write to real home config dirs
 instead, remove the folded symlink and re-stow the package:

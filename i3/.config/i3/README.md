@@ -21,7 +21,9 @@ not rewritten on every switch.
 
 `i3-theme-sync` reads KDE NightTime's sunrise/sunset schedule over D-Bus and
 applies it to i3, i3bar, rofi, dunst, GTK, KDE/Qt, kitty and Ghostty. It is
-started from i3's autostart.
+started only from i3's autostart. There is no systemd user unit or XDG
+autostart entry for it; the daemon also exits if `i3-msg -t get_version` fails,
+so it cannot start itself in a niri or Plasma session.
 
 The automatic theme pair is configured in `theme-sync.conf`:
 

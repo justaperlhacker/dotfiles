@@ -558,16 +558,25 @@ if ($forced_mode) {
     exit 0;
 }
 
+# Refuse to run outside an i3 session.  The autostart entry is the only
+# launcher, but this also protects against a manual start from niri/Plasma.
+my $i3_ok = 0;
+for ( 1 .. 50 ) {
+    if ( i3_running() ) {
+        $i3_ok = 1;
+        last;
+    }
+    sleep 0.2;
+}
+unless ($i3_ok) {
+    logmsg('i3 is not running; exiting instead of changing another session');
+    exit 0;
+}
+
 # Do this before the first schedule query so knighttimed starts with the
 # cached solar location rather than the timed fallback.
 warm_geoclue();
 my $mode = current_mode();
-
-my $i3_wait = 0;
-until ( i3_running() ) {
-    last if ++$i3_wait > 50;
-    sleep 0.2;
-}
 
 apply_mode( $mode, 1 );
 exit 0 if $once;

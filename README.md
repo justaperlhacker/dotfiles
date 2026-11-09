@@ -280,8 +280,11 @@ gdbus call --session \
 
 The service is D-Bus-activatable, so it works from an i3 session once a
 location has been stored (KDE keeps the location in
-`~/.local/state/knighttimestaterc`). If the daemon cannot provide a
-schedule, the script falls back to the `[Times]` values in
+`~/.local/state/knighttimestaterc`). i3 has no desktop-shell GeoClue agent,
+so the script starts `/usr/lib/geoclue-2.0/demos/agent`, waits for GeoClue,
+and restarts `knighttimed`; this makes KDE use its cached location and real
+sunrise/sunset instead of the 06:00/18:00 timed fallback. If GeoClue still
+cannot start, the script falls back to the `[Times]` values in
 `~/.config/knighttimerc` (06:00/18:00 by default).
 
 `i3/.config/i3/scripts/i3-theme-sync` is started from i3's autostart with

@@ -23,6 +23,8 @@ my $HOME = $ENV{HOME} // die "i3-theme-sync: HOME is not set\n";
 
 my $I3_DIR       = "$HOME/.config/i3";
 my $SWITCH_THEME = "$I3_DIR/scripts/switch-theme";
+my $THEME_CONFIG = "$I3_DIR/theme-sync.conf";
+my %THEME_CONFIG;
 my $STATE_DIR    = ( $ENV{XDG_STATE_HOME} // "$HOME/.local/state" ) . '/i3-theme-sync';
 my $STATE_FILE   = "$STATE_DIR/mode";
 my $LOG_FILE     = "$STATE_DIR/log";
@@ -30,8 +32,17 @@ my $LOCK_FILE    = $ENV{XDG_RUNTIME_DIR}
   ? "$ENV{XDG_RUNTIME_DIR}/i3-theme-sync.lock"
   : "/tmp/i3-theme-sync-$<.lock";
 
-my $DARK_THEME  = $ENV{I3_DARK_THEME}  // 'gruvbox';
-my $LIGHT_THEME = $ENV{I3_LIGHT_THEME} // 'gruvbox-light';
+if ( open my $fh, '<', $THEME_CONFIG ) {
+    while ( my $line = <$fh> ) {
+        chomp $line;
+        my ( $key, $value ) = $line =~ /^\s*([A-Za-z_]+)\s*=\s*(.*?)\s*$/
+          or next;
+        $THEME_CONFIG{ uc $key } = $value;
+    }
+    close $fh;
+}
+my $DARK_THEME  = $ENV{I3_DARK_THEME}  // $THEME_CONFIG{DARK}  // 'github-dark';
+my $LIGHT_THEME = $ENV{I3_LIGHT_THEME} // $THEME_CONFIG{LIGHT} // 'github-light';
 
 my $GHOSTTY_SESSION  = "$HOME/.config/ghostty/theme-session.conf";
 my $KITTY_SESSION_DIR = "$HOME/.config/kitty/theme-session.d";
@@ -356,9 +367,9 @@ sub set_kde_theme {
 }
 
 sub set_terminal_theme {
-    my ($dark) = @_;
+    my ($theme) = @_;
 
-    my $kitty_source = "$HOME/.config/kitty/" . ( $dark ? 'gruvbox-dark.conf' : 'gruvbox-light.conf' );
+    my $kitty_source = "$HOME/.config/kitty/$theme.conf";
     make_path($KITTY_SESSION_DIR);
     if ( -r $kitty_source ) {
         copy( $kitty_source, $KITTY_SESSION )
@@ -368,19 +379,70 @@ sub set_terminal_theme {
         logmsg("missing kitty palette $kitty_source");
     }
 
-    my $ghostty_theme = $dark ? 'gruvbox-dark' : 'gruvbox-light';
-    if ( -d "$HOME/.config/ghostty/themes" ) {
+    my $ghostty_theme = "$HOME/.config/ghostty/themes/$theme";
+    if ( -f $ghostty_theme ) {
         if ( open my $fh, '>', $GHOSTTY_SESSION ) {
-            print $fh "theme = $ghostty_theme\n";
+            print $fh "theme = $theme\n";
             close $fh;
         }
         else {
             logmsg("could not write $GHOSTTY_SESSION: $!");
         }
     }
+    else {
+        logmsg("missing Ghostty theme $ghostty_theme");
+    }
 
     system( 'pkill', '-USR1', '-x', 'kitty' );
     system( 'pkill', '-USR2', '-x', 'ghostty' );
+}
+
+sub read_theme_mode {
+    my ($theme) = @_;
+    my $file = "$I3_DIR/themes/$theme/mode";
+    return undef unless -r $file;
+
+    open my $fh, '<', $file or return undef;
+    my $mode = <$fh>;
+    close $fh;
+    return undef unless defined $mode;
+    chomp $mode;
+    return $mode =~ /^(dark|light)$/ ? $mode : undef;
+}
+
+# Apply a single theme manually (from the fzf picker).  This does not update
+# the scheduled-mode state, so the automatic sync resumes at the next
+# sunrise/sunset transition.
+sub apply_theme_only {
+    my ($theme) = @_;
+    my $dir = "$I3_DIR/themes/$theme";
+    unless ( -d $dir && -e "$dir/i3.conf" ) {
+        warn "i3-theme-sync: unknown theme '$theme'\n";
+        exit 2;
+    }
+
+    if ( -x $SWITCH_THEME ) {
+        system( $SWITCH_THEME, $theme ) == 0
+          or logmsg("switch-theme $theme failed");
+    }
+    else {
+        logmsg("missing $SWITCH_THEME");
+    }
+
+    set_terminal_theme($theme);
+
+    my $theme_mode = read_theme_mode($theme);
+    if ($theme_mode) {
+        my $dark = $theme_mode eq 'dark';
+        set_gtk_theme($dark);
+        set_kde_theme($dark);
+        system( 'systemctl', '--user', 'try-restart', 'xdg-desktop-portal-gtk.service' );
+        system( 'systemctl', '--user', 'try-restart', 'plasma-xdg-desktop-portal-kde.service' );
+        logmsg("manually applied theme $theme (apps: $theme_mode)");
+    }
+    else {
+        logmsg("manually applied theme $theme (apps unchanged)");
+    }
 }
 
 sub apply_mode {
@@ -404,7 +466,7 @@ sub apply_mode {
     set_kde_theme($dark);
     system( 'systemctl', '--user', 'try-restart', 'xdg-desktop-portal-gtk.service' );
     system( 'systemctl', '--user', 'try-restart', 'plasma-xdg-desktop-portal-kde.service' );
-    set_terminal_theme($dark);
+    set_terminal_theme($theme);
 
     write_state($mode);
     logmsg("applied $mode mode");
@@ -416,16 +478,20 @@ sub i3_running {
 }
 
 sub usage {
-    say "usage: i3-theme-sync [--once] [--get-mode] [--mode dark|light] [--help]";
+    say "usage: i3-theme-sync [--once] [--get-mode] [--mode dark|light] [--theme NAME] [--help]";
 }
 
 my $once     = grep { $_ eq '--once' } @ARGV;
 my $get_mode = grep { $_ eq '--get-mode' } @ARGV;
 my $help     = grep { $_ eq '--help' || $_ eq '-h' } @ARGV;
 my $forced_mode;
+my $forced_theme;
 for my $i ( 0 .. $#ARGV ) {
     if ( $ARGV[$i] eq '--mode' ) {
         $forced_mode = $ARGV[ $i + 1 ];
+    }
+    elsif ( $ARGV[$i] eq '--theme' ) {
+        $forced_theme = $ARGV[ $i + 1 ];
     }
 }
 
@@ -437,6 +503,16 @@ if ($help) {
 if ( defined $forced_mode && $forced_mode !~ /^(dark|light)$/ ) {
     warn "i3-theme-sync: --mode must be dark or light\n";
     exit 2;
+}
+
+if ( defined $forced_theme && defined $forced_mode ) {
+    warn "i3-theme-sync: --theme and --mode cannot be combined\n";
+    exit 2;
+}
+
+if ( defined $forced_theme ) {
+    apply_theme_only($forced_theme);
+    exit 0;
 }
 
 if ($get_mode) {

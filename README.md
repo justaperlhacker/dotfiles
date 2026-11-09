@@ -292,10 +292,12 @@ cannot start, the script falls back to the `[Times]` values in
 `exec_always` (a lock keeps reloads from starting a second copy) and polls
 every 60 seconds. On a mode change it:
 
-- switches the i3 theme symlink to `gruvbox` (dark) or `gruvbox-light`
+- switches the i3 theme symlink to `github-dark` (dark) or `github-light`
   (light) via `switch-theme`, which also updates rofi and dunst and reloads
   i3. i3bar colors come from `set` variables in the active theme's
-  `i3.conf`, with dark fallbacks in `appearance.conf`.
+  `i3.conf`, with dark fallbacks in `appearance.conf`. The automatic pair is
+  configured in `i3/.config/i3/theme-sync.conf`; see
+  `i3/.config/i3/README.md` for the full theme documentation.
 - sets GTK to `Breeze-Dark` / `Breeze` plus the matching icon theme, and
   temporarily removes the DMS `dank-colors.css` import from `gtk.css` so
   the real Breeze GTK theme is used. `dms-theme-sync` recognizes the
@@ -314,9 +316,16 @@ does not dirty the repo. For testing:
 ```sh
 i3-theme-sync --get-mode            # current dark/light decision
 i3-theme-sync --once                # apply the current mode and exit
-i3-theme-sync --mode dark           # force dark for one application
+i3-theme-sync --mode dark           # force the configured dark theme
 i3-theme-sync --mode light
+i3-theme-sync --theme github-dark   # apply one theme manually
+i3-theme-picker                     # fzf picker for all i3 theme areas
 ```
+
+The picker applies the selected theme to i3, i3bar, rofi, dunst, kitty and
+Ghostty. It also applies Breeze Dark/Light when the theme has a `mode` file.
+Manual picks are temporary; the scheduled pair resumes at the next
+sunrise/sunset transition.
 
 ### Brave flags
 

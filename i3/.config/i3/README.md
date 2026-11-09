@@ -1,26 +1,106 @@
-# This is Matt's i3 Config.
+# i3 configuration
 
-## Dependencies
-* i3-Gaps version 4.20+ (Previous versions will not work with this configuration)
-* Rofi
-* polybar
-* Nerd Fonts
+## Theme system
 
-## Changing Themes
+The active theme is `themes/active` (a generated symlink, gitignored).
+`appearance.conf` includes `themes/active/i3.conf`, which provides both the
+client colours and the `$i3bar_*` variables used by `bar.conf`. This means the
+i3bar palette follows the selected theme.
 
-In order to change themes, you will need to either change the #include-file lines in the polybar and i3 configs by hand or use my i3-ricer script. 
+`switch-theme` updates the symlink and the rofi/dunst themes, then reloads i3.
+It writes these generated, gitignored runtime files:
 
-**Note:** I use absolute paths in both places. Make sure you change the paths for your system or nothing will work. 
+- `themes/active`
+- `rofi/theme-active.rasi`
+- `dunst/dunstrc.active`
 
-Because of the way my script works, both my i3 and polybar configs are configured to pull from a theme file. The theme files (in their respective theme directories) are copied to those theme place holder files. So to change a theme by hand, cp the theme's config file to the theme place holder.
+The tracked `rofi/config.rasi` and `dunst/dunstrc` are stable bases; they are
+not rewritten on every switch.
 
-`Example: cp themes/onedark.conf theme.conf (for i3)`
+## Automatic light/dark mode
 
-`Example: cp polybar/themes/configs/onedark config.ini`
+`i3-theme-sync` reads KDE NightTime's sunrise/sunset schedule over D-Bus and
+applies it to i3, i3bar, rofi, dunst, GTK, KDE/Qt, kitty and Ghostty. It is
+started from i3's autostart.
 
-**Also note that the polybar folder in this directory is a symlink, and therefore should not be trusted**
+The automatic theme pair is configured in `theme-sync.conf`:
 
-### ToDo
+```ini
+DARK=github-dark
+LIGHT=github-light
+```
 
-* Add more themes
+Environment variables `I3_DARK_THEME` and `I3_LIGHT_THEME` override those
+values (useful for testing). If the KDE daemon cannot provide a schedule, the
+script falls back to the `[Times]` values in `~/.config/knighttimerc`.
 
+GTK and KDE/Qt do not have GitHub-specific themes installed, so the sync uses
+Breeze Dark/Light for applications. The i3, i3bar, rofi, dunst and terminal
+palettes use the GitHub themes.
+
+Useful commands:
+
+```sh
+i3-theme-sync --get-mode            # current dark/light decision
+i3-theme-sync --mode dark           # force the configured dark theme
+i3-theme-sync --mode light          # force the configured light theme
+i3-theme-sync --theme github-dark   # apply one theme manually
+i3-theme-sync --once                # apply the current mode and exit
+```
+
+The sync restarts `knighttimed` after starting the GeoClue demo agent, so KDE
+uses its cached location and real sunrise/sunset instead of the 06:00/18:00
+timed fallback. Logs live in `~/.local/state/i3-theme-sync/log`.
+
+## Manual theme picker (fzf)
+
+`i3-theme-picker` lists the available i3 themes in fzf and applies the selected
+theme to i3, i3bar, rofi, dunst, kitty and Ghostty:
+
+```sh
+i3-theme-picker
+i3-theme-picker --list
+```
+
+If `themes/<name>/mode` exists (`dark` or `light`), the picker also applies the
+matching GTK/KDE palette. Manual selection does not change the scheduled-mode
+state, so the automatic pair is applied again at the next sunrise/sunset
+transition. To make a manual choice permanent, put it in `theme-sync.conf`.
+
+## GitHub themes
+
+Two GitHub Primer themes are included:
+
+- `github-dark` — canvas `#0d1117`, foreground `#e6edf3`, accent `#58a6ff`
+- `github-light` — canvas `#ffffff`, foreground `#24292f`, accent `#0969da`
+
+Each theme has:
+
+- `themes/<name>/i3.conf` — client colours and i3bar variables
+- `themes/<name>/rofi.rasi`
+- `themes/<name>/dunst.conf`
+- `themes/<name>/mode` — `dark` or `light` (used by the picker for GTK/KDE)
+
+Matching terminal palettes are installed at:
+
+- `~/.config/kitty/github-{dark,light}.conf`
+- `~/.config/ghostty/themes/github-{dark,light}`
+
+## Adding a theme
+
+1. Create `themes/<name>/i3.conf` with the `client.*` colours and the
+   `$i3bar_*` variables (see an existing theme for the full list).
+2. Optionally add `rofi.rasi`, `dunst.conf`, and a `mode` file containing
+   `dark` or `light`.
+3. Optionally add a kitty palette at `~/.config/kitty/<name>.conf` and a
+   Ghostty theme at `~/.config/ghostty/themes/<name>`.
+4. Apply it with `switch-theme <name>` or `i3-theme-picker`.
+5. To use it in automatic mode, set it as `DARK` or `LIGHT` in
+   `theme-sync.conf`.
+
+## Keyboard
+
+`scripts/set-keymap` applies the same remap as niri and Plasma: Caps Lock is an
+additional Left Ctrl and Right Alt is an additional Left Super. It feeds the
+keymap through `xkbcomp` with `~/.config/xkb` on the include path because
+`setxkbmap` does not forward its `-I` option to `xkbcomp`.

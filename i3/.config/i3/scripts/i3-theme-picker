@@ -1,0 +1,39 @@
+#!/bin/sh
+# Pick an i3 theme with fzf and apply it to every i3-side theme area:
+# i3 window borders + i3bar, rofi, dunst, kitty and Ghostty.
+#
+# If themes/<name>/mode exists (dark or light), the matching GTK/KDE
+# palette is applied too. The automatic sunrise/sunset sync is not
+# disabled; it will apply its configured pair again at the next transition.
+set -eu
+
+i3_dir="${XDG_CONFIG_HOME:-$HOME/.config}/i3"
+themes_dir="$i3_dir/themes"
+
+list_themes() {
+    for d in "$themes_dir"/*; do
+        [ -d "$d" ] || continue
+        [ "$(basename "$d")" = active ] && continue
+        [ -f "$d/i3.conf" ] && basename "$d"
+    done | sort
+}
+
+if [ "${1:-}" = "--list" ]; then
+    list_themes
+    exit 0
+fi
+
+if ! command -v fzf >/dev/null 2>&1; then
+    echo "i3-theme-picker: fzf is required" >&2
+    exit 1
+fi
+
+choice=$(
+    list_themes |
+        fzf --height=60% --reverse --prompt='i3 theme> ' \
+            --header='Enter applies the theme to i3, i3bar, rofi, dunst and terminals' \
+            --preview='cat "$HOME/.config/i3/themes/{}/i3.conf"; echo; printf "kitty:   "; test -f "$HOME/.config/kitty/{}.conf" && echo yes || echo no; printf "ghostty: "; test -f "$HOME/.config/ghostty/themes/{}" && echo yes || echo no; printf "mode:    "; cat "$HOME/.config/i3/themes/{}/mode" 2>/dev/null || echo -'
+) || exit 0
+
+[ -n "$choice" ] || exit 0
+exec "$i3_dir/scripts/i3-theme-sync" --theme "$choice"

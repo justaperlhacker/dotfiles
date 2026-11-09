@@ -31,8 +31,9 @@ input {
             layout "us"
 
             // Caps Lock: additional (second) left Control.
-            // Right Alt: Right Super; the right Super key becomes Right Alt.
-            options "ctrl:nocaps,altwin:swap_ralt_rwin"
+            // Right Alt: additional left Super (custom:ralt_super). This
+            // keyboard has no right Win key, so no swap is needed.
+            options "caps:ctrl_modifier,custom:ralt_super"
         }
 
         // Enable numlock on startup, omitting this setting disables it.

@@ -6,7 +6,7 @@ After=niri.service dms.service
 
 [Service]
 Type=simple
-ExecStart=/home/johnm/.config/niri/scripts/dms-theme-sync.sh
+ExecStart=%h/.config/niri/scripts/dms-theme-sync.sh
 Restart=always
 RestartSec=5
 

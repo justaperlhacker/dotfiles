@@ -1,0 +1,5 @@
+#!/bin/sh
+# Wait for the DMS tray host, then start OneDriveGUI. The wrapper keeps the
+# .desktop entry free of a hardcoded /home path.
+exec "$HOME/.config/niri/scripts/exec-after-sni" \
+    "$HOME/.local/bin/OneDriveGUI-1.3.2-x86_64.AppImage"

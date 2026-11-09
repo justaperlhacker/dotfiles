@@ -286,27 +286,36 @@ VA-API path.
 
 ### Keyboard remap (Caps Lock → Ctrl, Right Alt → Super)
 
-The `kde` package ships a Plasma/XKB keyboard remap:
+All three sessions use the same remap:
 
 - **Caps Lock** acts as an additional Left Ctrl, with no Caps Lock toggling
   (`caps:ctrl_modifier`, a stock xkeyboard-config option).
 - **Right Alt** acts as an additional Left Super (`Super_L`), via the local
-  option `custom:ralt_super`.
+  option `custom:ralt_super`. This keyboard has no Right Win key, so no
+  swap option is involved.
 - Every other key is unchanged.
 
-Three pieces make this work, all under `kde/.config/`:
+The shared pieces live under `kde/.config/`:
 
 - `kxkbrc` sets `Options=caps:ctrl_modifier,custom:ralt_super` and
   `ResetOldOptions=true` (KWin ignores `Options` without it).
 - `xkb/symbols/custom` defines `ralt_super`, which maps `<RALT>` to `Super_L`.
-- `xkb/rules/evdev` is a per-user overlay of the system rules. It includes
-  `evdev-system`, a symlink to `/usr/share/X11/xkb/rules/evdev`, so
-  xkeyboard-config updates still flow through.
+- `xkb/rules/evdev` is a per-user overlay of the system rules, including
+  `evdev-system` (a symlink to `/usr/share/X11/xkb/rules/evdev`).
 
-KWin reads `kxkbrc` at startup, so **log out and back in** after changing it.
-`custom:ralt_super` is not part of xkeyboard-config's option list, so saving
-the Keyboard page in System Settings may drop it; re-add it to `Options=` in
-`kxkbrc` if that happens.
+niri uses the same options in `config.kdl`. i3 cannot use
+`setxkbmap -option custom:ralt_super` because X11's `setxkbmap` does not
+search `~/.config/xkb/rules`; its autostart instead passes the symbols
+component explicitly:
+
+```sh
+setxkbmap -I$HOME/.config/xkb -model pc105 -layout us \
+  -symbols "pc+us+inet(evdev)+capslock(ctrl_modifier)+custom(ralt_super)"
+```
+
+Log out and back in after changing the keyboard options. If saving the
+Plasma Keyboard page drops `custom:ralt_super`, re-add it to `Options=` in
+`kxkbrc`.
 
 ### Plasma tmux scratchpad (SUPER+F9)
 

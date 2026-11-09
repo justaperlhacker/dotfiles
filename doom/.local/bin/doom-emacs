@@ -1,0 +1,3 @@
+#!/bin/sh
+# Wrapper so the desktop entry does not need a hardcoded home path.
+exec emacs --init-dir="$HOME/.config/doom-emacs" --name=doom-emacs "$@"

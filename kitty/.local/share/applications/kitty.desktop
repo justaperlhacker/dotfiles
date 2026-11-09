@@ -3,10 +3,9 @@ Categories=System;TerminalEmulator;
 Comment=Fast, feature-rich, GPU based terminal
 Exec=kitty --start-as=maximized
 GenericName=Terminal emulator
-Icon=/home/johnm/.local/share/icons/kitty_ember_icon_128x128.png
+Icon=kitty_ember_icon_128x128
 Name=kitty
 NoDisplay=false
-Path=
 PrefersNonDefaultGPU=false
 StartupNotify=true
 Terminal=false

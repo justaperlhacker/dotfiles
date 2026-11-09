@@ -246,10 +246,6 @@ cp ~/.config/kdeglobals ~/.dotfiles/kde/.config/kdeglobals
 git add kde/.config/kdeglobals && git commit -m "kde: refresh kdeglobals base"
 ```
 
-The `niri` package also ships `~/.config/autostart/light-locker.desktop` with
-`NotShowIn=niri;`: light-locker is X11-only and exits with "screensaver
-already running" under niri, where DMS owns locking.
-
 The DMS-generated theme outputs (`ghostty/.../dankcolors`,
 `kitty/.../dank-*.conf`, `wezterm` colors, `zed` theme, `zen.css`, and
 `niri/.config/niri/dms/colors.kdl`) are gitignored and stow-ignored. On

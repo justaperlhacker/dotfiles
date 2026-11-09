@@ -145,6 +145,13 @@ apply_kde_scheme() {
             echo "kde theme: applied $scheme"
             kde_scheme=$scheme
             kde_scheme_hash=$hash
+
+            # The KDE portal caches its palette at startup; restart it so its
+            # non-filechooser dialogs (the file chooser is routed to GTK)
+            # repaint with the new scheme.
+            if systemctl --user try-restart plasma-xdg-desktop-portal-kde.service 2>/dev/null; then
+                echo "kde theme: restarted plasma-xdg-desktop-portal-kde"
+            fi
         fi
     fi
 }

@@ -216,7 +216,9 @@ and keeps the rest of the session in step with DMS's location/sunset mode:
 - applies DMS's generated KDE scheme (`DankMatugenDark` / `DankMatugenLight`)
   with `plasma-apply-colorscheme`, so Dolphin and other KDE/Qt apps follow.
   The tracked `kde/.config/kdeglobals` is only a base template (stow-ignored);
-  the service owns the real `~/.config/kdeglobals`.
+  the service owns the real `~/.config/kdeglobals`. It also restarts
+  `plasma-xdg-desktop-portal-kde.service` after a scheme change so the KDE
+  portal's dialogs repaint.
 - sends `SIGUSR2` to running Ghostty instances when DMS regenerates
   `~/.config/ghostty/themes/dankcolors` (Ghostty does not watch theme files).
 
@@ -243,6 +245,10 @@ explicitly:
 cp ~/.config/kdeglobals ~/.dotfiles/kde/.config/kdeglobals
 git add kde/.config/kdeglobals && git commit -m "kde: refresh kdeglobals base"
 ```
+
+The `niri` package also ships `~/.config/autostart/light-locker.desktop` with
+`NotShowIn=niri;`: light-locker is X11-only and exits with "screensaver
+already running" under niri, where DMS owns locking.
 
 The DMS-generated theme outputs (`ghostty/.../dankcolors`,
 `kitty/.../dank-*.conf`, `wezterm` colors, `zed` theme, `zen.css`, and

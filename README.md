@@ -233,6 +233,16 @@ palettes (Ghostty, kitty, …) to follow light mode.
 The live `~/.config/kdeglobals` is generated the same way: the tracked
 `kde/.config/kdeglobals` is only a base template (stow-ignored), and the
 service seeds the real file from it on first use before applying a scheme.
+The live file is authoritative for non-color keys (fonts/Xft, icon theme,
+look-and-feel, file-dialog options); the service only rewrites color
+sections and never overwrites an existing file. If you change non-color KDE
+settings in Plasma and want them captured in the repo, refresh the base
+explicitly:
+
+```bash
+cp ~/.config/kdeglobals ~/.dotfiles/kde/.config/kdeglobals
+git add kde/.config/kdeglobals && git commit -m "kde: refresh kdeglobals base"
+```
 
 The DMS-generated theme outputs (`ghostty/.../dankcolors`,
 `kitty/.../dank-*.conf`, `wezterm` colors, `zed` theme, `zen.css`, and

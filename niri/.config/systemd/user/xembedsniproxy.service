@@ -1,6 +1,8 @@
 [Unit]
 Description=Bridge legacy XEmbed tray icons to StatusNotifierItem
 Documentation=https://invent.kde.org/plasma/plasma-workspace/-/tree/master/xembed-sni-proxy
+# niri only: Plasma starts its own plasma-xembedsniproxy.service.
+ConditionEnvironment=XDG_SESSION_DESKTOP=niri
 PartOf=graphical-session.target
 
 [Service]

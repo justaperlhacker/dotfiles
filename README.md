@@ -132,6 +132,10 @@ niri tears Xwayland down when the last X11 app exits, which kills the proxy
 too, so the `niri` package ships it as a systemd user service that is
 restarted automatically instead of a one-shot `spawn-at-startup`.
 
+The unit is scoped with `ConditionEnvironment=XDG_SESSION_DESKTOP=niri`, so
+Plasma uses its own `plasma-xembedsniproxy.service` instead of starting a
+duplicate.
+
 ```bash
 sudo pacman -S --needed plasma-workspace   # provides /usr/bin/xembedsniproxy
 systemctl --user enable --now xembedsniproxy.service

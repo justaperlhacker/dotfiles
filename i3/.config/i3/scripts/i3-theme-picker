@@ -32,7 +32,7 @@ choice=$(
     list_themes |
         fzf --height=60% --reverse --prompt='i3 theme> ' \
             --header='Enter applies the theme to i3, i3bar, rofi, dunst and terminals' \
-            --preview='cat "$HOME/.config/i3/themes/{}/i3.conf"; echo; printf "kitty:   "; test -f "$HOME/.config/kitty/{}.conf" && echo yes || echo no; printf "ghostty: "; test -f "$HOME/.config/ghostty/themes/{}" && echo yes || echo no; printf "mode:    "; cat "$HOME/.config/i3/themes/{}/mode" 2>/dev/null || echo -'
+            --preview='cat "$HOME/.config/i3/themes/"{}/i3.conf; echo; printf "kitty:   "; test -f "$HOME/.config/kitty/"{}.conf && echo yes || echo no; printf "ghostty: "; test -f "$HOME/.config/ghostty/themes/"{} && echo yes || echo no; printf "mode:    "; cat "$HOME/.config/i3/themes/"{}/mode 2>/dev/null || echo -'
 ) || exit 0
 
 [ -n "$choice" ] || exit 0

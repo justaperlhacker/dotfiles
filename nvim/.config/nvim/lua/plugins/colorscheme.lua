@@ -23,6 +23,7 @@ return {
   T({ "CosecSecCot/cosec-twilight.nvim", name = "cosec-twilight", dependencies = { "rktjmp/lush.nvim" } }),
 
   -- Blue / cool-toned
+  T({ "Mofiqul/adwaita.nvim", name = "adwaita" }),
   T({ "catppuccin/nvim", name = "catppuccin" }),
   T({ "folke/tokyonight.nvim", name = "tokyonight" }),
   T({ "uloco/bluloco.nvim", dependencies = { "rktjmp/lush.nvim" } }),
@@ -97,6 +98,8 @@ return {
   T({ "piyush-ppradhan/naysayer.vim", name = "naysayer" }),
 
   -- Accessible / light-capable (ship light variants or high-legibility palettes)
+  -- GitHub Dark / Github Light and the Primer variants.
+  T({ "projekt0n/github-nvim-theme", name = "github-theme" }),
   -- Neovim port of Protesilaos' Modus themes (modus_operandi / modus_vivendi).
   T({ "miikanissi/modus-themes.nvim", name = "modus-themes.nvim" }),
   T({ "NLKNguyen/papercolor-theme", name = "PaperColor" }),

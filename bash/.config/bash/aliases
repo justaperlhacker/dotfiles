@@ -181,7 +181,7 @@ emacs_reset() {
 }
 
 # random
-alias op='opencode'
+alias oc='opencode'
 alias vscode='code'
 alias code='code'
 alias spotify='GTK_MODULES= spotify'

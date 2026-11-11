@@ -37,10 +37,12 @@ local colorscheme = {}
 -- colorscheme.name = "papercolor"
 
 -- Cool / nordic / structured vibes
+-- colorscheme.name = "adwaita" -- GNOME Adwaita
 -- colorscheme.name = "nord"
 -- colorscheme.name = "nordic"
 -- colorscheme.name = "nightfox"
 -- colorscheme.name = "tokyonight"
+-- colorscheme.name = "onedark" -- Atom One Dark
 -- colorscheme.name = "moonfly"
 -- colorscheme.name = "nightfly"
 -- colorscheme.name = "modus"
@@ -57,6 +59,13 @@ local colorscheme = {}
 -- Warm / floral / twilight vibes
 -- colorscheme.name = "rose-pine"
 -- colorscheme.name = "toast"
+
+-- GitHub (variants from projekt0n/github-nvim-theme)
+-- colorscheme.name = "github_dark" -- lighter dark (#30363d)
+-- colorscheme.name = "github_dark_default" -- GitHub Dark Default (#0d1117)
+-- colorscheme.name = "github_dark_dimmed" -- dimmed dark (#22272e)
+-- colorscheme.name = "github_light"
+-- colorscheme.name = "github_light_default"
 
 -- 10x Editor ports (all 41 stock schemes, colors/10x-*.lua)
 -- colorscheme.name = "10x-sunset" -- 10x default
@@ -75,8 +84,8 @@ local colorscheme = {}
 -- from kraihnight, and takes the palette from the matching kitty theme
 -- (colors/kitty.lua + lua/config/kitty-palette.lua), so terminal and editor
 -- match. It picks the palette by 'background', hence the same name both sides.
-colorscheme.dark = "kitty"
-colorscheme.light = "kitty"
+--colorscheme.dark = "kitty"
+--colorscheme.light = "kitty"
 -- colorscheme.dark = "vague"
 -- colorscheme.dark = "sequoia-monochrome-dark"
 -- colorscheme.light = "modus_operandi"
@@ -86,6 +95,10 @@ colorscheme.light = "kitty"
 -- colorscheme.dark = "miniwinter"
 -- colorscheme.dark = "kraihnight"
 -- colorscheme.dark = "fleury"
+--colorscheme.dark = "nord"
+--colorscheme.dark = "onedark"
+colorscheme.dark = "github_dark_default"
+colorscheme.light = "github_light_default"
 
 colorscheme.fallback = "default"
 

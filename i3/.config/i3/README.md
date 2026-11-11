@@ -111,3 +111,7 @@ Matching terminal palettes are installed at:
 additional Left Ctrl and Right Alt is an additional Left Super. It feeds the
 keymap through `xkbcomp` with `~/.config/xkb` on the include path because
 `setxkbmap` does not forward its `-I` option to `xkbcomp`.
+
+`scripts/xset-keyboard` sets the keyboard repeat rate (300 ms delay, 50 Hz) and
+turns the X bell off. It runs from `autostart.conf` with `exec_always`, so
+`i3-msg reload` also re-applies the settings.

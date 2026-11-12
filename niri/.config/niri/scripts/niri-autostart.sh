@@ -74,15 +74,6 @@ if have dbus-update-activation-environment; then
         QT_STYLE_OVERRIDE=Breeze
 fi
 
-# --- tray app after the bar exports StatusNotifierWatcher ------------------
-if is_running Discord || is_running discord ||
-    is_pending "$script_dir/exec-after-sni discord"; then
-    log "discord already running or queued; skipping"
-else
-    log "launching discord via exec-after-sni"
-    start_bg "$script_dir/exec-after-sni" discord
-fi
-
 # --- restart portal-gnome once niri exports Mutter.ScreenCast ---------------
 # Fixes the startup race that otherwise leaves screencasting (OBS) with a
 # black screen / no source picker. At most once per session.

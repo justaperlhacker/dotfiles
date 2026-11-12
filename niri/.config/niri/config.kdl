@@ -159,8 +159,9 @@ overview {
     }
 }
 // All ordering-sensitive startup lives in niri-autostart.sh: wallet unlock,
-// Discord after the tray host, xdg-desktop-portal-gnome restart, Xwayland
-// settings and host-specific extras. Waits are shared via scripts/wait-lib.sh.
+// xdg-desktop-portal-gnome restart, Xwayland settings and host-specific extras
+// (scripts/autostart/<hostname>.sh, e.g. Discord on destro only). Waits are
+// shared via scripts/wait-lib.sh.
 // The script is safe to re-run; it skips already-running processes.
 // Startup log: ~/.local/state/niri/autostart.log
 // Note that running niri as a session also supports xdg-desktop-autostart

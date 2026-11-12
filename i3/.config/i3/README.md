@@ -115,3 +115,19 @@ keymap through `xkbcomp` with `~/.config/xkb` on the include path because
 `scripts/xset-keyboard` sets the keyboard repeat rate (300 ms delay, 50 Hz) and
 turns the X bell off. It runs from `autostart.conf` with `exec_always`, so
 `i3-msg reload` also re-applies the settings.
+
+## Host-specific autostart
+
+`autostart.conf` calls `scripts/autostart-host.sh`, which sources
+`scripts/autostart/<hostname>.sh` (short hostname first, then the full one).
+Fragments are sourced, and long-lived programs must be backgrounded:
+
+```sh
+# scripts/autostart/destro.sh
+discord --start-minimized >/dev/null 2>&1 &
+yakuake >/dev/null 2>&1 &
+```
+
+`destro.sh` starts Discord and Yakuake; `blackslate.sh` is deliberately empty
+to keep the memory-constrained host minimal. Put anything only one machine
+needs in its fragment instead of the shared `autostart.conf`.

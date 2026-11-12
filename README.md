@@ -232,6 +232,24 @@ light/dark transitions are live.
 
 Create `~/.config/bash/local` for machine-specific settings (gitignored).
 
+### Per-host autostart (i3 and niri)
+
+Host-specific startup is kept out of the shared configs so one machine can be
+minimal without disabling programs for every host:
+
+- **i3**: `autostart.conf` calls `scripts/autostart-host.sh`, which sources
+  `~/.config/i3/scripts/autostart/<hostname>.sh`. Discord and Yakuake live in
+  `destro.sh`; `blackslate.sh` is intentionally empty.
+- **niri**: `niri-autostart.sh` sources
+  `~/.config/niri/scripts/autostart/<hostname>.sh` (Discord is in `destro.sh`).
+  Yakuake is started by its XDG autostart entry, so that systemd unit is gated
+  to destro with
+  `~/.config/systemd/user/app-org.kde.yakuake@autostart.service.d/10-host.conf`
+  (`ConditionHost=destro`).
+
+Add new per-host programs to the matching fragment. Keep the shared config for
+things every machine needs.
+
 ### DMS light/dark sync (niri + GTK + KDE + Ghostty)
 
 The `niri` package ships `dms-theme-sync.service`. It is enabled through

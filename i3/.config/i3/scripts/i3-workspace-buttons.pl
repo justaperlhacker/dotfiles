@@ -20,12 +20,10 @@ sub emit_workspaces {
         sub {
             my ($cv) = @_;
             my $workspaces = $cv->recv;
-            for my $w (@$workspaces) {
-                my $name = $w->{name} // "";
-                if ( length($name) > 1 && $name =~ /[a-z]\z/i ) {
-                    $w->{name} = substr( $name, 0, -1 );
-                }
-            }
+            # NOTE: names are passed through unmodified. A previous version
+            # stripped the per-monitor suffix (1a -> 1) for display, but
+            # i3bar activates buttons by the displayed name, so clicking "1"
+            # created/switched to a phantom workspace literally named "1".
             say encode_json($workspaces);
         }
     );

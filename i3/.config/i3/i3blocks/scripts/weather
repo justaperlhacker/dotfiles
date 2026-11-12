@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# weather - i3blocks weather block using wttr.in (no API key needed).
+#
+# Override the city with the WEATHER_CITY env var, e.g. in the i3blocks
+# config block:  WEATHER_CITY=Paris
+# Defaults to Montreal (matches the old openweather CITY_ID 6077243).
+# Last good reading is cached so the block never goes blank on transient
+# network failures.
+
+CITY="${WEATHER_CITY:-Montreal}"
+CACHE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/i3blocks-weather"
+
+command -v curl >/dev/null 2>&1 || { echo "weather: curl not installed"; exit 0; }
+mkdir -p "$(dirname "$CACHE_FILE")"
+
+RESPONSE=$(curl -s --max-time 10 --connect-timeout 5 "https://wttr.in/${CITY}?format=%t|%C") || RESPONSE=""
+
+if [[ -n "$RESPONSE" && "$RESPONSE" == *"|"* ]]; then
+    TEMP="${RESPONSE%%|*}"
+    CONDITION="${RESPONSE#*|}"
+    TEMP="${TEMP#+}"  # strip leading + from e.g. +21°C
+    case "$CONDITION" in
+        *Thunder*) ICON=$'\uf0e7' ;;                            # bolt
+        *Snow*|*Sleet*|*Blizzard*|*Hail*|*Ice*) ICON=$'\uf2dc' ;; # snowflake
+        *Rain*|*Drizzle*|*Shower*) ICON=$'\uf043' ;;             # tint
+        *Mist*|*Fog*|*Haze*|*Smoke*|*Dust*) ICON=$'\uf0c2' ;;     # cloud
+        *Partly*|*partly*) ICON=$'\uf6c4' ;;                     # cloud-sun
+        *Cloud*|*Overcast*) ICON=$'\uf0c2' ;;                    # cloud
+        *Sun*|*Clear*) ICON=$'\uf185' ;;                         # sun
+        *) ICON=$'\uf185' ;;
+    esac
+    OUTPUT="${ICON}  ${TEMP}"
+    printf '%s\n' "$OUTPUT" | tee "$CACHE_FILE"
+else
+    if [[ -f "$CACHE_FILE" ]]; then
+        cat "$CACHE_FILE"
+    else
+        echo "? --"
+    fi
+fi
+exit 0

@@ -50,8 +50,7 @@ full_text=:
 color=#717171
 
 [Weather]
-#command=~/.config/i3/scripts/openweather
-command=~/.config/i3/i3blocks/scripts/openweather-city
+command=~/.config/i3/i3blocks/scripts/weather
 interval=1800
 color=#7275b3
 

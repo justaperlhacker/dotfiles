@@ -34,3 +34,7 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[url "git@github-satrac:satrac/"]
+	insteadOf = git@github.com:satrac/
+[url "git@github-justaperlhacker:justaperlhacker/"]
+	insteadOf = git@github.com:justaperlhacker/

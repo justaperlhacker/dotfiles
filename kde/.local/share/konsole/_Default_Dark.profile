@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=false
 BorderWhenActive=true
-ColorScheme=Base2Tone Cave
+ColorScheme=Github Dark
 DimmValue=29
 FocusBorderColor=108,108,111
 Font=BerkeleyMono Nerd Font,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0

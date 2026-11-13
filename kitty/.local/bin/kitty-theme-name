@@ -1,0 +1,87 @@
+#!/bin/sh
+# Print the human-readable name of the kitty theme currently in effect.
+#
+# kitty applies colours in this order (later wins):
+#   - kitty.conf and its includes
+#   - <scheme>-theme.auto.conf for the OS colour scheme, if present.  These
+#     files override every other colour source, including --override.
+#
+# So ask the auto theme first, then the session palette (theme-session.d/
+# active.conf, written by i3-theme-sync / dms-theme-sync.sh), then the static
+# current-theme.conf.  This runs from fastfetch, including non-interactive
+# contexts, so it must never hang and never fail.
+
+confdir=${KITTY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/kitty}
+
+name_from() {
+    [ -r "$1" ] || return 0
+    sed -n 's/^##[[:space:]]*name:[[:space:]]*//p' "$1" 2>/dev/null |
+        head -n 1 |
+        tr -d '\r'
+}
+
+run_timeout() {
+    if command -v timeout >/dev/null 2>&1; then
+        timeout 2 "$@"
+    else
+        "$@"
+    fi
+}
+
+# light | dark | no-preference.  Prefer the XDG portal: that is what kitty
+# itself reads on Wayland.  Fall back to gsettings, which the desktop shells
+# here also keep in sync.
+os_scheme() {
+    value=
+    if command -v gdbus >/dev/null 2>&1; then
+        value=$(run_timeout gdbus call --session \
+            --dest org.freedesktop.portal.Desktop \
+            --object-path /org/freedesktop/portal/desktop \
+            --method org.freedesktop.portal.Settings.Read \
+            org.freedesktop.appearance color-scheme 2>/dev/null) || value=
+    fi
+    # 0 = no preference, 1 = prefer dark, 2 = prefer light
+    case $value in
+        *"uint32 1"*) printf '%s\n' dark; return 0 ;;
+        *"uint32 2"*) printf '%s\n' light; return 0 ;;
+        *"uint32 0"*) printf '%s\n' no-preference; return 0 ;;
+    esac
+
+    value=
+    if command -v gsettings >/dev/null 2>&1; then
+        value=$(run_timeout gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null |
+            tr -d "'\"")
+    fi
+    case $value in
+        prefer-dark)  printf '%s\n' dark ;;
+        prefer-light) printf '%s\n' light ;;
+        *)            printf '%s\n' no-preference ;;
+    esac
+}
+
+# Overridable for testing (and for unusual launchers that already know the
+# scheme): KITTY_THEME_SCHEME=dark|light|no-preference
+scheme=${KITTY_THEME_SCHEME:-$(os_scheme)}
+case $scheme in
+    dark|light|no-preference) ;;
+    *) scheme=no-preference ;;
+esac
+
+auto=$confdir/$scheme-theme.auto.conf
+if [ -r "$auto" ]; then
+    name=$(name_from "$auto")
+    if [ -z "$name" ]; then
+        case $scheme in
+            dark)  name='Kitty auto (dark)' ;;
+            light) name='Kitty auto (light)' ;;
+            *)     name='Kitty auto (no preference)' ;;
+        esac
+    fi
+else
+    name=$(name_from "$confdir/theme-session.d/active.conf")
+    [ -n "$name" ] || name=$(name_from "$confdir/current-theme.conf")
+fi
+
+[ -n "$name" ] || name='Unknown'
+
+printf '%s\n' "$name"

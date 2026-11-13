@@ -104,6 +104,14 @@ kitty_session=$kitty_session_dir/active.conf
 kitty_theme_hash=
 last_terminal_mode=
 
+kitty_theme_name() {
+    # Prefer an explicit "## name:" header in the generated palette, but
+    # never fail just because it is missing.
+    name=$(sed -n 's/^##[[:space:]]*name:[[:space:]]*//p' "$kitty_theme" 2>/dev/null | head -n 1)
+    [ -n "$name" ] || name='Dank (DMS)'
+    printf '%s\n' "$name"
+}
+
 ensure_terminal_session() {
     case $mode in
         dark|light) ;;
@@ -119,17 +127,44 @@ ensure_terminal_session() {
         changed=1
     fi
 
-    if [ -f "$kitty_theme" ]; then
-        hash=$(cat "$kitty_tabs" "$kitty_theme" 2>/dev/null | sha256sum | cut -d' ' -f1)
-        if [ -n "$hash" ] && { [ "$hash" != "$kitty_theme_hash" ] || [ ! -f "$kitty_session" ]; }; then
-            mkdir -p "$kitty_session_dir"
-            {
-                [ -f "$kitty_tabs" ] && cat "$kitty_tabs"
-                cat "$kitty_theme"
-            } > "$kitty_session"
-            changed=1
+    if [ -r "$kitty_theme" ]; then
+        hash=$({ kitty_theme_name; cat "$kitty_tabs" "$kitty_theme"; } 2>/dev/null | sha256sum | cut -d' ' -f1)
+        has_name=0
+        grep -q '^##[[:space:]]*name:' "$kitty_session" 2>/dev/null && has_name=1
+        if [ -n "$hash" ] && { [ "$hash" != "$kitty_theme_hash" ] || [ ! -f "$kitty_session" ] || [ "$has_name" = 0 ]; }; then
+            synced=0
+            if mkdir -p "$kitty_session_dir"; then
+                # Build the new file beside the live one, then rename it into
+                # place.  A missing optional piece or a failed read only
+                # discards the temp file; the previous theme keeps working.
+                tmp="$kitty_session.tmp.$$"
+                if {
+                    printf '## name: %s\n' "$(kitty_theme_name)"
+                    [ -r "$kitty_tabs" ] && cat "$kitty_tabs"
+                    cat "$kitty_theme"
+                } > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+                    if mv -f "$tmp" "$kitty_session"; then
+                        synced=1
+                    else
+                        rm -f "$tmp"
+                        echo "kitty: could not replace $kitty_session" >&2
+                    fi
+                else
+                    rm -f "$tmp"
+                    echo "kitty: could not write a complete $kitty_session" >&2
+                fi
+            else
+                echo "kitty: could not create $kitty_session_dir" >&2
+            fi
+            if [ "$synced" = 1 ]; then
+                changed=1
+                # Remember the hash only once the live file really matches it,
+                # so a transient failure is retried instead of being cached.
+                kitty_theme_hash=$hash
+            fi
+        else
+            kitty_theme_hash=$hash
         fi
-        kitty_theme_hash=$hash
     fi
 
     if [ "$changed" = 1 ] || [ "$mode" != "$last_terminal_mode" ]; then

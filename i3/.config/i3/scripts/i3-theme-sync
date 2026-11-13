@@ -382,14 +382,72 @@ sub set_kde_theme {
     }
 }
 
+# Prefer the palette's own "## name:" header (e.g. "GitHub Dark"), but fall
+# back to the theme id used on the command line / in theme-sync.conf.
+sub kitty_theme_name {
+    my ($source, $fallback) = @_;
+
+    if ( open my $fh, '<', $source ) {
+        while ( my $line = <$fh> ) {
+            if ( $line =~ /^##[ \t]*name:[ \t]*(.+?)[ \t]*$/ ) {
+                close $fh;
+                return $1;
+            }
+        }
+        close $fh;
+    }
+    return $fallback;
+}
+
 sub set_terminal_theme {
     my ($theme) = @_;
 
     my $kitty_source = "$HOME/.config/kitty/$theme.conf";
     make_path($KITTY_SESSION_DIR);
     if ( -r $kitty_source ) {
-        copy( $kitty_source, $KITTY_SESSION )
-          or logmsg("could not write $KITTY_SESSION: $!");
+        my $name = kitty_theme_name( $kitty_source, $theme );
+        my $tmp  = "$KITTY_SESSION.tmp.$$";
+
+        # Write to a temporary file first so a failed write (disk full,
+        # permissions, killed mid-write) leaves the previous session file
+        # intact instead of truncating it.
+        if ( open my $in, '<', $kitty_source ) {
+            if ( open my $out, '>', $tmp ) {
+                my $ok = print {$out} "## name: $name\n";
+
+                while ( my $line = <$in> ) {
+                    # Drop any existing header so the name can't appear twice.
+                    next if $line =~ /^##[ \t]*name:/;
+                    $ok &&= print {$out} $line;
+                }
+
+                # A short read (e.g. the file vanished) must not replace a
+                # good session file with a truncated palette.
+                $ok &&= eof $in;
+                my $closed = close $out;
+                $ok &&= $closed;
+                close $in;
+
+                if ( $ok && -s $tmp ) {
+                    rename( $tmp, $KITTY_SESSION )
+                      or do {
+                        logmsg("could not replace $KITTY_SESSION: $!");
+                        unlink $tmp;
+                      };
+                }
+                else {
+                    logmsg("could not write complete $tmp; keeping existing $KITTY_SESSION");
+                    unlink $tmp;
+                }
+            }
+            else {
+                logmsg("could not write $tmp: $!");
+                close $in;
+            }
+        }
+        else {
+            logmsg("could not read kitty palette $kitty_source: $!");
+        }
     }
     else {
         logmsg("missing kitty palette $kitty_source");

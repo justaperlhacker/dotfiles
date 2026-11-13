@@ -46,6 +46,19 @@ else
   vim.cmd.colorscheme("vague")
 end
 
+-- vague only changes Visual's background, which leaves the normal foreground
+-- sitting on a low-contrast tint and makes IncSearch nearly invisible. Use the
+-- terminal's selection pair for every selection-style group instead.
+local selection = helper.selection(background)
+if selection then
+  vim.api.nvim_set_hl(0, "Visual", { bg = selection.bg, fg = selection.fg })
+  vim.api.nvim_set_hl(0, "VisualNOS", { bg = selection.bg, fg = selection.fg })
+  vim.api.nvim_set_hl(0, "Search", { bg = selection.bg, fg = selection.fg })
+  vim.api.nvim_set_hl(0, "IncSearch", { bg = selection.fg, fg = selection.bg, bold = true })
+  vim.api.nvim_set_hl(0, "CurSearch", { bg = selection.fg, fg = selection.bg, bold = true })
+  vim.api.nvim_set_hl(0, "MatchParen", { bg = selection.bg, fg = selection.fg, bold = true })
+end
+
 -- Kraihnight is the only place the legacy Perl/POD/Raku groups are defined.
 -- Lift just those lines out of it and recolor them like everything else.
 local map = helper.kraihnight(background)

@@ -205,4 +205,34 @@ function M.source(background)
   return parse(path) and path or nil
 end
 
+--- The terminal's text selection pair.
+---
+--- Some kitty themes (including upstream Solarized Osaka Light) set
+--- selection_background equal to the normal background, which makes a
+--- selection invisible. Fall back to a visible tint in that case so Neovim
+--- does not inherit the same problem.
+---@param background "dark"|"light"
+---@return { bg: string, fg: string }|nil
+function M.selection(background)
+  local path = M.files[background == "light" and "light" or "dark"]
+  local p = parse(path)
+  if not p then
+    return nil
+  end
+
+  local bg, fg = p.background, p.foreground
+  local dark = luminance(bg) < 0.5
+  local selection_bg = p.selection_background
+  local selection_fg = p.selection_foreground
+
+  if not selection_bg or selection_bg == bg then
+    selection_bg = mix(bg, fg, dark and 0.30 or 0.18)
+  end
+  if not selection_fg or selection_fg == fg then
+    selection_fg = fg
+  end
+
+  return { bg = selection_bg, fg = selection_fg }
+end
+
 return M

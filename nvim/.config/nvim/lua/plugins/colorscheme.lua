@@ -97,6 +97,13 @@ return {
   T({ "lmburns/kimbox", name = "kimbox" }),
   T({ "piyush-ppradhan/naysayer.vim", name = "naysayer" }),
 
+  -- Solarized (upstream plugins)
+  -- craftzdog/solarized-osaka.nvim: solarized-osaka, -light, -vivid
+  -- ishan9299/nvim-solarized-lua: solarized-high (follows 'background'),
+  -- plus solarized, solarized-flat, solarized-low
+  T({ "craftzdog/solarized-osaka.nvim" }),
+  T({ "ishan9299/nvim-solarized-lua" }),
+
   -- Accessible / light-capable (ship light variants or high-legibility palettes)
   -- GitHub Dark / Github Light and the Primer variants.
   T({ "projekt0n/github-nvim-theme", name = "github-theme" }),

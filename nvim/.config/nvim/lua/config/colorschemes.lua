@@ -76,6 +76,13 @@ local colorscheme = {}
 -- colorscheme.name = "10x-icing"
 -- colorscheme.name = "10x-vs-plus-vax"
 
+-- Solarized (plugins in lua/plugins/colorscheme.lua)
+-- colorscheme.dark = "solarized-osaka"
+-- colorscheme.light = "solarized-osaka-light"
+-- colorscheme.dark = "solarized-osaka-vivid"
+-- colorscheme.dark = "solarized-high" -- high contrast, follows 'background'
+-- colorscheme.light = "solarized-high"
+
 -- Active theme, one per background. Neovim follows the local clock (dark
 -- between sunset and sunrise; see lua/config/auto-background.lua). Both themes
 -- must be installed; `fallback` is used if either fails to load.

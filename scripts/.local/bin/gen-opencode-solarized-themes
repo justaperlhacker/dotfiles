@@ -1,0 +1,698 @@
+#!/usr/bin/env python3
+"""gen-opencode-solarized-themes - generate Solarized themes for OpenCode.
+
+Writes these files into the OpenCode themes directory
+(default ~/.config/opencode/themes):
+
+  solarized-osaka-dark.json
+  solarized-osaka-light.json
+  solarized-high-contrast-dark.json
+  solarized-high-contrast-light.json
+
+Palette sources
+---------------
+* Solarized Osaka: craftzdog/solarized-osaka.nvim
+  (lua/solarized-osaka/colors.lua). Text tokens follow the upstream
+  Normal/NormalNC/Comment choices instead of the raw palette so Neovim and
+  OpenCode match.
+
+* Solarized high contrast: canonical Solarized values used by
+  ishan9299/nvim-solarized-lua's `solarized-high` colorscheme. The Neovim and
+  OpenCode sides intentionally share the same accent palette; only the
+  semantic text/background roles differ.
+
+The Neovim counterparts are upstream lazy.nvim plugins (see
+nvim/.config/nvim/lua/plugins/colorscheme.lua), so there is nothing to
+generate for Neovim here.
+
+Usage
+-----
+  gen-opencode-solarized-themes           # regenerate the JSON files
+  gen-opencode-solarized-themes --check   # validate and compare, write nothing
+  gen-opencode-solarized-themes --out DIR # write somewhere else
+
+Run it again after changing a palette in this file, or after pulling an upstream
+Solarized update.
+"""
+
+import argparse
+import copy
+import json
+import os
+import re
+import sys
+
+SCHEMA = "https://opencode.ai/theme.json"
+DEFAULT_OUT = "~/.config/opencode/themes"
+CATEGORICAL = ["accent", "green", "yellow", "blue", "purple", "cyan", "orange", "red"]
+
+
+# --------------------------------------------------------------------------
+# Color helpers
+# --------------------------------------------------------------------------
+
+
+def hex_to_rgb(value):
+    value = value.lstrip("#")
+    return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def rgb_to_hex(rgb):
+    return "#%02x%02x%02x" % tuple(max(0, min(255, round(c))) for c in rgb)
+
+
+def mix(a, b, t):
+    ra, rb = hex_to_rgb(a), hex_to_rgb(b)
+    return rgb_to_hex([ra[i] + (rb[i] - ra[i]) * t for i in range(3)])
+
+
+def scale(accent, dark=True):
+    """Build a nine-step hue scale.
+
+    Dark themes run bright (100) to dark (900). Light themes run dark (100) to
+    bright (900), matching the direction used by OpenCode's built-in themes.
+    """
+    steps = [0.55, 0.35, 0.15, 0.05, 0.0, 0.12, 0.25, 0.45, 0.65]
+    result = {}
+    for index, step in enumerate(steps, start=1):
+        if dark:
+            color = mix(accent, "#ffffff", step) if step <= 0.55 else mix(accent, "#000000", step)
+        else:
+            color = mix(accent, "#000000", step) if step <= 0.55 else mix(accent, "#ffffff", step)
+        result[str(index * 100)] = color
+    return result
+
+
+def invert(hue):
+    return {str(i): hue[str(1000 - i)] for i in range(100, 1000, 100)}
+
+
+# --------------------------------------------------------------------------
+# Solarized Osaka
+# --------------------------------------------------------------------------
+
+OSAKA_ACCENT_SCALES = {
+    "red": {
+        "100": "#ff9b99", "200": "#fb7674", "300": "#f65351", "400": "#ea413e",
+        "500": "#dc312e", "600": "#cd2623", "700": "#b7221f", "800": "#871917",
+        "900": "#57100f",
+    },
+    "orange": {
+        "100": "#ff9166", "200": "#fc723b", "300": "#f84f0d", "400": "#e55010",
+        "500": "#ca4c16", "600": "#b84514", "700": "#a23c11", "800": "#81310e",
+        "900": "#5c230a",
+    },
+    "yellow": {
+        "100": "#ffe999", "200": "#ffd54d", "300": "#ffbf00", "400": "#dba400",
+        "500": "#b28600", "600": "#8f6b00", "700": "#664d00", "800": "#4c3900",
+        "900": "#332700",
+    },
+    "green": {
+        "100": "#d6ffad", "200": "#bdff52", "300": "#b7fa00", "400": "#a3cc00",
+        "500": "#859900", "600": "#6f8000", "700": "#586600", "800": "#424c00",
+        "900": "#2c3300",
+    },
+    "cyan": {
+        "100": "#b8fffa", "200": "#6cf9ed", "300": "#2beede", "400": "#22d3c4",
+        "500": "#2aa298", "600": "#238682", "700": "#1a6365", "800": "#154f51",
+        "900": "#103a3c",
+    },
+    "blue": {
+        "100": "#a8dbff", "200": "#79c5fc", "300": "#47adf5", "400": "#309ce8",
+        "500": "#278bd3", "600": "#2078b6", "700": "#1b6498", "800": "#155079",
+        "900": "#103956",
+    },
+    "purple": {
+        "100": "#cccfff", "200": "#b4b7f9", "300": "#9ca0ed", "400": "#8084db",
+        "500": "#6d72c5", "600": "#5b60be", "700": "#494eb6", "800": "#363a87",
+        "900": "#25285b",
+    },
+}
+
+OSAKA_GRAY_DARK = {
+    "100": "#fdf6e2", "200": "#ede7d4", "300": "#adb8b8", "400": "#9fabad",
+    "500": "#647a82", "600": "#586e74", "700": "#073541", "800": "#002d38",
+    "900": "#00141a",
+}
+OSAKA_GRAY_LIGHT = {
+    "100": "#586e74", "200": "#586e74", "300": "#647a82", "400": "#9fabad",
+    "500": "#b6bfbe", "600": "#d9d5c4", "700": "#fdf6e2", "800": "#ede7d4",
+    "900": "#fffdf5",
+}
+
+
+def osaka_hues(dark):
+    if dark:
+        hues = copy.deepcopy(OSAKA_ACCENT_SCALES)
+        hues["gray"] = copy.deepcopy(OSAKA_GRAY_DARK)
+    else:
+        hues = {name: invert(values) for name, values in OSAKA_ACCENT_SCALES.items()}
+        hues["gray"] = copy.deepcopy(OSAKA_GRAY_LIGHT)
+    hues["accent"] = "$hue.green"
+    hues["interactive"] = "$hue.green"
+    hues["neutral"] = "$hue.gray"
+    return hues
+
+
+def osaka_dark_palette():
+    return {
+        "mode": "dark",
+        "hues": osaka_hues(True),
+        "bg": "#00141a",
+        "raised": "#002d38",
+        "raised_high": "#073541",
+        "raised_max": "#0b4046",
+        "text": "#9fabad",
+        "muted": "#647a82",
+        "faint": "#586e74",
+        "disabled": "#586e74",
+        "secondary": "#647a82",
+        "secondary_hover": "#9fabad",
+        "secondary_focus": "#ede7d4",
+        "border": "#073541",
+        "scrollbar": "#586e74",
+        "accent": "#859900",
+        "accent_hover": "#a3cc00",
+        "accent_focus": "#d6ffad",
+        "accent_press": "#6f8000",
+        "accent_select": "#a3cc00",
+        "destructive": "#dc312e",
+        "destructive_hover": "#ea413e",
+        "destructive_focus": "#f65351",
+        "destructive_press": "#cd2623",
+        "destructive_select": "#ea413e",
+        "destructive_bg": "#3a1b1e",
+        "destructive_bg_hover": "#4d2226",
+        "action_hover_bg": "#073541",
+        "action_press_bg": "#0b4451",
+        "formfield_bg": "#002d38",
+        "error": "#dc312e", "error_muted": "#871917", "error_bg": "#2a1a1d",
+        "warning": "#b28600", "warning_muted": "#664d00", "warning_bg": "#2d2517",
+        "success": "#859900", "success_muted": "#6f8000", "success_bg": "#1b2a17",
+        "info": "#278bd3", "info_muted": "#155079", "info_bg": "#10283a",
+        "diff_add_text": "#859900", "diff_del_text": "#dc312e",
+        "diff_context": "#9fabad", "diff_hunk": "#278bd3",
+        "diff_add_bg": "#103024", "diff_del_bg": "#35191d",
+        "diff_context_bg": "#0a2a30",
+        "diff_add_hl": "#1c5138", "diff_del_hl": "#5e262f",
+        "line_nr": "#586e74",
+        "syntax_comment": "#586e74", "syntax_keyword": "#859900",
+        "syntax_function": "#278bd3", "syntax_variable": "#9fabad",
+        "syntax_string": "#2aa298", "syntax_number": "#2aa298",
+        "syntax_type": "#b28600", "syntax_operator": "#859900",
+        "syntax_punctuation": "#9fabad",
+        "md_heading": "#d33682", "md_link": "#278bd3",
+        "md_link_text": "#6d72c5", "md_code": "#b28600",
+        "md_blockquote": "#9fabad", "md_emphasis": "#ca4c16",
+        "md_strong": "#b28600", "md_rule": "#073541",
+        "md_list": "#278bd3", "md_list_enum": "#6d72c5",
+        "md_image": "#d33682", "md_image_text": "#278bd3",
+        "md_code_block": "#9fabad",
+        "dialog_bg": "#002d38", "dialog_hover": "#073541",
+    }
+
+
+def osaka_light_palette():
+    return {
+        "mode": "light",
+        "hues": osaka_hues(False),
+        "bg": "#fdf6e2",
+        "raised": "#ede7d4",
+        "raised_high": "#f5f0e3",
+        "raised_max": "#fffdf5",
+        "text": "#647a82",
+        "muted": "#9fabad",
+        "faint": "#adb8b8",
+        "disabled": "#b6bfbe",
+        "secondary": "#9fabad",
+        "secondary_hover": "#586e74",
+        "secondary_focus": "#586e74",
+        "border": "#d9d5c4",
+        "scrollbar": "#b6bfbe",
+        "accent": "#859900",
+        "accent_hover": "#6f8000",
+        "accent_focus": "#586600",
+        "accent_press": "#859900",
+        "accent_select": "#6f8000",
+        "destructive": "#dc312e",
+        "destructive_hover": "#cd2623",
+        "destructive_focus": "#b7221f",
+        "destructive_press": "#dc312e",
+        "destructive_select": "#cd2623",
+        "destructive_bg": "#f6d3cd",
+        "destructive_bg_hover": "#f0beb8",
+        "action_hover_bg": "#e3dfcd",
+        "action_press_bg": "#d9d5c1",
+        "formfield_bg": "#ede7d4",
+        "error": "#dc312e", "error_muted": "#b7221f", "error_bg": "#f8ddd8",
+        "warning": "#b28600", "warning_muted": "#8f6b00", "warning_bg": "#f0e9cf",
+        "success": "#586600", "success_muted": "#6f8000", "success_bg": "#e2edcf",
+        "info": "#1b6498", "info_muted": "#278bd3", "info_bg": "#dceaf5",
+        "diff_add_text": "#586600", "diff_del_text": "#b7221f",
+        "diff_context": "#647a82", "diff_hunk": "#1b6498",
+        "diff_add_bg": "#dcecd0", "diff_del_bg": "#f6d3cd",
+        "diff_context_bg": "#f0e6d2",
+        "diff_add_hl": "#b9dda4", "diff_del_hl": "#f0b0a8",
+        "line_nr": "#b6bfbe",
+        "syntax_comment": "#9fabad", "syntax_keyword": "#859900",
+        "syntax_function": "#278bd3", "syntax_variable": "#647a82",
+        "syntax_string": "#2aa298", "syntax_number": "#2aa298",
+        "syntax_type": "#b28600", "syntax_operator": "#859900",
+        "syntax_punctuation": "#9fabad",
+        "md_heading": "#d33682", "md_link": "#278bd3",
+        "md_link_text": "#6d72c5", "md_code": "#b28600",
+        "md_blockquote": "#647a82", "md_emphasis": "#ca4c16",
+        "md_strong": "#8f6b00", "md_rule": "#d9d5c4",
+        "md_list": "#278bd3", "md_list_enum": "#6d72c5",
+        "md_image": "#d33682", "md_image_text": "#278bd3",
+        "md_code_block": "#647a82",
+        "dialog_bg": "#ede7d4", "dialog_hover": "#f5f0e3",
+    }
+
+
+# --------------------------------------------------------------------------
+# Solarized high contrast
+# --------------------------------------------------------------------------
+
+HC_ACCENTS = {
+    "red": "#dc322f",
+    "orange": "#cb4b16",
+    "yellow": "#b58900",
+    "green": "#859900",
+    "cyan": "#2aa198",
+    "blue": "#268bd2",
+    "purple": "#6c71c4",
+}
+
+HC_GRAY_DARK = {
+    "100": "#fdf6e3", "200": "#eee8d5", "300": "#93a1a1", "400": "#839496",
+    "500": "#657b83", "600": "#586e75", "700": "#073642", "800": "#002b36",
+    "900": "#001f27",
+}
+HC_GRAY_LIGHT = {
+    "100": "#586e75", "200": "#657b83", "300": "#839496", "400": "#93a1a1",
+    "500": "#b6bfbe", "600": "#c5c8bd", "700": "#eee8d5", "800": "#fdf6e3",
+    "900": "#fffdf5",
+}
+
+
+def hc_hues(dark):
+    hues = {name: scale(color, dark) for name, color in HC_ACCENTS.items()}
+    hues["gray"] = copy.deepcopy(HC_GRAY_DARK if dark else HC_GRAY_LIGHT)
+    hues["accent"] = "$hue.green"
+    hues["interactive"] = "$hue.green"
+    hues["neutral"] = "$hue.gray"
+    return hues
+
+
+def high_contrast_dark_palette():
+    return {
+        "mode": "dark",
+        "hues": hc_hues(True),
+        "bg": "#002b36",
+        "raised": "#073642",
+        "raised_high": "#0b3d4a",
+        "raised_max": "#0f4653",
+        "text": "#eee8d5",
+        "muted": "#93a1a1",
+        "faint": "#586e75",
+        "disabled": "#586e75",
+        "secondary": "#93a1a1",
+        "secondary_hover": "#eee8d5",
+        "secondary_focus": "#eee8d5",
+        "border": "#586e75",
+        "scrollbar": "#657b83",
+        "accent": "#859900",
+        "accent_hover": "#a3cc00",
+        "accent_focus": "#d6ffad",
+        "accent_press": "#6f8000",
+        "accent_select": "#a3cc00",
+        "destructive": "#dc322f",
+        "destructive_hover": "#ea413e",
+        "destructive_focus": "#f65351",
+        "destructive_press": "#c02724",
+        "destructive_select": "#ea413e",
+        "destructive_bg": "#4a1f22",
+        "destructive_bg_hover": "#64292d",
+        "action_hover_bg": "#073642",
+        "action_press_bg": "#0b4451",
+        "formfield_bg": "#073642",
+        "error": "#dc322f", "error_muted": "#8a2323", "error_bg": "#3a1f22",
+        "warning": "#b58900", "warning_muted": "#7a5c00", "warning_bg": "#3a3117",
+        "success": "#859900", "success_muted": "#5f7000", "success_bg": "#1f3a26",
+        "info": "#268bd2", "info_muted": "#1b5e91", "info_bg": "#113a4f",
+        "diff_add_text": "#859900", "diff_del_text": "#dc322f",
+        "diff_context": "#93a1a1", "diff_hunk": "#2aa198",
+        "diff_add_bg": "#0d3a2a", "diff_del_bg": "#3d1f22",
+        "diff_context_bg": "#073642",
+        "diff_add_hl": "#1b5a3a", "diff_del_hl": "#6b2f35",
+        "line_nr": "#586e75",
+        "syntax_comment": "#839496", "syntax_keyword": "#859900",
+        "syntax_function": "#268bd2", "syntax_variable": "#eee8d5",
+        "syntax_string": "#2aa198", "syntax_number": "#2aa198",
+        "syntax_type": "#b58900", "syntax_operator": "#859900",
+        "syntax_punctuation": "#657b83",
+        "md_heading": "#d33682", "md_link": "#268bd2",
+        "md_link_text": "#6c71c4", "md_code": "#b58900",
+        "md_blockquote": "#839496", "md_emphasis": "#cb4b16",
+        "md_strong": "#b58900", "md_rule": "#586e75",
+        "md_list": "#268bd2", "md_list_enum": "#6c71c4",
+        "md_image": "#d33682", "md_image_text": "#268bd2",
+        "md_code_block": "#eee8d5",
+        "dialog_bg": "#073642", "dialog_hover": "#0b3d4a",
+    }
+
+
+def high_contrast_light_palette():
+    return {
+        "mode": "light",
+        "hues": hc_hues(False),
+        "bg": "#fdf6e3",
+        "raised": "#eee8d5",
+        "raised_high": "#f5f0e3",
+        "raised_max": "#fffdf5",
+        "text": "#586e75",
+        "muted": "#657b83",
+        "faint": "#93a1a1",
+        "disabled": "#c5c8bd",
+        "secondary": "#657b83",
+        "secondary_hover": "#586e75",
+        "secondary_focus": "#586e75",
+        "border": "#c5c8bd",
+        "scrollbar": "#93a1a1",
+        "accent": "#859900",
+        "accent_hover": "#6f8000",
+        "accent_focus": "#586600",
+        "accent_press": "#859900",
+        "accent_select": "#6f8000",
+        "destructive": "#dc322f",
+        "destructive_hover": "#c02724",
+        "destructive_focus": "#a61f1d",
+        "destructive_press": "#dc322f",
+        "destructive_select": "#c02724",
+        "destructive_bg": "#f7d4d1",
+        "destructive_bg_hover": "#f2bcb8",
+        "action_hover_bg": "#e6e0cc",
+        "action_press_bg": "#dcd6c2",
+        "formfield_bg": "#eee8d5",
+        "error": "#dc322f", "error_muted": "#a61f1d", "error_bg": "#f8ddd9",
+        "warning": "#b58900", "warning_muted": "#7a5c00", "warning_bg": "#f4eccc",
+        "success": "#586600", "success_muted": "#6f8000", "success_bg": "#e3edcc",
+        "info": "#1b5e91", "info_muted": "#268bd2", "info_bg": "#dbeaf5",
+        "diff_add_text": "#859900", "diff_del_text": "#dc322f",
+        "diff_context": "#657b83", "diff_hunk": "#268bd2",
+        "diff_add_bg": "#dcecd0", "diff_del_bg": "#f6d3d0",
+        "diff_context_bg": "#f1e9d6",
+        "diff_add_hl": "#b9dda4", "diff_del_hl": "#f0b0a8",
+        "line_nr": "#93a1a1",
+        "syntax_comment": "#839496", "syntax_keyword": "#859900",
+        "syntax_function": "#268bd2", "syntax_variable": "#586e75",
+        "syntax_string": "#2aa198", "syntax_number": "#2aa198",
+        "syntax_type": "#b58900", "syntax_operator": "#859900",
+        "syntax_punctuation": "#657b83",
+        "md_heading": "#d33682", "md_link": "#268bd2",
+        "md_link_text": "#6c71c4", "md_code": "#b58900",
+        "md_blockquote": "#839496", "md_emphasis": "#cb4b16",
+        "md_strong": "#8f6b00", "md_rule": "#c5c8bd",
+        "md_list": "#268bd2", "md_list_enum": "#6c71c4",
+        "md_image": "#d33682", "md_image_text": "#268bd2",
+        "md_code_block": "#586e75",
+        "dialog_bg": "#eee8d5", "dialog_hover": "#f5f0e3",
+    }
+
+
+# --------------------------------------------------------------------------
+# Theme builder
+# --------------------------------------------------------------------------
+
+
+def build_theme(palette):
+    """Expand a palette role table into an OpenCode theme document."""
+    text = {
+        "base": palette["text"],
+        "muted": palette["muted"],
+        "faint": palette["faint"],
+        "action": {
+            "primary": {
+                "base": palette["accent"],
+                "$hovered": palette["accent_hover"],
+                "$focused": palette["accent_focus"],
+                "$pressed": palette["accent_press"],
+                "$selected": palette["accent_select"],
+                "$disabled": palette["disabled"],
+            },
+            "secondary": {
+                "base": palette["secondary"],
+                "$hovered": palette["secondary_hover"],
+                "$focused": palette["secondary_focus"],
+                "$pressed": palette["secondary_hover"],
+                "$selected": palette["secondary_hover"],
+                "$disabled": palette["disabled"],
+            },
+            "destructive": {
+                "base": palette["destructive"],
+                "$hovered": palette["destructive_hover"],
+                "$focused": palette["destructive_focus"],
+                "$pressed": palette["destructive_press"],
+                "$selected": palette["destructive_select"],
+                "$disabled": palette["disabled"],
+            },
+        },
+        "formfield": {
+            "base": palette["text"],
+            "$hovered": palette["accent"],
+            "$focused": palette["accent"],
+            "$pressed": palette["accent"],
+            "$selected": palette["accent"],
+            "$disabled": palette["disabled"],
+        },
+        "feedback": {
+            "error": {"base": palette["error"], "muted": palette["error_muted"]},
+            "warning": {"base": palette["warning"], "muted": palette["warning_muted"]},
+            "success": {"base": palette["success"], "muted": palette["success_muted"]},
+            "info": {"base": palette["info"], "muted": palette["info_muted"]},
+        },
+    }
+
+    background = {
+        "base": palette["bg"],
+        "raised": {
+            "base": palette["raised"],
+            "high": palette["raised_high"],
+            "max": palette["raised_max"],
+        },
+        "action": {
+            "primary": {
+                "base": "transparent",
+                "$hovered": palette["action_hover_bg"],
+                "$focused": palette["accent"],
+                "$pressed": palette["action_press_bg"],
+                "$selected": palette["action_hover_bg"],
+                "$disabled": "transparent",
+            },
+            "secondary": {
+                "base": "transparent",
+                "$hovered": palette["action_hover_bg"],
+                "$focused": palette["action_hover_bg"],
+                "$pressed": palette["action_press_bg"],
+                "$selected": palette["action_hover_bg"],
+                "$disabled": "transparent",
+            },
+            "destructive": {
+                "base": palette["destructive_bg"],
+                "$hovered": palette["destructive_bg_hover"],
+                "$focused": palette["destructive"],
+                "$pressed": palette["destructive_bg"],
+                "$selected": palette["destructive_bg_hover"],
+                "$disabled": "transparent",
+            },
+        },
+        "formfield": {"base": palette["formfield_bg"]},
+        "feedback": {
+            "error": {"base": palette["error_bg"]},
+            "warning": {"base": palette["warning_bg"]},
+            "success": {"base": palette["success_bg"]},
+            "info": {"base": palette["info_bg"]},
+        },
+    }
+
+    base = {
+        "categorical": list(CATEGORICAL),
+        "text": text,
+        "background": background,
+        "border": {"base": palette["border"]},
+        "scrollbar": {"base": palette["scrollbar"]},
+        "diff": {
+            "text": {
+                "added": palette["diff_add_text"],
+                "removed": palette["diff_del_text"],
+                "context": palette["diff_context"],
+                "hunkHeader": palette["diff_hunk"],
+            },
+            "background": {
+                "added": palette["diff_add_bg"],
+                "removed": palette["diff_del_bg"],
+                "context": palette["diff_context_bg"],
+            },
+            "highlight": {
+                "added": palette["diff_add_hl"],
+                "removed": palette["diff_del_hl"],
+            },
+            "lineNumber": {
+                "text": palette["line_nr"],
+                "background": {
+                    "added": palette["diff_add_bg"],
+                    "removed": palette["diff_del_bg"],
+                },
+            },
+        },
+        "syntax": {
+            "comment": palette["syntax_comment"],
+            "keyword": palette["syntax_keyword"],
+            "function": palette["syntax_function"],
+            "variable": palette["syntax_variable"],
+            "string": palette["syntax_string"],
+            "number": palette["syntax_number"],
+            "type": palette["syntax_type"],
+            "operator": palette["syntax_operator"],
+            "punctuation": palette["syntax_punctuation"],
+        },
+        "markdown": {
+            "text": palette["text"],
+            "heading": palette["md_heading"],
+            "link": palette["md_link"],
+            "linkText": palette["md_link_text"],
+            "code": palette["md_code"],
+            "blockQuote": palette["md_blockquote"],
+            "emphasis": palette["md_emphasis"],
+            "strong": palette["md_strong"],
+            "horizontalRule": palette["md_rule"],
+            "listItem": palette["md_list"],
+            "listEnumeration": palette["md_list_enum"],
+            "image": palette["md_image"],
+            "imageText": palette["md_image_text"],
+            "codeBlock": palette["md_code_block"],
+        },
+        "@dialog": {
+            "background": {
+                "base": palette["dialog_bg"],
+                "action": {"primary": {"$hovered": palette["dialog_hover"]}},
+            }
+        },
+    }
+
+    mode = palette["mode"]
+    return {"$schema": SCHEMA, "base": base, mode: {"hue": palette["hues"], **copy.deepcopy(base)}}
+
+
+# --------------------------------------------------------------------------
+# Validation
+# --------------------------------------------------------------------------
+
+HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+HUE_NAMES = ("gray", "red", "orange", "yellow", "green", "cyan", "blue", "purple")
+
+
+def walk(node, path=""):
+    if isinstance(node, dict):
+        for key, value in node.items():
+            yield from walk(value, f"{path}.{key}" if path else key)
+    elif isinstance(node, list):
+        for index, value in enumerate(node):
+            yield from walk(value, f"{path}[{index}]")
+    else:
+        yield path, node
+
+
+def validate(theme, name):
+    mode = "dark" if "dark" in theme else "light"
+    base = theme["base"]
+    overrides = theme[mode]
+
+    if sorted(base) != sorted(key for key in overrides if key != "hue"):
+        raise ValueError(f"{name}: base and {mode} token trees differ")
+
+    for hue in HUE_NAMES:
+        steps = sorted(overrides["hue"][hue])
+        if steps != [str(i) for i in range(100, 1000, 100)]:
+            raise ValueError(f"{name}: hue {hue} does not have nine steps")
+
+    aliases = {key: overrides["hue"].get(key) for key in ("accent", "interactive", "neutral")}
+    if aliases != {"accent": "$hue.green", "interactive": "$hue.green", "neutral": "$hue.gray"}:
+        raise ValueError(f"{name}: hue aliases are incorrect")
+
+    def resolve(reference):
+        node = overrides
+        for part in reference[1:].split("."):
+            node = node[part]
+        return node
+
+    for path, value in list(walk(base)) + list(walk({k: v for k, v in overrides.items() if k != "hue"})):
+        if path.startswith("categorical"):
+            continue
+        if not isinstance(value, str):
+            continue
+        if value.startswith("$"):
+            resolved = resolve(value)
+            if not (isinstance(resolved, dict) or resolved.startswith("#")):
+                raise ValueError(f"{name}:{path}: {value} resolved to {resolved!r}")
+        elif value != "transparent" and not HEX_RE.match(value):
+            raise ValueError(f"{name}:{path}: invalid color {value!r}")
+
+    for hue in base["categorical"]:
+        if hue not in overrides["hue"]:
+            raise ValueError(f"{name}: categorical hue {hue} is undefined")
+
+
+# --------------------------------------------------------------------------
+# Main
+# --------------------------------------------------------------------------
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate OpenCode Solarized themes.")
+    parser.add_argument("--out", default=os.path.expanduser(DEFAULT_OUT),
+                        help=f"output directory (default: {DEFAULT_OUT})")
+    parser.add_argument("--check", action="store_true",
+                        help="validate generated themes and compare with files on disk; write nothing")
+    args = parser.parse_args()
+
+    themes = {
+        "solarized-osaka-dark": build_theme(osaka_dark_palette()),
+        "solarized-osaka-light": build_theme(osaka_light_palette()),
+        "solarized-high-contrast-dark": build_theme(high_contrast_dark_palette()),
+        "solarized-high-contrast-light": build_theme(high_contrast_light_palette()),
+    }
+
+    if not args.check:
+        os.makedirs(args.out, exist_ok=True)
+
+    failures = 0
+    for name, theme in themes.items():
+        validate(theme, name)
+        path = os.path.join(args.out, name + ".json")
+
+        if args.check:
+            if not os.path.exists(path):
+                print(f"missing  {path}")
+                failures += 1
+                continue
+            with open(path, encoding="utf-8") as handle:
+                current = json.load(handle)
+            if current != theme:
+                print(f"outdated {path}")
+                failures += 1
+            else:
+                print(f"ok       {path}")
+            continue
+
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump(theme, handle, indent=2)
+            handle.write("\n")
+        print(f"wrote    {path}")
+
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

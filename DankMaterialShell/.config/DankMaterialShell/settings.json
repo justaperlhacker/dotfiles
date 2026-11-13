@@ -183,13 +183,16 @@
       "islandHomeCompactTight": true,
       "widgetStyle": "segments",
       "islandNotch": false,
-      "islandReserveThickness": 36,
+      "islandReserveThickness": 30,
       "islandCompactThickness": 32,
       "islandSatelliteGap": 6,
       "islandRouteLauncher": "island",
       "islandRouteControlCenter": "island",
       "islandInteractionMode": "hybrid",
-      "islandDashTabs": true
+      "islandDashTabs": true,
+      "islandFloating": false,
+      "islandPlacement": "edge",
+      "islandOuterGap": 4
     },
     {
       "id": "dot1793460496072",

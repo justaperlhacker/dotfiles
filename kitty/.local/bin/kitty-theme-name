@@ -8,8 +8,9 @@
 #
 # So ask the auto theme first, then the session palette (theme-session.d/
 # active.conf, written by i3-theme-sync / dms-theme-sync.sh), then the static
-# current-theme.conf.  This runs from fastfetch, including non-interactive
-# contexts, so it must never hang and never fail.
+# current-theme.conf, then kitty.conf's own include chain.  This runs from
+# fastfetch, including non-interactive contexts, so it must never hang and
+# never fail.
 
 confdir=${KITTY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/kitty}
 
@@ -18,6 +19,25 @@ name_from() {
     sed -n 's/^##[[:space:]]*name:[[:space:]]*//p' "$1" 2>/dev/null |
         head -n 1 |
         tr -d '\r'
+}
+
+# Last named file in kitty.conf's include chain.  Used when no auto theme
+# exists for the current scheme: kitty then falls back to the normal config
+# includes, so mirror which of them wins (later includes override earlier).
+name_from_includes() {
+    [ -r "$confdir/kitty.conf" ] || return 0
+    sed -n 's/^[[:space:]]*\(glob\)\{0,1\}include[[:space:]]\{1,\}//p' "$confdir/kitty.conf" |
+        while IFS= read -r inc; do
+            case $inc in
+                ''|'#'*) continue ;;
+                /*) target=$inc ;;
+                *) target=$confdir/$inc ;;
+            esac
+            for f in $target; do
+                name_from "$f"
+            done
+        done |
+        tail -n 1
 }
 
 run_timeout() {
@@ -78,8 +98,12 @@ if [ -r "$auto" ]; then
         esac
     fi
 else
+    # No auto theme for this scheme: kitty uses the normal config includes.
+    # Prefer the known session/default files, then walk kitty.conf itself so
+    # custom include layouts keep working too.
     name=$(name_from "$confdir/theme-session.d/active.conf")
     [ -n "$name" ] || name=$(name_from "$confdir/current-theme.conf")
+    [ -n "$name" ] || name=$(name_from_includes)
 fi
 
 [ -n "$name" ] || name='Unknown'

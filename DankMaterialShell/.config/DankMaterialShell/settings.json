@@ -123,6 +123,11 @@
         },
         "cpuUsage",
         "memUsage",
+        {
+          "id": "diskUsage",
+          "enabled": true,
+          "mountPath": "/"
+        },
         "notificationButton",
         {
           "id": "battery",
@@ -610,5 +615,6 @@
   "matugenTemplateVesktop": false,
   "matugenTemplateVencord": false,
   "matugenTemplateAlacritty": false,
-  "matugenSmartMode": false
+  "matugenSmartMode": false,
+  "systemTrayIconTintMode": "none"
 }

@@ -18,7 +18,7 @@ fi
 # Pi
 export PATH="/home/johnm/.pi/agent/bin:$PATH"
 # -- START ACTIVESTATE INSTALLATION
-export PATH="/home/johnm/.komodoide/12.0/XRE/state/bin:$PATH"
+export PATH="/tmp/opencode/gui-nm2/.komodoide/12.10/XRE/state/bin:$PATH"
 # -- STOP ACTIVESTATE INSTALLATION
 # -- START ACTIVESTATE DEFAULT RUNTIME ENVIRONMENT
 export PATH="/home/johnm/.cache/activestate/bin:$PATH"

@@ -21,6 +21,7 @@ TERMINAL & APPS
   $mod+Shift+F2         brave (incognito)
   $mod+F3               Gmail
   $mod+F9               toggle opencode (tmux session)
+  $mod+Shift+F9         toggle pi (tmux session)
   $mod+F10              toggle kilo (tmux session)
   $mod+F11              monitor (tmux session)
   $mod+F12              toggle yaquake

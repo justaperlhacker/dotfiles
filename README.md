@@ -453,7 +453,7 @@ pins a single **Scratchpads** button
 scratchpads run kitty with the same `--class tmux-scratchpad`, so their windows
 pool under that one button: Plasma shows the window count and scrolling over
 it cycles through them. Right-click the button for the per-session toggle
-actions (opencode, kilo, work, btop); clicking it with nothing open starts the
+actions (opencode, pi, kilo, work, btop); clicking it with nothing open starts the
 `opencode` scratchpad. It uses kitty's stock `Icon=kitty`, while the custom
 `kitty.desktop` keeps its ember icon, so manual kitty sessions and scratchpads
 are easy to tell apart. The script's `metadata.json` declares
@@ -462,7 +462,7 @@ a compositor restart**; without that key KWin silently ignores the script and
 the shortcut only works while it has been loaded by hand. **SUPER+F9** then
 spawns a
 centered, always-on-top Konsole running the `opencode` tmux session,
-**SUPER+SHIFT+F9** does the same for `kilo`, and
+**SUPER+SHIFT+F9** does the same for `pi`, and
 **SUPER+\\** (backslash) does the same for the `work` session in Konsole, and
 **SUPER+F11** for the system monitor in kitty (uses `dgop` if present, else
 `htop` → `btop` → `top`); pressing

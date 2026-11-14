@@ -60,6 +60,7 @@ our ( $KWIN_SVC, $KWIN_OBJ ) = ( 'org.kde.KWin', '/Scripting' );
 # ---------------------------------------------------------------------------
 my %PRESETS = (
     opencode => { cmd => 'opencode' },
+    pi       => { cmd => \&pi_command },
     kilo     => { cmd => 'kilo' },
     btop     => { cmd => 'btop' },
     htop     => { cmd => 'htop' },
@@ -133,6 +134,17 @@ sub first_available {
         }
     }
     return undef;
+}
+
+# Pi lives in ~/.pi/agent/bin, which is not normally part of the systemd user
+# manager's PATH.  Prefer a `pi` already on PATH, then fall back to the managed
+# launcher so the plasma-toggle-tmux@pi.service unit can still start a session.
+sub pi_command {
+    my $found = first_available('pi');
+    return $found if defined $found;
+    my $managed = ( $ENV{HOME} // '' ) . '/.pi/agent/bin/pi';
+    return $managed if -x $managed;
+    return 'pi';
 }
 
 # The systemd user manager can carry a stale WAYLAND_DISPLAY (e.g. wayland-1
@@ -440,7 +452,7 @@ sub usage ($code) {
           --install          enable + load the KWin shortcut script for this session
           -h, --help         show this help
 
-        Preset sessions: opencode, kilo, btop, htop, work
+        Preset sessions: opencode, pi, kilo, btop, htop, work
         USAGE
     exit $code;
 }
@@ -479,7 +491,7 @@ sub pin_scratchpad_launchers {
     my $wanted = 'applications:tmux-scratchpad.desktop';
     my @stale  = (
         'applications:plasma-toggle-tmux.desktop',
-        map {"applications:plasma-toggle-tmux-$_.desktop"} qw(opencode kilo work btop)
+        map {"applications:plasma-toggle-tmux-$_.desktop"} qw(opencode pi kilo work btop)
     );
     my $stale  = join ',', map { qq{"$_"} } @stale;
     my $js     = <<~"JS";
@@ -619,6 +631,6 @@ sub do_install {
         }
     }
 
-    print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+SHIFT+F9 kilo, SUPER+\\ work, SUPER+F11 btop.\n";
+    print "plasma-toggle-tmux: installed. SUPER+F9 opencode, SUPER+SHIFT+F9 pi, SUPER+\\ work, SUPER+F11 btop.\n";
     return 1;
 }

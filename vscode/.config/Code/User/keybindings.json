@@ -9,6 +9,16 @@
     "command": "workbench.action.togglePanel"
   },
   {
+    "key": "alt+m",
+    "command": "workbench.action.toggleMaximizedPanel",
+    "when": "!auxiliaryBarFocus"
+  },
+  {
+    "key": "shift+alt+m",
+    "command": "workbench.action.toggleMaximizedAuxiliaryBar",
+    "when": "auxiliaryBarFocus"
+  },
+  {
     "key": "ctrl+shift+l",
     "command": "toggle",
     "when": "editorTextFocus",

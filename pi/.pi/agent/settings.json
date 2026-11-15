@@ -6,7 +6,8 @@
     "npm:pi-permission-system",
     "npm:pi-undo-redo",
     "npm:pi-web-access",
-    "npm:pi-mcp-adapter"
+    "npm:pi-mcp-adapter",
+    "npm:pi-background-tasks@latest"
   ],
   "terminal": {
     "showTerminalProgress": true

@@ -367,6 +367,11 @@ window-rule {
     match app-id=r#"^com\.heroicgameslauncher\.hgl$"#
     open-maximized true
 }
+// VS Code — open maximized on startup.
+window-rule {
+    match app-id=r#"^com\.microsoft\.VSCode$"#
+    open-maximized true
+}
 
 // Include dms files
 include optional=true "dms/colors.kdl"

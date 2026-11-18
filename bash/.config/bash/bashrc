@@ -15,6 +15,44 @@ source ~/.config/bash/prompt
 # Load shell completions
 [[ -f "$HOME/.config/bash/completion" ]] && source "$HOME/.config/bash/completion"
 
+# aur-scan: wrap paru/yay (and pikaur/trizen/pakku) so AUR packages are scanned
+# before they build. Defines <helper>-unsafe as the deliberate bypass.
+# gate: AUR_SCAN_SEVERITY (default high); AUR_SCAN_MODE=install for race-free builds.
+if [[ -r /usr/share/aur-scan/integration.bash ]]; then
+    source /usr/share/aur-scan/integration.bash
+
+    # `yay <term>` shows a search menu and installs the pick AFTER the gate runs,
+    # so it can never be pre-scanned. Allow the menu, and enforce at build time:
+    # yay's makepkgbin is aur-scan-makepkg (scripts/.local/bin), which scans the
+    # exact package directory it is about to build. Everything else keeps the
+    # stock gate, including its dependency-tree pre-scan.
+    if declare -F _aur_scan_gate >/dev/null && declare -F _aur_scan_classify >/dev/null; then
+        export AUR_SCAN_ALLOW_MENU=1
+
+        _aur_scan_makepkg_bin() {
+            command yay -Pg 2>/dev/null |
+                sed -n 's/.*"makepkgbin"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p'
+        }
+
+        yay() {
+            # Reuse the shipped classifier rather than duplicating yay's flag grammar.
+            if [[ "${AUR_SCAN_ENABLED:-1}" == "1" ]] && _aur_scan_classify "$@" &&
+                [[ "$_AUR_SCAN_MENU" == "1" ]]; then
+                if [[ "$(_aur_scan_makepkg_bin)" == *aur-scan-makepkg ]]; then
+                    command yay "$@"
+                    return
+                fi
+                echo "aur-scan: menu install refused: yay's makepkgbin is not the aur-scan gate." >&2
+                echo "aur-scan: wire it with: yay --makepkg ~/.local/bin/aur-scan-makepkg --save -Pg" >&2
+                return 1
+            fi
+            _aur_scan_gate yay "$@"
+        }
+        # -unsafe skips both layers, not just the pre-scan.
+        yay-unsafe() { AUR_SCAN_ENABLED=0 AUR_SCAN_MAKEPKG_BYPASS=1 command yay "$@"; }
+    fi
+fi
+
 # shopt
 shopt -s autocd         # change to named directory
 shopt -s cdspell        # autocorrects cd misspellings

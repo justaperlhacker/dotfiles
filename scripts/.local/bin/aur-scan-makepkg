@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# aur-scan-makepkg - makepkg front-end that scans a package before building it.
+#
+# yay builds every AUR package by running its configured `makepkgbin` inside the
+# package's build directory. Pointing that at this script means a package picked
+# from yay's search menu (`yay <term>`) is still scanned -- at build time, on the
+# exact bytes that get built, so there is no scan/build gap. Named installs are
+# already pre-scanned by the shell integration; this is the backstop that also
+# covers the menu, split packages, local builds and other helpers.
+#
+# Env:
+#   AUR_SCAN_SEVERITY=high        gate threshold (same default as the shell integration)
+#   AUR_SCAN_MAKEPKG_BYPASS=1     run makepkg without scanning (deliberate bypass)
+#   AUR_SCAN_MAKEPKG_NOCONFIRM=1  never prompt; deny when the gate trips
+#   AUR_SCAN_REAL_MAKEPKG=<path>  the real makepkg (default: /usr/bin/makepkg)
+
+set -uo pipefail
+umask 077
+
+self=$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")
+real=${AUR_SCAN_REAL_MAKEPKG:-/usr/bin/makepkg}
+[[ -x $real ]] || real=$(type -P makepkg) || true
+if [[ -z ${real:-} || ! -x $real || $(readlink -f "$real") == "$self" ]]; then
+    echo "aur-scan-makepkg: cannot locate the real makepkg (set AUR_SCAN_REAL_MAKEPKG)." >&2
+    exit 1
+fi
+
+# Calls that only read metadata never run PKGBUILD code: pass them straight through.
+for a in "$@"; do
+    case $a in
+        --printsrcinfo|--packagelist|--help|-h|--version|-V) exec "$real" "$@" ;;
+    esac
+done
+
+[[ ${AUR_SCAN_MAKEPKG_BYPASS:-0} == 1 ]] && exec "$real" "$@"
+
+# Nothing to scan outside a package directory.
+[[ -f PKGBUILD ]] || exec "$real" "$@"
+
+scan=$(type -P aur-scan) || true
+if [[ -z ${scan:-} ]]; then
+    echo "aur-scan-makepkg: aur-scan not in PATH; refusing to build ${PWD##*/} unscanned." >&2
+    echo "aur-scan-makepkg: install aur-scanner, or set AUR_SCAN_MAKEPKG_BYPASS=1 to build anyway." >&2
+    exit 1
+fi
+
+sev=${AUR_SCAN_SEVERITY:-high}
+pkg_hash=$(sha256sum -- PKGBUILD | cut -d' ' -f1)
+
+# yay calls makepkg several times per package (--verifysource, --nobuild, then the
+# build). Scan once per yay process per package, keyed on the yay PID, its start
+# time and the PKGBUILD contents, so an edited PKGBUILD is always rescanned.
+rt=${XDG_RUNTIME_DIR:-/tmp}/aur-scan-makepkg
+mkdir -p "$rt" 2>/dev/null || rt=/tmp/aur-scan-makepkg-$UID
+start=$(sed 's/^.*) //' "/proc/$PPID/stat" 2>/dev/null | awk '{print $20}')
+key="$rt/${PPID}-${start:-0}-$(printf '%s' "$PWD" | sha256sum | cut -c1-16)"
+if [[ -f $key && $(<"$key") == "$pkg_hash" ]]; then
+    exec "$real" "$@"
+fi
+
+out=$(mktemp) || { echo "aur-scan-makepkg: mktemp failed; refusing." >&2; exit 1; }
+trap 'rm -f "$out"' EXIT
+
+"$scan" scan --fail-on "$sev" . >"$out" 2>&1
+rc=$?
+cat "$out"
+
+if (( rc == 0 )); then
+    printf '%s\n' "$pkg_hash" >"$key" 2>/dev/null
+    exec "$real" "$@"
+fi
+
+# SCAN-001 means the package could not be fully reviewed; that is never offered
+# a prompt, matching aur-scan's own policy for unreadable packages.
+interactive=1
+if [[ ${AUR_SCAN_MAKEPKG_NOCONFIRM:-0} == 1 ]]; then
+    interactive=0
+fi
+for a in "$@"; do
+    [[ $a == --noconfirm ]] && interactive=0
+done
+grep -q 'SCAN-001' "$out" && interactive=0
+
+tty_ok=0
+if (exec 3<>/dev/tty) 2>/dev/null; then tty_ok=1; fi
+
+if (( interactive == 1 && tty_ok == 1 )); then
+    printf 'aur-scan-makepkg: findings at or above "%s" in %s -- build it anyway? [y/N] ' \
+        "$sev" "${PWD##*/}" >/dev/tty
+    reply=
+    read -r reply </dev/tty || reply=
+    if [[ $reply == [yY]* ]]; then
+        printf '%s\n' "$pkg_hash" >"$key" 2>/dev/null
+        exec "$real" "$@"
+    fi
+fi
+
+echo "aur-scan-makepkg: not building ${PWD##*/}. Review with: aur-scan scan \"$PWD\"" >&2
+echo "aur-scan-makepkg: deliberate bypass: AUR_SCAN_MAKEPKG_BYPASS=1" >&2
+exit 1

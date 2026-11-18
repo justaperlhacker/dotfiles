@@ -1,0 +1,19 @@
+[config]
+
+# Obsidian theme, generated from the DMS/matugen palette.
+# Source of truth: ~/Projects/dank-obsidian-theme
+
+# Theme body kept in the project repo (git-tracked snapshot).
+[templates.dmsobsidiantheme]
+input_path = '/home/johnm/Projects/dank-obsidian-theme/template/dank-obsidian.css'
+output_path = '/home/johnm/Projects/dank-obsidian-theme/theme.css'
+
+# Installed copy inside the vault (what Obsidian actually loads).
+[templates.dmsobsidianvault]
+input_path = '/home/johnm/Projects/dank-obsidian-theme/template/dank-obsidian.css'
+output_path = '/home/johnm/OneDrive/Notes/Second-Brain/.obsidian/themes/Dank Matugen/theme.css'
+
+# Snippet fallback: keeps the DMS palette when a community theme is selected.
+[templates.dmsobsidian]
+input_path = '/home/johnm/Projects/dank-obsidian-theme/template/dank-obsidian.css'
+output_path = '/home/johnm/OneDrive/Notes/Second-Brain/.obsidian/snippets/dank-matugen.css'

@@ -1,0 +1,19 @@
+#!/bin/sh
+# Move the focused column to the monitor to the left, then to workspace N
+# on that monitor.  Bound to Mod+Ctrl+Shift+1..9 in custom-binds.kdl.
+#
+# niri workspace indices are positional (they address "the workspace currently
+# at position N on the focused monitor") and both switch_workspace() and
+# move_column_to_workspace() clamp to the last workspace.  There is no
+# "create workspace N" action, so if N is larger than the number of workspaces
+# on the target monitor, the window ends up on that monitor's bottom
+# (trailing empty) workspace instead.
+set -u
+
+ws=${1:?usage: move-column-to-left-workspace N}
+
+# Focus follows the column, so the second action resolves workspace N on the
+# left monitor.  If there is no monitor to the left this is a no-op and the
+# workspace move simply happens on the current monitor.
+niri msg action move-column-to-monitor-left
+niri msg action move-column-to-workspace "$ws"

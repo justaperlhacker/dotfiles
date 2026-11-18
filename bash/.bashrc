@@ -4,7 +4,7 @@
 
 
 # opencode
-export PATH=/home/johnm/.opencode/bin:$PATH
+#export PATH=/home/johnm/.opencode/bin:$PATH
 export PATH="$HOME/.local/lib/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/go/bin:$PATH"
 export GOPATH="$HOME/.local/go"
@@ -26,3 +26,6 @@ if [[ ! -z "$ACTIVESTATE_ACTIVATED" && -f "$ACTIVESTATE_ACTIVATED/activestate.ya
   echo "State Tool is operating on project $ACTIVESTATE_ACTIVATED_NAMESPACE, located at $ACTIVESTATE_ACTIVATED"
 fi
 # -- STOP ACTIVESTATE DEFAULT RUNTIME ENVIRONMENT
+
+# Pi
+export PATH="$HOME/.local/bin:$PATH"

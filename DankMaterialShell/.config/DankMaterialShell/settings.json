@@ -108,7 +108,13 @@
           "id": "dankPomodoroTimer",
           "enabled": true
         },
-        "focusedWindow"
+        {
+          "id": "focusedWindow",
+          "enabled": true,
+          "focusedWindowCompactMode": false,
+          "focusedWindowSize": 1,
+          "focusedWindowShowIcon": true
+        }
       ],
       "centerWidgets": [
         "music",
@@ -197,7 +203,8 @@
       "islandDashTabs": true,
       "islandFloating": false,
       "islandPlacement": "edge",
-      "islandOuterGap": 4
+      "islandOuterGap": 4,
+      "islandRouteNotificationCenter": "follow"
     },
     {
       "id": "dot1793460496072",
@@ -616,5 +623,6 @@
   "matugenTemplateVencord": false,
   "matugenTemplateAlacritty": false,
   "matugenSmartMode": false,
-  "systemTrayIconTintMode": "none"
+  "systemTrayIconTintMode": "none",
+  "osdPosition": 5
 }

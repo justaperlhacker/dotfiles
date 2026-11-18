@@ -1,0 +1,18 @@
+// Hand-written binds. Kept out of dms/binds.kdl so DMS can rewrite that file
+// without losing these.
+binds {
+    // Move the focused column to the left monitor, then to workspace N there.
+    //
+    // niri indices are positional and the workspace actions clamp to the last
+    // workspace, so N greater than the number of workspaces on the left
+    // monitor lands on its bottom (trailing empty) workspace.
+    Mod+Ctrl+Shift+1 hotkey-overlay-title="Move to Left Monitor, Workspace 1" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "1"; }
+    Mod+Ctrl+Shift+2 hotkey-overlay-title="Move to Left Monitor, Workspace 2" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "2"; }
+    Mod+Ctrl+Shift+3 hotkey-overlay-title="Move to Left Monitor, Workspace 3" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "3"; }
+    Mod+Ctrl+Shift+4 hotkey-overlay-title="Move to Left Monitor, Workspace 4" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "4"; }
+    Mod+Ctrl+Shift+5 hotkey-overlay-title="Move to Left Monitor, Workspace 5" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "5"; }
+    Mod+Ctrl+Shift+6 hotkey-overlay-title="Move to Left Monitor, Workspace 6" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "6"; }
+    Mod+Ctrl+Shift+7 hotkey-overlay-title="Move to Left Monitor, Workspace 7" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "7"; }
+    Mod+Ctrl+Shift+8 hotkey-overlay-title="Move to Left Monitor, Workspace 8" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "8"; }
+    Mod+Ctrl+Shift+9 hotkey-overlay-title="Move to Left Monitor, Workspace 9" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "9"; }
+}

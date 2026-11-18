@@ -372,12 +372,21 @@ window-rule {
     match app-id=r#"^com\.microsoft\.VSCode$"#
     open-maximized true
 }
+// Obsidian — open maximized on startup. Flatpak/Electron builds report
+// md.obsidian.Obsidian; accept plain "obsidian" too.
+window-rule {
+    match app-id=r#"^md\.obsidian\.Obsidian$"#
+    match app-id=r#"^obsidian$"#
+    open-maximized true
+}
 
 // Include dms files
 include optional=true "dms/colors.kdl"
 include optional=true "dms/layout.kdl"
 include optional=true "dms/alttab.kdl"
 include optional=true "dms/binds.kdl"
+// Hand-written binds (move to left monitor + workspace N).
+include optional=true "custom-binds.kdl"
 include optional=true "dms/outputs.kdl"
 include optional=true "dms/cursor.kdl"
 // DMS-managed window rules (this file existed but was never included, which is

@@ -77,6 +77,7 @@ auth.json
 
 # OpenWeatherMap API key — never commit; still deployed by stow
 i3/.config/i3/scripts/.env
+.env
 
 # i3 active theme symlink (managed by switch-theme/i3-theme-sync)
 /i3/.config/i3/themes/active

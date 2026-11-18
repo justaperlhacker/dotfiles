@@ -23,9 +23,9 @@ if [[ -r /usr/share/aur-scan/integration.bash ]]; then
 
     # `yay <term>` shows a search menu and installs the pick AFTER the gate runs,
     # so it can never be pre-scanned. Allow the menu, and enforce at build time:
-    # yay's makepkgbin is aur-scan-makepkg (scripts/.local/bin), which scans the
-    # exact package directory it is about to build. Everything else keeps the
-    # stock gate, including its dependency-tree pre-scan.
+    # yay's makepkgbin is aur-scan-makepkg (github.com/satrac/aur-scan-makepkg),
+    # which scans the exact package directory it is about to build. Everything
+    # else keeps the stock gate, including its dependency-tree pre-scan.
     if declare -F _aur_scan_gate >/dev/null && declare -F _aur_scan_classify >/dev/null; then
         export AUR_SCAN_ALLOW_MENU=1
 

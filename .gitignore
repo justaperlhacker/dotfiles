@@ -89,3 +89,9 @@ i3/.config/i3/scripts/.env
 # i3 theme-generated runtime files (switch-theme)
 /i3/.config/i3/rofi/theme-active.rasi
 /i3/.config/i3/dunst/dunstrc.active
+# Secrets — this repo is public. Never commit API keys.
+# llama-swap key lives at ~/.config/llama-swap/api_key (outside the repo, but
+# guard the path in case llama-swap is ever stowed into the dotfiles tree).
+api_key
+api_key.*
+**/llama-swap/api_key

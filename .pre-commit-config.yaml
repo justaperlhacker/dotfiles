@@ -1,0 +1,18 @@
+# Pre-commit hooks. This repo is public, so block accidental credential commits.
+#
+# Install once per clone:
+#   pre-commit install
+#
+# If detect-secrets flags a new false positive, audit/refresh the baseline:
+#   detect-secrets audit .secrets.baseline
+#   detect-secrets scan --baseline .secrets.baseline
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        name: detect-secrets (new credentials)
+        args: ["--baseline", ".secrets.baseline"]
+        # Package lockfiles are full of commit hashes; everything else is
+        # covered by the baseline.
+        exclude: '(?x)^(\.secrets\.baseline|.*(lazy-lock|plugins\.lock)\.json)$'

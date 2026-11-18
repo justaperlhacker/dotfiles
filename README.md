@@ -113,6 +113,26 @@ the script falls back to a numbered prompt. It honours `OPENCODE_DB`, `--db`,
 and `NO_COLOR`, and refuses to resume a session whose directory no longer
 exists.
 
+### AUR build gate (`aur-scan-makepkg`)
+
+`bash` sources aur-scan's shell integration so `yay`/`paru` scan AUR packages
+before building. Search-menu installs (`yay <term>`) can't be pre-scanned — the
+package is picked after the gate runs — so the menu is allowed and enforcement
+moves to build time.
+
+That build-time gate lives in its own repo, not here:
+[satrac/aur-scan-makepkg](https://github.com/satrac/aur-scan-makepkg). It is a
+`makepkg` front-end wired in as yay's `makepkgbin`, so it scans the exact
+package directory it is about to build.
+
+```bash
+install -Dm755 aur-scan-makepkg ~/.local/bin/aur-scan-makepkg
+yay --makepkg ~/.local/bin/aur-scan-makepkg --save -Pg
+```
+
+Deliberate bypass for both layers: `yay-unsafe` (or `AUR_SCAN_MAKEPKG_BYPASS=1`
+when calling `makepkg` through yay).
+
 ### kitty cursor animations (`cursor_trail`)
 
 Cursor animations are the builtin `cursor_trail` feature (kitty 0.37+, custom

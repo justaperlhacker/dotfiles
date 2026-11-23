@@ -108,6 +108,15 @@ my $suffixes = auto_assign_suffixes( $cfg, $host );
 
 %MONITOR_SUFFIX = %$suffixes;
 
+# Monitor cycle order for "move to other monitor". Suffixes are assigned
+# left-to-right in monitors.conf (a, b, c, d...), so sort them and wrap
+# around, which works for any number of monitors.
+my @monitor_order = sort keys %{ { map { $_ => 1 } values %MONITOR_SUFFIX } };
+my %NEXT_SUFFIX;
+for my $i ( 0 .. $#monitor_order ) {
+    $NEXT_SUFFIX{ $monitor_order[$i] } = $monitor_order[ ( $i + 1 ) % @monitor_order ];
+}
+
 my %KEYS = map { $_ => $_ } 1 .. 8;
 
 my $i3 = i3_connect();
@@ -144,7 +153,7 @@ sub on_binding($msg) {
                 return unless has_modifier( $mask, 'shift' );
                 my ($index) = $focused->{name} =~ /(\d+)/;
                 return unless defined $index;
-                my $other_suffix = $suffix eq 'a' ? 'b' : 'a';
+                my $other_suffix = $NEXT_SUFFIX{$suffix} // $suffix;
                 my $target       = "$index$other_suffix";
                 $command = "move container to workspace $target; workspace $target";
             }
@@ -153,7 +162,7 @@ sub on_binding($msg) {
                 return if $target eq ( $focused->{name} // '' );
 
                 if ( has_modifier( $mask, 'ctrl' ) && has_modifier( $mask, 'shift' ) ) {
-                    my $other_suffix = $suffix eq 'a' ? 'b' : 'a';
+                    my $other_suffix = $NEXT_SUFFIX{$suffix} // $suffix;
                     my $target       = "$local_index$other_suffix";
                     $command = "move container to workspace $target; workspace $target";
                 }

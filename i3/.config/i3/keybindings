@@ -62,9 +62,9 @@ SYSTEM
   $mod+Shift+r          restart i3
 
 WORKSPACES (per-monitor, niri-style via i3-multimonitor)
-  Each monitor has its own 1-8: left = 1a-8a (HDMI-A-1), right = 1b-8b
-  (DisplayPort-3). Keys are handled by the i3-multimonitor daemon and map to
-  the focused monitor's workspace set.
+  Each monitor has its own 1-8 workspace set, suffixed left-to-right (a, b,
+  c, d...). Keys are handled by the i3-multimonitor daemon and map to the
+  focused monitor's workspace set.
   $mod+1-8              switch to workspace N on focused monitor
   $mod+Shift+1-8        move focused window to workspace N and switch
   $mod+Ctrl+Shift+1-8   move focused window to same-index workspace on other monitor

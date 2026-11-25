@@ -1,0 +1,188 @@
+#!/usr/bin/env python3
+"""Report the colour theme of the terminal fastfetch is running in.
+
+fastfetch has no portable way to ask a terminal which theme it uses, so this
+dispatches to the per-terminal helpers kept in the dotfiles:
+
+    terminator -> terminator-theme-name    (Terminator's active profile)
+    kitty      -> kitty-theme-name         (kitty's auto/session palette)
+    konsole    -> konsole-theme-name       (Konsole's active colour scheme)
+
+Other well-known terminals are reported by name; anything unrecognised prints
+"Unknown".
+
+Inside tmux it follows the terminal attached to the tmux client rather than
+the environment the tmux server inherited - otherwise a server started in
+kitty would keep claiming "Kitty Theme" in panes attached from Terminator.
+
+This runs from fastfetch, so every external call is bounded and any failure
+degrades to a single printable line.
+"""
+
+import os
+import shutil
+import subprocess
+import sys
+
+# Process/argv basenames we can recognise while walking the parent chain.
+KNOWN = {
+    "terminator", "kitty", "ghostty", "wezterm-gui", "wezterm", "foot",
+    "footclient", "alacritty", "konsole", "gnome-terminal-server", "tilix",
+    "xfce4-terminal", "xterm", "urxvt", "st", "qterminal", "yakuake",
+}
+
+# Terminals with a dotfiles helper that knows their theme.
+HELPERS = {
+    "terminator": "terminator-theme-name",
+    "kitty": "kitty-theme-name",
+    "konsole": "konsole-theme-name",
+    "yakuake": "konsole-theme-name",
+}
+
+DISPLAY = {
+    "ghostty": "Ghostty",
+    "wezterm-gui": "WezTerm",
+    "wezterm": "WezTerm",
+    "foot": "foot",
+    "footclient": "foot",
+    "alacritty": "Alacritty",
+    "konsole": "Konsole",
+    "yakuake": "Yakuake",
+    "gnome-terminal-server": "GNOME Terminal",
+    "tilix": "Tilix",
+    "xfce4-terminal": "Xfce Terminal",
+    "xterm": "xterm",
+    "urxvt": "urxvt",
+    "st": "st",
+    "qterminal": "QTerminal",
+}
+
+
+def proc_info(pid):
+    try:
+        with open("/proc/%d/comm" % pid, encoding="utf-8", errors="replace") as fh:
+            comm = fh.read().strip()
+    except OSError:
+        comm = ""
+    try:
+        with open("/proc/%d/cmdline" % pid, "rb") as fh:
+            argv = [part.decode("utf-8", "replace")
+                    for part in fh.read().split(b"\0") if part]
+    except OSError:
+        argv = []
+    return comm, argv
+
+
+def parent_pid(pid):
+    try:
+        with open("/proc/%d/status" % pid, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                if line.startswith("PPid:"):
+                    return int(line.split()[1])
+    except (OSError, ValueError, IndexError):
+        pass
+    return 0
+
+
+def terminal_of(pid):
+    """Walk up the process tree and name the first known terminal we find."""
+    seen = set()
+    for _ in range(64):
+        if pid <= 1 or pid in seen:
+            return None
+        seen.add(pid)
+        comm, argv = proc_info(pid)
+        for candidate in [comm] + [os.path.basename(arg) for arg in argv]:
+            if candidate in KNOWN:
+                return candidate
+        pid = parent_pid(pid)
+    return None
+
+
+def tmux_client_pid():
+    if not os.environ.get("TMUX"):
+        return None
+    tmux = shutil.which("tmux")
+    if not tmux:
+        return None
+    try:
+        result = subprocess.run(
+            [tmux, "display-message", "-p", "#{client_pid}"],
+            capture_output=True, text=True, timeout=2,
+        )
+        pid = int(result.stdout.strip())
+        return pid if result.returncode == 0 and pid > 1 else None
+    except Exception:
+        return None
+
+
+def terminal_from_env(env):
+    if env.get("TERMINATOR_UUID"):
+        return "terminator"
+    if env.get("KITTY_PID"):
+        return "kitty"
+    if env.get("WEZTERM_PANE"):
+        return "wezterm-gui"
+    if env.get("ALACRITTY_WINDOW_ID"):
+        return "alacritty"
+    if env.get("GHOSTTY_RESOURCES_DIR"):
+        return "ghostty"
+    program = env.get("TERM_PROGRAM", "").lower()
+    if program in KNOWN and program != "tmux":
+        return program
+    if "kitty" in env.get("TERM", ""):
+        return "kitty"
+    return None
+
+
+def detect_terminal():
+    pid = tmux_client_pid()
+    if pid:
+        found = terminal_of(pid)
+        if found:
+            return found
+    found = terminal_of(os.getppid())
+    if found:
+        return found
+    return terminal_from_env(os.environ)
+
+
+def run_helper(name):
+    candidates = [shutil.which(name), os.path.expanduser("~/.local/bin/" + name)]
+    for candidate in candidates:
+        if not candidate or not os.access(candidate, os.X_OK):
+            continue
+        try:
+            result = subprocess.run(
+                [candidate], capture_output=True, text=True, timeout=3,
+            )
+            lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+            if lines:
+                return lines[0]
+        except Exception:
+            pass
+    return ""
+
+
+def main():
+    try:
+        # Testing/unusual-launcher override, mirroring KITTY_THEME_SCHEME.
+        term = os.environ.get("TERMINAL_THEME_FORCE", "").strip() or detect_terminal()
+    except Exception:
+        term = ""
+
+    name = ""
+    try:
+        if term in HELPERS:
+            name = run_helper(HELPERS[term])
+        elif term:
+            name = DISPLAY.get(term, "")
+    except Exception:
+        name = ""
+
+    print(name or "Unknown")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

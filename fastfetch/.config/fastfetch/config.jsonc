@@ -15,17 +15,31 @@
     "wmtheme",
     "theme",
     "icons",
+    // Desktop (GTK/KDE) font, not the terminal's font.  Keep both: the
+    // terminal font is reported separately below.
     "font",
     "cursor",
     "terminal",
-    "terminalfont",
-    // Reports the active kitty auto theme (dark/light/no-preference), with the
-    // session palette as fallback.  Fall back to a literal so a missing helper
-    // can never break fastfetch.
+    // fastfetch's built-in terminalfont module cannot read Konsole profiles
+    // (it looks for ~/.local/share/konsole/<profile> but Konsole writes
+    // <profile>.profile) and it stops at tmux instead of following the tmux
+    // client's terminal.  The helper does both and also reads kitty,
+    // terminator, ghostty, foot and wezterm configs.
     {
       "type": "command",
-      "key": "Kitty Theme",
-      "text": "$HOME/.local/bin/kitty-theme-name 2>/dev/null || printf 'Unknown\\n'"
+      "key": "Terminal Font",
+      "text": "$HOME/.local/bin/terminal-font-name 2>/dev/null || printf 'Unknown\\n'"
+    },
+    // Terminal-aware theme name: Terminator reports its active profile,
+    // kitty reports its auto/session palette, Konsole reports its profile's
+    // colour scheme.  Under tmux it follows the terminal attached to the tmux
+    // client, so a tmux server started in one terminal does not claim its
+    // theme in panes attached from another.
+    // Fall back to a literal so a missing helper can never break fastfetch.
+    {
+      "type": "command",
+      "key": "Terminal Theme",
+      "text": "$HOME/.local/bin/terminal-theme-name 2>/dev/null || printf 'Unknown\\n'"
     },
     "cpu",
     "gpu",

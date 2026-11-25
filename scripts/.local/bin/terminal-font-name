@@ -1,0 +1,562 @@
+#!/usr/bin/env python3
+"""Report the font family and size of the terminal fastfetch is running in.
+
+fastfetch's built-in TerminalFont module cannot reliably answer this:
+
+  * For Konsole it looks for ~/.local/share/konsole/<profile>, but Konsole
+    writes <profile>.profile, so the module gives up (and with --show-errors
+    reports "Couldn't find Font=... in konsole/<profile>").
+  * In tmux it stops at the tmux server instead of following the terminal
+    that owns the tmux client.  fastfetch runs on every interactive bash
+    startup here, including tmux panes, so that matters.
+
+So this dispatches to per-terminal readers, following the same detection as
+terminal-theme-name:
+
+    konsole / yakuake -> <profile>.profile, honouring the light/dark sync
+    kitty             -> kitty.conf include chain (font_family/font_size)
+    terminator        -> active profile's font
+    ghostty           -> font-family / font-size
+    foot              -> foot.ini font=
+    wezterm           -> wezterm.lua config.font / config.font_size
+
+Everything is best effort: external calls are bounded, missing or unparsable
+configs degrade to "Unknown", and nothing is allowed to hang or raise.
+"""
+
+import configparser
+import glob
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+
+# Process/argv basenames we can recognise while walking the parent chain.
+KNOWN = {
+    "terminator", "kitty", "ghostty", "wezterm-gui", "wezterm", "foot",
+    "footclient", "alacritty", "konsole", "gnome-terminal-server", "tilix",
+    "xfce4-terminal", "xterm", "urxvt", "st", "qterminal", "yakuake",
+}
+
+
+def proc_info(pid):
+    try:
+        with open("/proc/%d/comm" % pid, encoding="utf-8", errors="replace") as fh:
+            comm = fh.read().strip()
+    except OSError:
+        comm = ""
+    try:
+        with open("/proc/%d/cmdline" % pid, "rb") as fh:
+            argv = [part.decode("utf-8", "replace")
+                    for part in fh.read().split(b"\0") if part]
+    except OSError:
+        argv = []
+    return comm, argv
+
+
+def parent_pid(pid):
+    try:
+        with open("/proc/%d/status" % pid, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                if line.startswith("PPid:"):
+                    return int(line.split()[1])
+    except (OSError, ValueError, IndexError):
+        pass
+    return 0
+
+
+def terminal_of(pid):
+    """Walk up the process tree and name the first known terminal we find."""
+    seen = set()
+    for _ in range(64):
+        if pid <= 1 or pid in seen:
+            return None
+        seen.add(pid)
+        comm, argv = proc_info(pid)
+        for candidate in [comm] + [os.path.basename(arg) for arg in argv]:
+            if candidate in KNOWN:
+                return candidate
+        pid = parent_pid(pid)
+    return None
+
+
+def tmux_client_pid():
+    if not os.environ.get("TMUX"):
+        return None
+    tmux = shutil.which("tmux")
+    if not tmux:
+        return None
+    try:
+        result = subprocess.run(
+            [tmux, "display-message", "-p", "#{client_pid}"],
+            capture_output=True, text=True, timeout=2,
+        )
+        pid = int(result.stdout.strip())
+        return pid if result.returncode == 0 and pid > 1 else None
+    except Exception:
+        return None
+
+
+def terminal_from_env(env):
+    if env.get("TERMINATOR_UUID"):
+        return "terminator"
+    if env.get("KITTY_PID"):
+        return "kitty"
+    if env.get("WEZTERM_PANE"):
+        return "wezterm-gui"
+    if env.get("ALACRITTY_WINDOW_ID"):
+        return "alacritty"
+    if env.get("GHOSTTY_RESOURCES_DIR"):
+        return "ghostty"
+    program = env.get("TERM_PROGRAM", "").lower()
+    if program in KNOWN and program != "tmux":
+        return program
+    if "kitty" in env.get("TERM", ""):
+        return "kitty"
+    return None
+
+
+def detect_terminal():
+    pid = tmux_client_pid()
+    if pid:
+        found = terminal_of(pid)
+        if found:
+            return found
+    found = terminal_of(os.getppid())
+    if found:
+        return found
+    return terminal_from_env(os.environ)
+
+
+def config_home():
+    return os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+
+
+def config_dirs():
+    dirs = [config_home()]
+    for item in os.environ.get("XDG_CONFIG_DIRS", "/etc/xdg").split(":"):
+        if item and item not in dirs:
+            dirs.append(item)
+    return dirs
+
+
+def data_dirs():
+    home = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
+    dirs = [home]
+    for item in os.environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share").split(":"):
+        if item and item not in dirs:
+            dirs.append(item)
+    return dirs
+
+
+def first_file(relative, bases=None):
+    for base in bases or config_dirs():
+        path = os.path.join(base, relative)
+        if os.path.isfile(path):
+            return path
+    return None
+
+
+def read_text(path):
+    if not path:
+        return ""
+    try:
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            return fh.read()
+    except OSError:
+        return ""
+
+
+def run(argv, cwd=None, timeout=2):
+    try:
+        result = subprocess.run(
+            argv, cwd=cwd, capture_output=True, text=True, timeout=timeout,
+        )
+        return result.stdout or ""
+    except Exception:
+        return ""
+
+
+def parse_ini(text):
+    """Parse a KConfig-style file into {section: {key: value}}."""
+    try:
+        parser = configparser.ConfigParser(interpolation=None, strict=False)
+        parser.optionxform = str
+        parser.read_string(text)
+        return {section: dict(parser.items(section))
+                for section in parser.sections()}
+    except Exception:
+        return {}
+
+
+def parse_ini_file(path):
+    return parse_ini(read_text(path)) if path else {}
+
+
+def option(section, key):
+    for candidate, value in (section or {}).items():
+        if candidate.lower() == key.lower():
+            return value.strip()
+    return ""
+
+
+def pretty(family, size=""):
+    family = (family or "").strip().strip("'\"")
+    size = (size or "").strip().lower().removesuffix("pt").strip()
+    if size:
+        try:
+            number = float(size)
+            size = str(int(number)) if number.is_integer() else str(number)
+        except ValueError:
+            pass
+    if family and size:
+        return "%s (%spt)" % (family, size)
+    if family:
+        return family
+    return "Unknown"
+
+
+def parse_qt_font(value):
+    """Qt stores fonts as Family,PointSize,-1,Weight,..."""
+    parts = [part.strip() for part in value.split(",")]
+    family = parts[0] if parts else ""
+    size = parts[1] if len(parts) > 1 else ""
+    return family, size
+
+
+def parse_pango_font(value):
+    """Pango / Xft stores fonts as 'Family Name 11' or 'Family Name-11'."""
+    value = (value or "").strip()
+    match = re.match(r"^(.*?)\s+(\d+(?:\.\d+)?)$", value)
+    if match:
+        return match.group(1), match.group(2)
+    match = re.match(r"^(.*?)-(\d+(?:\.\d+)?)$", value)
+    if match:
+        return match.group(1), match.group(2)
+    return value, ""
+
+
+# ---------------------------------------------------------------- Konsole
+
+def scheme_is_dark():
+    """Follow the desktop colour scheme Konsole's light/dark sync reacts to."""
+    kdeglobals = parse_ini_file(first_file("kdeglobals"))
+    name = option(kdeglobals.get("General", {}), "ColorScheme")
+    if name:
+        lowered = name.lower()
+        if "dark" in lowered:
+            return True
+        if "light" in lowered:
+            return False
+
+    out = run([
+        "gdbus", "call", "--session",
+        "--dest", "org.freedesktop.portal.Desktop",
+        "--object-path", "/org/freedesktop/portal/desktop",
+        "--method", "org.freedesktop.portal.Settings.Read",
+        "org.freedesktop.appearance", "color-scheme",
+    ])
+    # 0 = no preference, 1 = prefer dark, 2 = prefer light
+    if "uint32 1" in out:
+        return True
+    if "uint32 2" in out:
+        return False
+
+    out = run(["gsettings", "get", "org.gnome.desktop.interface", "color-scheme"])
+    lowered = out.strip().strip("'\"").lower()
+    if lowered == "prefer-light":
+        return False
+    if lowered == "prefer-dark":
+        return True
+    return True
+
+
+def kde_monospace():
+    path = first_file("kdeglobals")
+    if path:
+        fixed = option(parse_ini_file(path).get("General", {}), "fixed")
+        if fixed:
+            return parse_qt_font(fixed)
+    return "", ""
+
+
+def konsole_profile_path(name):
+    name = name.strip()
+    if name.endswith(".profile"):
+        name = name[:-len(".profile")]
+    for base in data_dirs():
+        for filename in (name + ".profile", name):
+            path = os.path.join(base, "konsole", filename)
+            if os.path.isfile(path):
+                return path
+    return None
+
+
+def konsole_font(term):
+    rc_name = "yakuakerc" if term == "yakuake" else "konsolerc"
+    config = parse_ini_file(first_file(rc_name))
+    if term == "yakuake" and not option(config.get("Desktop Entry", {}), "DefaultProfile"):
+        # Yakuake keeps its window settings in yakuakerc but the profile list
+        # itself comes from Konsole.
+        config = parse_ini_file(first_file("konsolerc"))
+
+    profile = option(config.get("Desktop Entry", {}), "DefaultProfile")
+
+    theme = config.get("LightDarkTheme", {})
+    if option(theme, "SyncProfileWithSystemTheme").lower() in ("true", "1", "yes"):
+        key = "DarkThemeProfile" if scheme_is_dark() else "LightThemeProfile"
+        profile = option(theme, key) or profile
+
+    seen = set()
+    while profile and profile not in seen and len(seen) < 8:
+        seen.add(profile)
+        path = konsole_profile_path(profile)
+        if not path:
+            break
+        appearance = parse_ini_file(path).get("Appearance", {})
+        font = option(appearance, "Font")
+        if font:
+            return parse_qt_font(font)
+        profile = option(parse_ini_file(path).get("General", {}), "Parent")
+        if not profile or profile.upper() == "FALLBACK/":
+            break
+
+    # A profile without Font= inherits Konsole's built-in default.
+    family, size = kde_monospace()
+    if not family:
+        family, size = gtk_monospace()
+    return family, size
+
+
+# ------------------------------------------------------------------ kitty
+
+def kitty_config_dir():
+    return os.environ.get("KITTY_CONFIG_DIR") or os.path.join(config_home(), "kitty")
+
+
+def kitty_family(value):
+    match = re.search(r"""family\s*=\s*(?:"([^"]*)"|'([^']*)'|(\S+))""", value)
+    if match:
+        return next(group for group in match.groups() if group)
+    if "=" in value:
+        return ""
+    return value.strip().strip("'\"")
+
+
+def kitty_font():
+    state = {"family": "", "size": ""}
+    stack = []
+
+    def handle_line(line, base, depth):
+        line = line.strip()
+        if not line or line.startswith("#") or depth > 16:
+            return
+        key, _, value = line.partition(" ")
+        if not _:
+            key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip()
+
+        if key in ("include", "globinclude"):
+            pattern = os.path.expanduser(value)
+            if not os.path.isabs(pattern):
+                pattern = os.path.join(base, pattern)
+            for included in sorted(glob.glob(pattern)):
+                handle_file(included, depth + 1)
+        elif key == "geninclude":
+            try:
+                argv = shlex.split(value)
+            except ValueError:
+                return
+            if argv and not os.path.isabs(argv[0]):
+                local = os.path.join(base, argv[0])
+                if os.path.isfile(local):
+                    argv[0] = local
+            for generated in run(argv, cwd=base).splitlines():
+                handle_line(generated, base, depth + 1)
+        elif key == "font_family":
+            family = kitty_family(value)
+            if family:
+                state["family"] = family
+        elif key == "font_size" and value:
+            state["size"] = value
+
+    def handle_file(path, depth=0):
+        real = os.path.realpath(path)
+        if real in stack or depth > 16:
+            return
+        stack.append(real)
+        try:
+            base = os.path.dirname(path)
+            for line in read_text(path).splitlines():
+                handle_line(line, base, depth)
+        finally:
+            stack.pop()
+
+    handle_file(os.path.join(kitty_config_dir(), "kitty.conf"))
+    return state["family"] or "monospace", state["size"] or "11"
+
+
+# ------------------------------------------------------------- terminator
+
+def parse_terminator_config(text):
+    """Parse Terminator's nested INI format into {(section, ...): {key: value}}."""
+    data = {}
+    stack = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("["):
+            depth = 0
+            while depth < len(line) and line[depth] == "[":
+                depth += 1
+            end = line.find("]" * depth)
+            name = line[depth:end] if end != -1 else line[depth:]
+            stack = stack[:depth - 1] + [name.strip()]
+            continue
+        if "=" not in line or not stack:
+            continue
+        key, _, value = line.partition("=")
+        data.setdefault(tuple(stack), {})[key.strip()] = value.strip()
+    return data
+
+
+def terminator_profile(data):
+    enabled = data.get(("global_config",), {}).get("enabled_plugins", "")
+    if "AutoTheme" in [item.strip() for item in enabled.split(",") if item.strip()]:
+        auto = data.get(("plugins", "AutoTheme"), {})
+        mode = auto.get("mode", "Auto")
+        light = auto.get("light") or None
+        dark = auto.get("dark") or None
+        if mode == "Light" and light:
+            return light
+        if mode == "Dark" and dark:
+            return dark
+        if mode == "Auto":
+            chosen = dark if scheme_is_dark() else light
+            if chosen:
+                return chosen
+        elif light or dark:
+            return light or dark
+
+    for path, values in data.items():
+        if len(path) == 3 and path[0] == "layouts" and path[1] == "default":
+            profile = values.get("profile")
+            if profile:
+                return profile
+    return "default"
+
+
+def gtk_monospace():
+    out = run(["gsettings", "get", "org.gnome.desktop.interface",
+               "monospace-font-name"])
+    return parse_pango_font(out.strip().strip("'\""))
+
+
+def terminator_font():
+    data = parse_terminator_config(read_text(first_file("terminator/config")))
+    name = terminator_profile(data)
+    profile = data.get(("profiles", name)) or data.get(("profiles", "default"))
+    if not profile:
+        for path, values in data.items():
+            if len(path) == 2 and path[0] == "profiles":
+                profile = values
+                break
+    if not profile:
+        return "", ""
+
+    if profile.get("use_system_font", "False").lower() == "true":
+        return gtk_monospace()
+    return parse_pango_font(profile.get("font", ""))
+
+
+# ------------------------------------------------------ ghostty / foot / wezterm
+
+def ghostty_font():
+    path = first_file("ghostty/config")
+    family, size = "", ""
+    for raw in read_text(path).splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip().lower()
+        value = value.strip().strip("'\"")
+        if key == "font-family" and not family:
+            family = value
+        elif key == "font-size" and value:
+            size = value
+    return family or "monospace", size or "12"
+
+
+def foot_font():
+    path = first_file("foot/foot.ini")
+    font = ""
+    for raw in read_text(path).splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        if key.strip().lower() == "font":
+            font = value.strip()
+            break
+
+    entry = font.split(",")[0]
+    match = re.search(r"size=(\d+(?:\.\d+)?)", entry)
+    if match:
+        family = entry.split(":")[0]
+        return family, match.group(1)
+    family, size = parse_pango_font(entry)
+    return family or "monospace", size or "8"
+
+
+def wezterm_font():
+    path = first_file(os.path.join("wezterm", "wezterm.lua")) or first_file(".wezterm.lua")
+    text = read_text(path)
+    match = re.search(
+        r"""config\.font\s*=\s*.*?font(?:_with_fallback)?\s*\(\s*\{?\s*["']([^"']+)["']""",
+        text, re.S,
+    )
+    if not match:
+        match = re.search(r"""config\.font\s*=\s*["']([^"']+)["']""", text)
+    size = re.search(r"config\.font_size\s*=\s*(\d+(?:\.\d+)?)", text)
+    return (match.group(1) if match else ""), (size.group(1) if size else "12")
+
+
+READERS = {
+    "konsole": lambda term: konsole_font("konsole"),
+    "yakuake": lambda term: konsole_font("yakuake"),
+    "kitty": lambda term: kitty_font(),
+    "terminator": lambda term: terminator_font(),
+    "ghostty": lambda term: ghostty_font(),
+    "foot": lambda term: foot_font(),
+    "footclient": lambda term: foot_font(),
+    "wezterm": lambda term: wezterm_font(),
+    "wezterm-gui": lambda term: wezterm_font(),
+}
+
+
+def main():
+    try:
+        # Testing/unusual-launcher override, mirroring KITTY_THEME_SCHEME.
+        term = os.environ.get("TERMINAL_FONT_FORCE", "").strip() or detect_terminal()
+    except Exception:
+        term = ""
+
+    family, size = "", ""
+    reader = READERS.get(term or "")
+    if reader:
+        try:
+            family, size = reader(term)
+        except Exception:
+            family, size = "", ""
+
+    print(pretty(family, size))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

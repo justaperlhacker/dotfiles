@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Print the colour scheme name Konsole (or Yakuake) is using.
+
+Konsole stores the scheme in the active profile's [Appearance] ColorScheme
+key, e.g.:
+
+    [Appearance]
+    ColorScheme=Nord
+
+The profile is selected by konsolerc's DefaultProfile, or by the
+LightDarkTheme pair when SyncProfileWithSystemTheme is enabled.  Profiles may
+inherit settings from a Parent= profile, so follow that chain too.
+
+This runs from fastfetch (via terminal-theme-name), so every external call is
+bounded and any failure degrades to a single printable line.
+"""
+
+import configparser
+import os
+import subprocess
+
+
+def config_home():
+    return os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+
+
+def config_dirs():
+    dirs = [config_home()]
+    for item in os.environ.get("XDG_CONFIG_DIRS", "/etc/xdg").split(":"):
+        if item and item not in dirs:
+            dirs.append(item)
+    return dirs
+
+
+def data_dirs():
+    home = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
+    dirs = [home]
+    for item in os.environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share").split(":"):
+        if item and item not in dirs:
+            dirs.append(item)
+    return dirs
+
+
+def first_file(relative):
+    for base in config_dirs():
+        path = os.path.join(base, relative)
+        if os.path.isfile(path):
+            return path
+    return None
+
+
+def read_text(path):
+    if not path:
+        return ""
+    try:
+        with open(path, encoding="utf-8", errors="replace") as handle:
+            return handle.read()
+    except OSError:
+        return ""
+
+
+def parse_ini(path):
+    try:
+        parser = configparser.ConfigParser(interpolation=None, strict=False)
+        parser.optionxform = str
+        parser.read_string(read_text(path))
+        return {section: dict(parser.items(section))
+                for section in parser.sections()}
+    except Exception:
+        return {}
+
+
+def option(section, key):
+    for candidate, value in (section or {}).items():
+        if candidate.lower() == key.lower():
+            return value.strip()
+    return ""
+
+
+def run(argv, timeout=2):
+    try:
+        result = subprocess.run(
+            argv, capture_output=True, text=True, timeout=timeout,
+        )
+        return result.stdout or ""
+    except Exception:
+        return ""
+
+
+def scheme_is_dark():
+    """Follow the desktop colour scheme Konsole's light/dark sync reacts to."""
+    kdeglobals = parse_ini(first_file("kdeglobals"))
+    name = option(kdeglobals.get("General", {}), "ColorScheme")
+    if name:
+        lowered = name.lower()
+        if "dark" in lowered:
+            return True
+        if "light" in lowered:
+            return False
+
+    out = run([
+        "gdbus", "call", "--session",
+        "--dest", "org.freedesktop.portal.Desktop",
+        "--object-path", "/org/freedesktop/portal/desktop",
+        "--method", "org.freedesktop.portal.Settings.Read",
+        "org.freedesktop.appearance", "color-scheme",
+    ])
+    # 0 = no preference, 1 = prefer dark, 2 = prefer light
+    if "uint32 1" in out:
+        return True
+    if "uint32 2" in out:
+        return False
+
+    out = run(["gsettings", "get", "org.gnome.desktop.interface", "color-scheme"])
+    lowered = out.strip().strip("'\"").lower()
+    if lowered == "prefer-light":
+        return False
+    if lowered == "prefer-dark":
+        return True
+    return True
+
+
+def profile_path(name):
+    name = name.strip()
+    if name.endswith(".profile"):
+        name = name[:-len(".profile")]
+    for base in data_dirs():
+        for filename in (name + ".profile", name):
+            path = os.path.join(base, "konsole", filename)
+            if os.path.isfile(path):
+                return path
+    return None
+
+
+def active_profile(config):
+    profile = option(config.get("Desktop Entry", {}), "DefaultProfile")
+
+    theme = config.get("LightDarkTheme", {})
+    if option(theme, "SyncProfileWithSystemTheme").lower() in ("true", "1", "yes"):
+        key = "DarkThemeProfile" if scheme_is_dark() else "LightThemeProfile"
+        profile = option(theme, key) or profile
+    return profile
+
+
+def scheme_name():
+    # Yakuake keeps its window settings in yakuakerc but takes the profile
+    # list from Konsole.
+    config = parse_ini(first_file("yakuakerc"))
+    if not option(config.get("Desktop Entry", {}), "DefaultProfile"):
+        config = parse_ini(first_file("konsolerc"))
+
+    profile = active_profile(config)
+    seen = set()
+    while profile and profile not in seen and len(seen) < 8:
+        seen.add(profile)
+        path = profile_path(profile)
+        if not path:
+            break
+        data = parse_ini(path)
+        scheme = option(data.get("Appearance", {}), "ColorScheme")
+        if scheme:
+            return scheme
+        profile = option(data.get("General", {}), "Parent")
+        if not profile or profile.upper() == "FALLBACK/":
+            break
+
+    return "Konsole"
+
+
+def main():
+    try:
+        name = scheme_name()
+    except Exception:
+        name = "Konsole"
+    print(name or "Konsole")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

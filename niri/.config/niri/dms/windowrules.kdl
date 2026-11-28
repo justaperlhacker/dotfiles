@@ -78,6 +78,12 @@ window-rule {
     open-maximized true
 }
 
+// @id=wr_1795830452877737003 @name=GeForceNOW
+window-rule {
+    match app-id="^GeForceNOW$"
+    open-maximized true
+}
+
 // @id=dms-window-opaque @name=DMS Window Opaque
 window-rule {
     match app-id="^(dev\\.duxlabs\\.shell|com\\.danklinux\\.dms)$"

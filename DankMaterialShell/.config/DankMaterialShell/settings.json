@@ -147,8 +147,8 @@
         "notificationButton",
         {
           "id": "battery",
-          "enabled": false,
-          "overflowMode": "section",
+          "enabled": true,
+          "overflowMode": "always",
           "showBatteryPercentOnlyOnBattery": true
         },
         {
@@ -652,5 +652,8 @@
   "fontWeight": 400,
   "displayFontFamily": "Adwaita Sans",
   "fontScale": 0.97,
-  "wallpaperFillMode": "Fill"
+  "wallpaperFillMode": "Fill",
+  "acSuspendTimeout": 10800,
+  "acPostLockMonitorTimeout": 5400,
+  "acMonitorTimeout": 5400
 }

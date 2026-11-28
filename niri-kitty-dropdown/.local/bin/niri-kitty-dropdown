@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Launcher for the niri-kitty-dropdown source checkout.
+# Override the checkout location with NIRI_KITTY_DROPDOWN_SRC if needed.
+set -euo pipefail
+app=${NIRI_KITTY_DROPDOWN_SRC:-$HOME/shared/dev/niri-kitty-dropdown}
+export PYTHONPATH="$app/src${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -m niri_kitty_dropdown "$@"

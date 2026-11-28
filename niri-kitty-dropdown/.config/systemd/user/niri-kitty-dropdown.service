@@ -1,0 +1,20 @@
+# Dotfiles-managed copy. Upstream:
+# https://github.com/satrac/niri-kitty-dropdown
+[Unit]
+Description=Niri Kitty Dropdown tray
+Documentation=https://github.com/satrac/niri-kitty-dropdown
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/niri-kitty-dropdown
+Restart=on-failure
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target

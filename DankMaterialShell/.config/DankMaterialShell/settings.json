@@ -655,5 +655,6 @@
   "wallpaperFillMode": "Fill",
   "acSuspendTimeout": 10800,
   "acPostLockMonitorTimeout": 5400,
-  "acMonitorTimeout": 5400
+  "acMonitorTimeout": 5400,
+  "batteryAutoPowerSaver": true
 }

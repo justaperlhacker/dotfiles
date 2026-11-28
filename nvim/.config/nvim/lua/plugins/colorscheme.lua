@@ -97,6 +97,13 @@ return {
   T({ "lmburns/kimbox", name = "kimbox" }),
   T({ "piyush-ppradhan/naysayer.vim", name = "naysayer" }),
 
+  -- NvChad base46 themes (standalone fork, no NvChad/nvconfig needed).
+  -- Every theme is prefixed: `:colorscheme base46-<name>` (98 of them).
+  -- opts = {} pulls in the plugin's defaults, i.e. all integrations enabled
+  -- (treesitter, lsp, cmp, telescope, which-key, ...). Themes set 'background'
+  -- themselves, which lua/config/colorschemes.lua treats as a manual override.
+  T({ "duxlabs-dev/base46", name = "base46", opts = {} }),
+
   -- Solarized (upstream plugins)
   -- craftzdog/solarized-osaka.nvim: solarized-osaka, -light, -vivid
   -- ishan9299/nvim-solarized-lua: solarized-high (follows 'background'),

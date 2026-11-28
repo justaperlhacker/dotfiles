@@ -1,0 +1,332 @@
+{
+  "id": "poimandres",
+  "name": "Poimandres",
+  "version": "2.1.0",
+  "author": "aryas",
+  "description": "Blue \u0026 teal theme inspired by https://github.com/drcmda/poimandres-theme",
+  "dark": {},
+  "light": {},
+  "variants": {
+    "type": "multi",
+    "defaults": {
+      "dark": {
+        "accent": "green",
+        "flavor": "m3e"
+      },
+      "light": {
+        "accent": "green",
+        "flavor": "m3e-light"
+      }
+    },
+    "flavors": [
+      {
+        "id": "m3e",
+        "name": "M3E",
+        "dark": {
+          "primaryContainer": "#303340",
+          "surface": "#1B1E28",
+          "surfaceText": "#E4F0FB",
+          "surfaceVariant": "#1E213A",
+          "surfaceVariantText": "#FFFFFF",
+          "surfaceTint": "#add7ff",
+          "background": "#0F1018",
+          "backgroundText": "#E4F0FB",
+          "outline": "#3C5170",
+          "surfaceContainer": "#171D2E",
+          "surfaceContainerHigh": "#222436",
+          "surfaceContainerHighest": "#303340",
+          "error": "#F087BD",
+          "warning": "#FFFAC2",
+          "info": "#add7ff"
+        },
+        "light": {}
+      },
+      {
+        "id": "m3e-light",
+        "name": "M3E Light",
+        "dark": {},
+        "light": {
+          "primaryContainer": "#CFE0F2",
+          "surface": "#E3F0FD",
+          "surfaceText": "#1B212E",
+          "surfaceVariant": "#E4F0FB",
+          "surfaceVariantText": "#2A3142",
+          "surfaceTint": "#14AFEC",
+          "background": "#FFFFFF",
+          "backgroundText": "#1B212E",
+          "outline": "#087C91",
+          "surfaceContainer": "#E8FAFF",
+          "surfaceContainerHigh": "#E0F1FF",
+          "surfaceContainerHighest": "#CFE0F2",
+          "error": "#CE0056",
+          "warning": "#8A000B",
+          "info": "#00677F"
+        }
+      },
+      {
+        "id": "colorful",
+        "name": "Colorful",
+        "dark": {
+          "primaryContainer": "#303340",
+          "surface": "#1B1E28",
+          "surfaceVariant": "#1E213A",
+          "surfaceVariantText": "#FFFFFF",
+          "surfaceTint": "#add7ff",
+          "background": "#0D0E1A",
+          "backgroundText": "#E4F0FB",
+          "outline": "#3C5170",
+          "surfaceContainer": "#0D121F",
+          "surfaceContainerHigh": "#10142C",
+          "surfaceContainerHighest": "#303340",
+          "error": "#F087BD",
+          "warning": "#FFFAC2",
+          "info": "#add7ff"
+        },
+        "light": {}
+      },
+      {
+        "id": "colorful-light",
+        "name": "Colorful Light",
+        "dark": {},
+        "light": {
+          "primaryContainer": "#CFE0F2",
+          "surface": "#E3F0FD",
+          "surfaceVariant": "#E4F0FB",
+          "surfaceVariantText": "#2A3142",
+          "surfaceTint": "#14AFEC",
+          "background": "#DBFBFF",
+          "backgroundText": "#131B2C",
+          "outline": "#087C91",
+          "surfaceContainer": "#E0FCFC",
+          "surfaceContainerHigh": "#D3FCFC",
+          "surfaceContainerHighest": "#CFE0F2",
+          "error": "#CE0056",
+          "warning": "#8A000B",
+          "info": "#00677F"
+        }
+      }
+    ],
+    "accents": [
+      {
+        "colorful": {
+          "primary": "#89DDFF",
+          "primaryText": "#1a162e",
+          "secondary": "#FFFAC2",
+          "surfaceText": "#E2F8FF"
+        },
+        "colorful-light": {
+          "primary": "#0081A8",
+          "primaryText": "#FFFFFF",
+          "secondary": "#FFFAC2",
+          "surfaceText": "#1B212E"
+        },
+        "id": "default",
+        "m3e": {
+          "primary": "#89DDFF",
+          "primaryText": "#1B212E",
+          "secondary": "#5DE4C7"
+        },
+        "m3e-light": {
+          "primary": "#0081A8",
+          "primaryText": "#FFFFFF",
+          "secondary": "#01BBAB"
+        },
+        "name": "Default"
+      },
+      {
+        "colorful": {
+          "primary": "#F087BD",
+          "primaryText": "#1a162e",
+          "secondary": "#89DDFF",
+          "surfaceText": "#E2F8FF"
+        },
+        "colorful-light": {
+          "primary": "#F087BD",
+          "primaryText": "#FFFFFF",
+          "secondary": "#0081A8",
+          "surfaceText": "#1B212E"
+        },
+        "id": "red",
+        "m3e": {
+          "primary": "#F087BD",
+          "primaryText": "#1B212E",
+          "secondary": "#5DE4C7"
+        },
+        "m3e-light": {
+          "primary": "#F087BD",
+          "primaryText": "#FFFFFF",
+          "secondary": "#00A194"
+        },
+        "name": "Red"
+      },
+      {
+        "colorful": {
+          "primary": "#5DE4C7",
+          "primaryText": "#1a162e",
+          "secondary": "#FFFAC2",
+          "surfaceText": "#E2F8FF"
+        },
+        "colorful-light": {
+          "primary": "#4FB8A1",
+          "primaryText": "#FFFFFF",
+          "secondary": "#0081A8",
+          "surfaceText": "#1B212E"
+        },
+        "id": "green",
+        "m3e": {
+          "primary": "#5DE4C7",
+          "primaryText": "#1B212E",
+          "secondary": "#89DDFF"
+        },
+        "m3e-light": {
+          "primary": "#00A194",
+          "primaryText": "#FFFFFF",
+          "secondary": "#0081A8"
+        },
+        "name": "Green"
+      },
+      {
+        "colorful": {
+          "primary": "#FFFAC2",
+          "primaryText": "#1a162e",
+          "secondary": "#5DE4C7",
+          "surfaceText": "#E2F8FF"
+        },
+        "colorful-light": {
+          "primary": "#A79707",
+          "primaryText": "#FFFFFF",
+          "secondary": "#4FB8A1",
+          "surfaceText": "#1B212E"
+        },
+        "id": "yellow",
+        "m3e": {
+          "primary": "#FFFAC2",
+          "primaryText": "#1B212E",
+          "secondary": "#89DDFF"
+        },
+        "m3e-light": {
+          "primary": "#A79707",
+          "primaryText": "#FFFFFF",
+          "secondary": "#0081A8"
+        },
+        "name": "Yellow"
+      }
+    ]
+  },
+  "wcag": {
+    "level": "fail",
+    "dark": {
+      "level": "AAA",
+      "minRatio": 10.27,
+      "worstPair": [
+        "primaryText",
+        "primary"
+      ],
+      "body": {
+        "level": "AAA",
+        "minRatio": 10.85,
+        "worstPair": [
+          "surfaceText",
+          "surfaceContainerHighest"
+        ]
+      },
+      "accent": {
+        "level": "AAA",
+        "minRatio": 10.27,
+        "worstPair": [
+          "primaryText",
+          "primary"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 7.12,
+        "worstPair": [
+          "error",
+          "surfaceContainer"
+        ]
+      },
+      "variants": {
+        "colorful-default": "AAA",
+        "colorful-green": "AAA",
+        "colorful-red": "AAA",
+        "colorful-yellow": "AAA",
+        "m3e-default": "AAA",
+        "m3e-green": "AAA",
+        "m3e-red": "AA",
+        "m3e-yellow": "AAA"
+      },
+      "breakdown": [
+        {
+          "name": "M3E",
+          "mode": "dark",
+          "level": "AA",
+          "bodyLevel": "AAA"
+        },
+        {
+          "name": "Colorful",
+          "mode": "dark",
+          "level": "AAA",
+          "bodyLevel": "AAA"
+        }
+      ]
+    },
+    "light": {
+      "level": "fail",
+      "minRatio": 3,
+      "worstPair": [
+        "primary",
+        "surfaceContainer"
+      ],
+      "body": {
+        "level": "AAA",
+        "minRatio": 11.23,
+        "worstPair": [
+          "surfaceVariantText",
+          "surface"
+        ]
+      },
+      "accent": {
+        "level": "fail",
+        "minRatio": 3,
+        "worstPair": [
+          "primary",
+          "surfaceContainer"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 5.2,
+        "worstPair": [
+          "error",
+          "surfaceContainer"
+        ]
+      },
+      "variants": {
+        "colorful-light-default": "fail",
+        "colorful-light-green": "fail",
+        "colorful-light-red": "fail",
+        "colorful-light-yellow": "fail",
+        "m3e-light-default": "fail",
+        "m3e-light-green": "fail",
+        "m3e-light-red": "fail",
+        "m3e-light-yellow": "fail"
+      },
+      "breakdown": [
+        {
+          "name": "M3E Light",
+          "mode": "light",
+          "level": "fail",
+          "bodyLevel": "AAA"
+        },
+        {
+          "name": "Colorful Light",
+          "mode": "light",
+          "level": "fail",
+          "bodyLevel": "AAA"
+        }
+      ]
+    }
+  },
+  "sourceDir": "poimandres"
+}

@@ -5,14 +5,6 @@
 config-notification {
     disable-failed
 }
-// Outputs from existing configuration
-/-output "eDP-2" {
-    mode "2560x1600@239.998993"
-    position x=2560 y=0
-    variable-refresh-rate
-}
-
-
 gestures {
     hot-corners {
         off
@@ -217,6 +209,10 @@ animations {
 // Window rules let you adjust behavior for individual windows.
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
+//
+// Parking spot for the kitty dropdown (SUPER+SHIFT+F12) while it is hidden.
+// Declared so that `move-window-to-workspace dropdown` has a target.
+workspace "dropdown"
 // Work around WezTerm's initial configure bug
 // by setting an empty default-column-width.
 window-rule {
@@ -290,6 +286,16 @@ window-rule {
     match app-id=r#"^yakuake$"#
     open-floating true
     // default-floating-position x=0 y=0 relative-to="top"
+}
+// Single-instance kitty dropdown (SUPER+SHIFT+F12). niri has no keep-above
+// rule for windows: floating windows already draw above tiled ones, and
+// ~/.config/niri/scripts/kitty-dropdown focuses it on summon.
+window-rule {
+    match app-id=r#"^kitty-dropdown$"#
+    open-floating true
+    default-floating-position x=0 y=0 relative-to="top"
+    default-column-width { proportion 1.0; }
+    default-window-height { proportion 0.85; }
 }
 // Citrix ICAClient — always floating
 window-rule {

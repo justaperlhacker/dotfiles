@@ -1,0 +1,69 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "llama-completion: start",
+      "detail": "Start the FIM completion server (systemd user unit on 127.0.0.1:8082).",
+      "type": "shell",
+      "command": "systemctl --user start llama-completion.service && echo 'llama-completion started (the model may still be loading)'",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "focus": false
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "llama-completion: stop",
+      "detail": "Stop the FIM completion server and free its VRAM.",
+      "type": "shell",
+      "command": "systemctl --user stop llama-completion.service && echo 'llama-completion stopped'",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "focus": false
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "llama-completion: restart",
+      "detail": "Restart the FIM completion server.",
+      "type": "shell",
+      "command": "systemctl --user restart llama-completion.service && echo 'llama-completion restarted (the model may still be loading)'",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "focus": false
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "llama-completion: status",
+      "detail": "Show unit state and probe the /health endpoint.",
+      "type": "shell",
+      "command": "systemctl --user --no-pager --full status llama-completion.service || true; echo; printf 'health: '; curl -fsS -m 3 http://127.0.0.1:8082/health || echo 'not ready'",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "focus": false
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    }
+  ]
+}

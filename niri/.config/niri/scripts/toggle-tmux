@@ -1,8 +1,15 @@
 #!/usr/bin/env perl
+# Scratch popup terminal for a tmux session.
+#
+# Toggling off closes the kitty window. The floating/tiled layout is remembered
+# per session in $XDG_RUNTIME_DIR/niri-toggle-tmux/, so it survives repeated
+# toggles but resets to floating on each login.
 use v5.36;
 use Getopt::Long;
 use Time::HiRes qw(sleep time);
 use JSON::PP;
+use File::Path qw(make_path);
+use File::Spec;
 
 sub niri_msg (@args) {
     my $cmd = join( " ", "niri", "msg", @args );
@@ -51,6 +58,38 @@ sub find_target_window ( $windows, $wclass, $title ) {
 }
 
 sub is_kitty ($t) { return $t =~ m{(?:^|/)kitty$}; }
+
+# Layout memory is per tmux session (opencode, pi, ...) and lives in the
+# per-login runtime dir, so a fresh login always starts out floating.
+my $state_dir;
+
+sub state_dir () {
+    return $state_dir //= do {
+        my $base = $ENV{XDG_RUNTIME_DIR} // File::Spec->tmpdir;
+        my $dir  = File::Spec->catdir( $base, 'niri-toggle-tmux' );
+        make_path($dir) unless -d $dir;
+        return $dir;
+    };
+}
+
+sub state_path ($session) {
+    ( my $name = $session ) =~ s/[^A-Za-z0-9_.-]+/_/g;
+    return File::Spec->catfile( state_dir(), "$name.layout" );
+}
+
+sub read_layout ($session) {
+    open my $fh, '<', state_path($session) or return 'floating';
+    my $layout = <$fh> // '';
+    close $fh;
+    chomp $layout;
+    return $layout eq 'tiled' ? 'tiled' : 'floating';
+}
+
+sub write_layout ( $session, $layout ) {
+    open my $fh, '>', state_path($session) or return;
+    print $fh "$layout\n";
+    close $fh;
+}
 
 sub has_command ($name) {
     for my $dir ( split /:/, ( $ENV{PATH} // '' ) ) {
@@ -121,22 +160,39 @@ my $target_win = find_target_window( $windows, $wclass, $title );
 if ($target_win) {
     my $win_id = $target_win->{id};
     if ( $target_win->{is_focused} ) {
+        # Closing is the "hide" action; remember whether it was floating or
+        # tiled (e.g. after a manual SUPER+SHIFT+T) for the next summon.
+        write_layout( $session, $target_win->{is_floating} ? 'floating' : 'tiled' );
         niri_action "close-window", "--id", $win_id;
     }
     else {
+        # The window still exists on another workspace; its current layout is
+        # the authoritative state, so keep the memory file in sync with it.
+        my $layout = $target_win->{is_floating} ? 'floating' : 'tiled';
+        write_layout( $session, $layout );
+
         my $focused_ws = get_focused_workspace_idx();
         niri_action "move-window-to-workspace", "--window-id", $win_id, $focused_ws, "--focus=true";
         niri_action "focus-window", "--id", $win_id;
-        float_and_center( $win_id, $width );
+        float_and_center( $win_id, $width ) if $layout eq 'floating';
     }
 }
 else {
+    # Default is floating; start tiled only if the user left it tiled in this
+    # login session. New kitty windows open tiled, so nothing to do for tiled.
+    my $layout = read_layout($session);
+
     spawn_app( $terminal, $session, $cmd );
     $target_win = wait_for_window( $wclass, $title, 3.0, 0.2 );
     if ($target_win) {
         my $win_id = $target_win->{id};
         niri_action "focus-window", "--id", $win_id;
-        float_and_center( $win_id, $width );
+        if ( $layout eq 'floating' ) {
+            float_and_center( $win_id, $width );
+        }
+        else {
+            niri_action "move-window-to-tiling", "--id", $win_id;
+        }
     }
     else {
         print STDERR "Failed to find window for " . ( $cmd // $session ) . "\n";

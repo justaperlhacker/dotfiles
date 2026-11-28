@@ -24,11 +24,39 @@
     "workbench.activityBar.location": "top",
     "git.enabled": false,
     "makefile.configureOnOpen": true,
-    "chat.viewSessions.orientation": "stacked",
     "chat.titleBar.openInAgentsWindow.enabled": false,
     "github.copilot.enable": {
         "*": false
     },
+    // Inline code completion comes from the FIM server on the AMD card
+    // (llama-completion.service, port 8082) via the ggml-org llama-vscode
+    // extension. It POSTs to /infill with input_prefix/input_suffix, which is
+    // llama.cpp's native FIM path; the Qwen 2.5 Coder model handles the
+    // <|fim_prefix|>/<|fim_suffix|>/<|fim_middle|> markers itself.
+    // Server is loopback-only and has no API key. Chat/agents in VS Code come
+    // from the OpenCode and Pi ("Pendant") extensions, which read their own
+    // configs and already list qwen38.
+    "llama-vscode.enabled": true,
+    "llama-vscode.endpoint": "http://127.0.0.1:8082",
+    "llama-vscode.ask_install_llamacpp": false,
+    "llama-vscode.auto": true,
+    "llama-vscode.debounce_ms": 150,
+    "llama-vscode.n_predict": 128,
+    // The FIM server runs with -np 1 (a single slot), so the extension must ask
+    // for exactly one completion. Its default of 3 makes llama.cpp return
+    // HTTP 400: "Field 'n_cmpl': Value must be between 1 <= value <= 1".
+    "llama-vscode.max_parallel_completions": 1,
+    // Make the systemd-managed server selectable by name in the completion menu
+    // instead of only through "Use settings". An empty localStartCommand means
+    // selecting it just switches the endpoint to 8082; it does not spawn
+    // another llama-server (that stays owned by llama-completion.service).
+    "llama-vscode.completion_models_list": [
+        {
+            "name": "llama-completion (systemd, 8082)",
+            "endpoint": "http://127.0.0.1:8082",
+            "localStartCommand": ""
+        }
+    ],
     "vim.handleKeys": {
         "<C-b>": false,
         "<C-j>": false,
@@ -88,6 +116,11 @@
             "tab.unfocusedActiveBackground": "#171717",
             "editorGroup.border": "#7a6b5a",
             "sideBar.border": "#7a6b5a",
+        },
+        // Nightjar already sets these; override the generic dark-theme rule.
+        "[Nightjar]": {
+            "editor.lineHighlightBackground": "#161e28",
+            "editor.lineHighlightBorder": "#00000000",
         },
         // Nord Darker with more contrast.
         "[Nord]": {
@@ -261,14 +294,37 @@
     },
 
     "vsicons.dontShowNewVersionMessage": true,
-    "workbench.colorTheme": "Tokyo Night",
+    "workbench.colorTheme": "Nightjar",
     // Follow the desktop's light/dark scheme. KDE Plasma exposes its
     // day/night switch through the XDG desktop portal, so this tracks it.
     "window.autoDetectColorScheme": true,
-    "workbench.preferredDarkColorTheme": "Black Metal",
-    "workbench.preferredLightColorTheme": "GitHub Light Default",
+    "workbench.preferredDarkColorTheme": "Nightjar",
+    "workbench.preferredLightColorTheme": "DankShell Light",
     "window.density.layout": "compact",
     "pendant.subagents.delegation": "automatic",
     "pendant.sessionRailPosition": "right",
+    "llama-vscode.tool_run_terminal_command_enabled": true,
+    "llama-vscode.tool_search_source_enabled": true,
+    "llama-vscode.tool_read_file_enabled": true,
+    "llama-vscode.tool_list_directory_enabled": true,
+    "llama-vscode.tool_regex_search_enabled": true,
+    "llama-vscode.tool_delete_file_enabled": true,
+    "llama-vscode.tool_get_diff_enabled": true,
+    "llama-vscode.tool_edit_file_enabled": true,
+    "llama-vscode.tool_ask_user_enabled": true,
+    "llama-vscode.tool_custom_tool_enabled": false,
+    "llama-vscode.tool_custom_eval_tool_enabled": false,
+    "llama-vscode.tool_llama_vscode_help_enabled": false,
+    "llama-vscode.tool_update_todo_list_enabled": true,
+    "llama-vscode.tool_delegate_task_enabled": true,
+    "llama-vscode.tool_create_agent_enabled": false,
+    "llama-vscode.tool_get_errors_enabled": true,
+    "llama-vscode.tool_rename_symbol_enabled": true,
+    "llama-vscode.tool_multi_edit_file_enabled": true,
+    "llama-vscode.tool_web_browser_enabled": true,
+    "llama-vscode.tool_search_tools_enabled": false,
+    "editor.renderWhitespace": "all",
+    "zig.zls.enabled": "on",
+    "chat.viewSessions.orientation": "stacked",
 
 }

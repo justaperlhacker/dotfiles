@@ -44,11 +44,7 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 
-# Makefiles: POSIX requires literal tabs in recipes.
-[Makefile]
-indent_style = tab
-tab_width = 4
-
-[*.mk]
+# Makefiles: recipe lines require hard tabs.
+[{GNUmakefile,BSDmakefile,Kbuild,Kbuild.*,mkfile,[Mm]akefile,[Mm]akefile.*,*.mk,*.mak,*.make,*.makefile,*.mkfile}]
 indent_style = tab
 tab_width = 4

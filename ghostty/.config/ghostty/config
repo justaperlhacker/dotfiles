@@ -69,3 +69,5 @@ gtk-titlebar-hide-when-maximized = false
 gtk-toolbar-style = flat
 gtk-wide-tabs = true
 maximize = true
+# Added by Gogh
+config-file = ?auto/theme.ghostty

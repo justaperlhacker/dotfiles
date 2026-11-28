@@ -58,6 +58,9 @@ NVIM_ANSI = {
     "fleury": ["#020202", "#bd2d2d", "#6eb535", "#f0c674", "#2895c7",
                "#c9598a", "#8ffff2", "#b99468", "#666666", "#ff0000",
                "#a7eb13", "#ffae00", "#6fb3e0", "#e08bb0", "#bffff5", "#f0dcc0"],
+    "nightjar": ["#0c1014", "#ff6b6b", "#c3e88d", "#ffcb6b", "#82aaff",
+                 "#c792ea", "#7fdbca", "#d8e1ea", "#5c6b7d", "#ff8a8a",
+                 "#d7f0a8", "#ffe08a", "#a6c8ff", "#ddb3f5", "#a6f0e2", "#ffffff"],
 }
 
 

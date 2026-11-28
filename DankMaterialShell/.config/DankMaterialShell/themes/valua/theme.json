@@ -1,0 +1,131 @@
+{
+  "id": "valua",
+  "name": "Valua",
+  "version": "1.0.0",
+  "author": "Nonetrix (https://github.com/nonetrix)",
+  "description": "A dark teal and green base16 theme by Nonetrix, with a matching light variant",
+  "dark": {
+    "primary": "#4ed2d2",
+    "primaryText": "#131f1f",
+    "primaryContainer": "#3e5c53",
+    "secondary": "#a874e0",
+    "surface": "#213132",
+    "surfaceText": "#a5cbb9",
+    "surfaceVariant": "#273d3c",
+    "surfaceVariantText": "#98c1a3",
+    "surfaceTint": "#4ed2d2",
+    "background": "#131f1f",
+    "backgroundText": "#aacbcb",
+    "outline": "#3e5c53",
+    "surfaceContainer": "#213132",
+    "surfaceContainerHigh": "#273d3c",
+    "surfaceContainerHighest": "#273d3c",
+    "error": "#d7586e",
+    "warning": "#e6b466",
+    "info": "#76dbd2"
+  },
+  "light": {
+    "primary": "#0c7272",
+    "primaryText": "#ffffff",
+    "primaryContainer": "#b7e8e3",
+    "secondary": "#7a3fae",
+    "surface": "#e8f0ed",
+    "surfaceText": "#14231f",
+    "surfaceVariant": "#d9e7e1",
+    "surfaceVariantText": "#35544a",
+    "surfaceTint": "#0c7272",
+    "background": "#f4f8f6",
+    "backgroundText": "#14231f",
+    "outline": "#7c9a8f",
+    "surfaceContainer": "#e8f0ed",
+    "surfaceContainerHigh": "#dce9e3",
+    "surfaceContainerHighest": "#cfe0d9",
+    "error": "#b3203b",
+    "warning": "#8f6200",
+    "info": "#0e6f6f"
+  },
+  "wcag": {
+    "level": "AA",
+    "dark": {
+      "level": "AA",
+      "minRatio": 5.77,
+      "worstPair": [
+        "surfaceVariantText",
+        "surfaceContainerHigh"
+      ],
+      "body": {
+        "level": "AA",
+        "minRatio": 5.77,
+        "worstPair": [
+          "surfaceVariantText",
+          "surfaceContainerHigh"
+        ]
+      },
+      "accent": {
+        "level": "AAA",
+        "minRatio": 7.4,
+        "worstPair": [
+          "primary",
+          "surfaceContainer"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 3.56,
+        "worstPair": [
+          "error",
+          "surfaceContainer"
+        ]
+      },
+      "breakdown": [
+        {
+          "name": "Dark",
+          "mode": "dark",
+          "level": "AA",
+          "bodyLevel": "AA"
+        }
+      ]
+    },
+    "light": {
+      "level": "AA",
+      "minRatio": 4.94,
+      "worstPair": [
+        "primary",
+        "surfaceContainer"
+      ],
+      "body": {
+        "level": "AA",
+        "minRatio": 6.67,
+        "worstPair": [
+          "surfaceVariantText",
+          "surfaceContainerHigh"
+        ]
+      },
+      "accent": {
+        "level": "AA",
+        "minRatio": 4.94,
+        "worstPair": [
+          "primary",
+          "surfaceContainer"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 4.63,
+        "worstPair": [
+          "warning",
+          "surfaceContainer"
+        ]
+      },
+      "breakdown": [
+        {
+          "name": "Light",
+          "mode": "light",
+          "level": "AA",
+          "bodyLevel": "AA"
+        }
+      ]
+    }
+  },
+  "sourceDir": "valua"
+}

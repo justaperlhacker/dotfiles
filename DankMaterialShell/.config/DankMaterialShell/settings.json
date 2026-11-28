@@ -1,13 +1,17 @@
 {
-  "currentThemeName": "dynamic",
-  "currentThemeCategory": "dynamic",
-  "customThemeFile": "/home/johnm/.config/dms/themes/deepmono/theme.json",
+  "currentThemeName": "monochrome",
+  "currentThemeCategory": "generic",
+  "customThemeFile": "/home/johnm/.config/dms/themes/catppuccin/theme.json",
   "registryThemeVariants": {
     "rosePine": "rosePine",
     "catppuccin": {
       "dark": {
         "flavor": "frappe",
         "accent": "peach"
+      },
+      "light": {
+        "flavor": "latte",
+        "accent": "lavender"
       }
     },
     "everforest": "medium",
@@ -45,6 +49,13 @@
       "dark": {
         "flavor": "mono",
         "accent": "graphite"
+      }
+    },
+    "gnomeAdwaita": "yellow",
+    "cyberdream": {
+      "light": {
+        "flavor": "cyberdream-light",
+        "accent": "green"
       }
     }
   },
@@ -128,16 +139,15 @@
           "enabled": false
         },
         "cpuUsage",
-        "memUsage",
         {
-          "id": "diskUsage",
-          "enabled": true,
-          "mountPath": "/"
+          "id": "cpuTemp",
+          "enabled": false
         },
+        "memUsage",
         "notificationButton",
         {
           "id": "battery",
-          "enabled": true,
+          "enabled": false,
           "overflowMode": "section",
           "showBatteryPercentOnlyOnBattery": true
         },
@@ -624,5 +634,23 @@
   "matugenTemplateAlacritty": false,
   "matugenSmartMode": false,
   "systemTrayIconTintMode": "none",
-  "osdPosition": 5
+  "osdPosition": 5,
+  "matugenTemplateNeovim": true,
+  "matugenTemplateQtengine": false,
+  "matugenTemplateNeovimSettings": {
+    "dark": {
+      "baseTheme": "github_dark",
+      "harmony": 0.5
+    },
+    "light": {
+      "baseTheme": "github_light",
+      "harmony": 0.5
+    }
+  },
+  "matugenTemplateFcitx5": false,
+  "matugenTemplateEquibop": false,
+  "fontWeight": 400,
+  "displayFontFamily": "Adwaita Sans",
+  "fontScale": 0.97,
+  "wallpaperFillMode": "Fill"
 }

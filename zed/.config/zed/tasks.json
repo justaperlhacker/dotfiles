@@ -1,0 +1,34 @@
+[
+  {
+    "label": "llama-completion: start",
+    "command": "systemctl --user start llama-completion.service && echo 'llama-completion started (the model may still be loading)'",
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "llama-completion: stop",
+    "command": "systemctl --user stop llama-completion.service && echo 'llama-completion stopped'",
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "llama-completion: restart",
+    "command": "systemctl --user restart llama-completion.service && echo 'llama-completion restarted (the model may still be loading)'",
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "llama-completion: status",
+    "command": "systemctl --user --no-pager --full status llama-completion.service || true; echo; printf 'health: '; curl -fsS -m 3 http://127.0.0.1:8082/health || echo 'not ready'",
+    "reveal": "always",
+    "hide": "never",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false
+  }
+]

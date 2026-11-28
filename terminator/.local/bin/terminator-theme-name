@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+"""Print the name of the theme (profile) Terminator is using.
+
+Terminator keeps no record of the profile an individual terminal was opened
+with, so this mirrors what it does at startup:
+
+  1. If the AutoTheme plugin is enabled, resolve its Light/Dark setting, and
+     in "Auto" mode follow the desktop colour scheme.
+  2. Otherwise use the profile pinned to the first terminal of the default
+     layout.
+  3. Otherwise use the profile named "default".
+
+The output is the profile name from ~/.config/terminator/config - the same
+name the Preferences dialog shows, e.g. "OneHalfDark".
+
+This runs from fastfetch, so it must never hang and never raise: anything
+unexpected degrades to a single line on stdout.
+"""
+
+import os
+import subprocess
+import sys
+
+
+def config_path():
+    base = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+    return os.path.join(base, "terminator", "config")
+
+
+def parse_config(text):
+    """Parse Terminator's INI-like format into {(section, ...): {key: value}}.
+
+    Section depth is the number of leading '[' characters, exactly as
+    Terminator's own Config class writes it: [profiles], [[default]],
+    [[[child1]]].
+    """
+    data = {}
+    stack = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("["):
+            depth = 0
+            while depth < len(line) and line[depth] == "[":
+                depth += 1
+            end = line.find("]" * depth)
+            name = line[depth:end] if end != -1 else line[depth:]
+            stack = stack[: depth - 1] + [name.strip()]
+            continue
+        if "=" not in line or not stack:
+            continue
+        key, _, value = line.partition("=")
+        data.setdefault(tuple(stack), {})[key.strip()] = value.strip()
+    return data
+
+
+def scheme_is_dark():
+    """Follow the desktop colour scheme the way libhandy/GTK do."""
+    try:
+        out = subprocess.run(
+            [
+                "gdbus", "call", "--session",
+                "--dest", "org.freedesktop.portal.Desktop",
+                "--object-path", "/org/freedesktop/portal/desktop",
+                "--method", "org.freedesktop.portal.Settings.Read",
+                "org.freedesktop.appearance", "color-scheme",
+            ],
+            capture_output=True, text=True, timeout=2,
+        ).stdout
+        # 0 = no preference, 1 = prefer dark, 2 = prefer light
+        if "uint32 1" in out:
+            return True
+        if "uint32 2" in out:
+            return False
+        if "uint32 0" in out:
+            return True
+    except Exception:
+        pass
+    try:
+        out = subprocess.run(
+            ["gsettings", "get", "org.gnome.desktop.interface", "color-scheme"],
+            capture_output=True, text=True, timeout=2,
+        ).stdout.strip().strip("'\"")
+        if out == "prefer-light":
+            return False
+        if out == "prefer-dark":
+            return True
+    except Exception:
+        pass
+    # Same default as the AutoTheme plugin's fallback look.
+    return True
+
+
+def enabled_plugins(data):
+    value = data.get(("global_config",), {}).get("enabled_plugins", "")
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def theme_name(data):
+    if "AutoTheme" in enabled_plugins(data):
+        auto = data.get(("plugins", "AutoTheme"), {})
+        mode = auto.get("mode", "Auto")
+        light = auto.get("light") or None
+        dark = auto.get("dark") or None
+        if mode == "Light" and light:
+            return light
+        if mode == "Dark" and dark:
+            return dark
+        if mode == "Auto":
+            chosen = dark if scheme_is_dark() else light
+            if chosen:
+                return chosen
+        elif light or dark:
+            return light or dark
+
+    for path, values in data.items():
+        if len(path) == 3 and path[0] == "layouts" and path[1] == "default":
+            profile = values.get("profile")
+            if profile:
+                return profile
+
+    return "default"
+
+
+def main():
+    try:
+        with open(config_path(), encoding="utf-8", errors="replace") as handle:
+            text = handle.read()
+    except OSError:
+        text = ""
+    try:
+        name = theme_name(parse_config(text))
+    except Exception:
+        name = "default"
+    print(name or "Unknown")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

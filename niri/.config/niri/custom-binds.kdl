@@ -15,4 +15,8 @@ binds {
     Mod+Ctrl+Shift+7 hotkey-overlay-title="Move to Left Monitor, Workspace 7" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "7"; }
     Mod+Ctrl+Shift+8 hotkey-overlay-title="Move to Left Monitor, Workspace 8" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "8"; }
     Mod+Ctrl+Shift+9 hotkey-overlay-title="Move to Left Monitor, Workspace 9" { spawn "/home/johnm/.config/niri/scripts/move-column-to-left-workspace" "9"; }
+
+    // Single floating kitty "dropdown" (SUPER+F12): one instance that follows
+    // the focused monitor. Yakuake moves to SUPER+SHIFT+F12.
+    Mod+F12 hotkey-overlay-title="Dropdown Terminal" { spawn "/home/johnm/.config/niri/scripts/kitty-dropdown"; }
 }

@@ -1,0 +1,45 @@
+#!/bin/sh
+# Move the focused column to the adjacent monitor in the given direction,
+# landing on the workspace that monitor is already showing.
+#
+# niri's move-column-to-monitor-{left,right,up,down} preserve the focused
+# workspace *index* rather than the target monitor's visible workspace.
+# Moving from workspace 2 therefore lands on workspace 2 of the target
+# monitor, which is normally a hidden, empty workspace instead of what that
+# monitor is displaying.  This script moves to the monitor first, then moves
+# the column to the workspace index that the target monitor had active before
+# the move.
+#
+# Usage: move-column-to-monitor-visible left|right|up|down
+set -u
+
+dir=${1:?usage: move-column-to-monitor-visible left|right|up|down}
+
+case "$dir" in
+    left|right|up|down) action="move-column-to-monitor-$dir" ;;
+    *)  echo "move-column-to-monitor-visible: unknown direction: $dir" >&2
+        exit 2 ;;
+esac
+
+# output -> active workspace index, captured while still on the source monitor.
+active_ws=$(niri msg -j workspaces |
+    jq -r '.[] | select(.is_active) | "\(.output) \(.idx)"')
+
+source_output=$(niri msg -j focused-output | jq -r '.name')
+
+niri msg action "$action" >/dev/null || exit 1
+
+# Focus follows the column.  If we are still on the source monitor there was
+# no monitor in that direction and niri did nothing; leave it there.
+target_output=$(niri msg -j focused-output | jq -r '.name')
+if [ "$target_output" = "$source_output" ]; then
+    exit 0
+fi
+
+target_ws=$(printf '%s\n' "$active_ws" |
+    awk -v out="$target_output" '$1 == out { print $2; exit }')
+
+# The workspace exists (it was active a moment ago), so this cannot clamp.
+if [ -n "$target_ws" ]; then
+    niri msg action move-column-to-workspace "$target_ws" >/dev/null
+fi

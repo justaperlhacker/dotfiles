@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+# Single-instance floating "dropdown" terminal that follows the focused monitor.
+#
+#   hidden  -> parked on a workspace that is not active on any monitor
+#   visible -> moved to the focused workspace, floating, full width, 85% tall
+#
+# niri has no hidden workspaces, so a "hidden" window is one that lives on an
+# inactive workspace. The configured park workspace ("dropdown") is used while
+# it is off screen. If the park workspace is currently being displayed (for
+# example because it ended up as a normal workspace), the script parks on
+# another inactive workspace instead, preferring an empty one. That keeps the
+# toggle working no matter which workspace is focused.
+#
+# Note: niri has no "always on top" for windows. Floating windows do render
+# above tiled ones, and focusing on summon puts this one on top of the float
+# stack; it will not cover a fullscreen window.
+
+set -u -o pipefail
+
+class=kitty-dropdown
+park=${KITTY_DROPDOWN_PARK:-dropdown}
+percent=${KITTY_DROPDOWN_PERCENT:-85}
+title="dropdown"
+runtime=${XDG_RUNTIME_DIR:-/tmp}
+
+json() { niri msg --json "$@"; }
+act() { niri msg action "$@" >/dev/null; }
+
+# Serialize toggles. Without this, a second press while the first invocation is
+# still waiting for the window to appear starts a second kitty, and the two
+# instances then confuse the hide/show toggle.
+exec 9>"$runtime/kitty-dropdown.lock"
+flock -n 9 || exit 0
+
+workspaces=$(json workspaces)
+windows=$(json windows)
+focused=$(jq -r '.[] | select(.is_focused) | "\(.id) \(.idx)"' <<<"$workspaces")
+focused_ws_id=${focused% *}
+focused_ws_idx=${focused#* }
+focused_output=$(json focused-output | jq -r '.name // empty')
+
+if [[ -z $focused_ws_id || -z $focused_output ]]; then
+    echo "kitty-dropdown: no focused workspace/output" >&2
+    exit 1
+fi
+
+find_window() {
+    jq -c --arg c "$class" '
+        [ .[] | select(.app_id == $c) ] as $w
+        | ( $w | map(select(.is_focused)) | first ) // ( $w | first ) // empty
+    ' <<<"$windows"
+}
+
+# Print "output\nname\nidx" for a workspace that is not currently displayed, or
+# nothing if every workspace is active. Preference order:
+#   1. the named park workspace
+#   2. an empty inactive workspace on the window's own output
+#   3. any inactive workspace on the window's own output
+#   4. an inactive named workspace (any output; can be moved to by name)
+#   5. an empty inactive workspace on another output
+#   6. any inactive workspace
+# Staying on the window's output avoids move-window-to-monitor, which would
+# otherwise move focus to that monitor.
+choose_hidden_workspace() {
+    local win_output=$1
+    jq -sr --arg park "$park" --arg win_output "$win_output" '
+        .[0] as $ws
+        | .[1] as $wins
+        | ( $ws | map(select(.name == $park)) | first ) as $p
+        | ( $wins
+            | map(select(.workspace_id != null) | .workspace_id)
+            | group_by(.)
+            | map({ key: (.[0] | tostring), value: length })
+            | from_entries ) as $count
+        | def empty_ws: (($count[.id | tostring] // 0) == 0);
+          def high_idx: sort_by(.idx) | reverse;
+          [ $ws[] | select(.is_active == false) ] as $hidden
+        | (
+            [ $hidden[] | select($p != null) | select(.id == $p.id) ]
+            + ( [ $hidden[] | select(.output == $win_output) | select(empty_ws) ] | high_idx )
+            + ( [ $hidden[] | select(.output == $win_output) ] | high_idx )
+            + ( [ $hidden[] | select(.name != null) ] | high_idx )
+            + ( [ $hidden[] | select(.output != $win_output) | select(empty_ws) ] | high_idx )
+            + ( [ $hidden[] | select(.output != $win_output) ] | high_idx )
+          )
+        | first
+        | if . == null then empty
+          else "\(.output)\n\(.name // "")\n\(.idx)" end
+    ' <(printf '%s\n' "$workspaces") <(printf '%s\n' "$windows")
+}
+
+# Move the window to the focused workspace, float it, and size/position it as
+# the dropdown.
+place_window() {
+    local id=$1 x
+    act move-window-to-monitor --id "$id" "$focused_output"
+    act move-window-to-workspace --window-id "$id" "$focused_ws_idx" --focus=false
+    act move-window-to-floating --id "$id"
+    act set-window-width --id "$id" "100%"
+    act set-window-height --id "$id" "${percent}%"
+
+    # Growing to full width can leave the window offset; nudge it back to x=0.
+    x=$(json windows | jq -r --argjson id "$id" \
+        '.[] | select(.id == $id) | .layout.tile_pos_in_workspace_view[0] // 0')
+    if [[ ${x%.*} =~ ^-?[0-9]+$ && ${x%.*} -ne 0 ]]; then
+        act move-floating-window --id "$id" -x "$((-${x%.*}))"
+    fi
+
+    act focus-window --id "$id"
+}
+
+# Park the window on a workspace that is not being displayed.
+hide_window() {
+    local id=$1 ws=$2 target target_output target_name target_idx park_ws win_output
+    park_ws=$(jq -c --arg p "$park" 'map(select(.name == $p)) | first // empty' <<<"$workspaces")
+    win_output=$(jq -r --argjson ws "$ws" '.[] | select(.id == $ws) | .output' <<<"$workspaces")
+
+    mapfile -t target < <(choose_hidden_workspace "$win_output")
+    if [[ ${#target[@]} -eq 0 ]]; then
+        # Every workspace is active (can happen on a single empty workspace).
+        # Fall back to the park workspace rather than leaving it visible.
+        if [[ -z $park_ws ]]; then
+            echo "kitty-dropdown: no workspace to hide the window on" >&2
+            return 1
+        fi
+        target_output=$(jq -r '.output' <<<"$park_ws")
+        target_name=$park
+        target_idx=""
+    else
+        target_output=${target[0]:-}
+        target_name=${target[1]:-}
+        target_idx=${target[2]:-}
+    fi
+
+    if [[ -n $target_name ]]; then
+        # Reference by name works across outputs without moving to the monitor
+        # first (which would move focus).
+        act move-window-to-workspace --window-id "$id" "$target_name" --focus=false
+    elif [[ $target_output == "$win_output" ]]; then
+        act move-window-to-workspace --window-id "$id" "$target_idx" --focus=false
+    else
+        # Unnamed workspaces can only be addressed by index, which is relative
+        # to the window's current output.
+        act move-window-to-monitor --id "$id" "$target_output"
+        act move-window-to-workspace --window-id "$id" "$target_idx" --focus=false
+    fi
+}
+
+win=$(find_window)
+
+if [[ -z $win ]]; then
+    # Close the lock descriptor in the child, otherwise kitty would keep the
+    # lock held and every later toggle would exit immediately.
+    setsid kitty --class "$class" --instance-group "$class" --title "$title" \
+        -o background_opacity=1.0 >/dev/null 2>&1 9>&- &
+    for _ in {1..50}; do
+        windows=$(json windows)
+        win=$(find_window)
+        [[ -n $win ]] && break
+        sleep 0.1
+    done
+    if [[ -z $win ]]; then
+        echo "kitty-dropdown: window did not appear" >&2
+        exit 1
+    fi
+    sleep 0.25
+    place_window "$(jq -r .id <<<"$win")"
+    exit 0
+fi
+
+id=$(jq -r .id <<<"$win")
+ws=$(jq -r .workspace_id <<<"$win")
+
+# Same workspace as the focused one -> the dropdown is in front of the user, so
+# toggle it off. Otherwise -> summon it to the focused workspace.
+if [[ $ws == "$focused_ws_id" ]]; then
+    hide_window "$id" "$ws"
+else
+    place_window "$id"
+fi

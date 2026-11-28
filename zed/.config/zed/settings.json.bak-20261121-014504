@@ -1,0 +1,189 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "agent": {
+    "default_model": {
+      "provider": "opencode",
+      "model": "go/deepseek-v4.1-flash",
+      "enable_thinking": true,
+      "effort": "high"
+    },
+    "threads_sidebar": {
+      "auto_open": false
+    },
+    "favorite_models": [
+      {
+        "provider": "opencode",
+        "model": "go/deepseek-v4.1-flash",
+        "enable_thinking": true,
+        "effort": "high"
+      },
+      {
+        "provider": "opencode",
+        "model": "go/glm-5.3-flash",
+        "enable_thinking": true,
+        "effort": "high"
+      }
+    ],
+    "model_parameters": []
+  },
+  "language_models": {
+    // OpenCode Go (same account/key as `opencode`): DeepSeek V4.1 Flash,
+    // LongCat 2.0, GLM-5.3, Qwen3.8, etc. Zed discovers the model list and
+    // capabilities from OpenCode. Zen models are hidden to keep the picker
+    // focused on Go.
+    //
+    // Auth: OPENCODE_API_KEY in Zed's environment, or enter the key once under
+    // Agent Settings -> LLM Providers -> OpenCode (stored in the keychain).
+    // `~/.config/opencode/.env` is only read by OpenCode, not by Zed.
+    "opencode": {
+      "show_zen_models": true,
+      "show_go_models": true
+    },
+    // Local llama-swap front end for llama.cpp at 127.0.0.1:8081 (see
+    // ~/.config/llama-swap/config.yaml). Auto-discovery is off because
+    // llama-swap reports context length only for a loaded model (/props
+    // returns 404 while unloaded), so the resident models are listed here,
+    // mirroring the `llamacpp` provider in ~/.config/opencode/opencode.jsonc.
+    //
+    // Auth: llama-swap requires the key from ~/.config/llama-swap/api_key.
+    // Put it in LLAMACPP_API_KEY (Zed's environment) or enter it once under
+    // Agent Settings -> LLM Providers -> llama.cpp.
+    "llama.cpp": {
+      "api_url": "http://127.0.0.1:8081",
+      "auto_discover": false,
+      "available_models": [
+        {
+          "name": "qwen38",
+          "display_name": "Qwen 3.8 27B (no-think, 90k ctx)",
+          "max_tokens": 90112,
+          "supports_tools": true,
+          "supports_images": false
+        },
+        {
+          "name": "qwen38:think",
+          "display_name": "Qwen 3.8 27B (thinking, 90k ctx)",
+          "max_tokens": 90112,
+          "supports_tools": true,
+          "supports_images": false
+        },
+        {
+          "name": "qwen3vl",
+          "display_name": "Qwen3-VL 30B-A3B (vision, 16k ctx)",
+          "max_tokens": 16384,
+          "supports_tools": true,
+          "supports_images": true
+        },
+        {
+          "name": "paddleocr",
+          "display_name": "PaddleOCR-VL 1.6 (documents -> markdown, 8k ctx)",
+          "max_tokens": 8192,
+          "supports_tools": false,
+          "supports_images": true
+        }
+      ]
+    }
+  },
+  "cli_default_open_behavior": "existing_window",
+  "icon_theme": "Bearded Icon Theme",
+  "proxy": "",
+  "buffer_font_weight": 400.0,
+  "ui_font_weight": 400.0,
+  "ui_font_family": "Adwaita Sans",
+  "telemetry": {
+    "diagnostics": true,
+    "metrics": false,
+    "anthropic_retention": false
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "base_keymap": "VSCode",
+  "ui_font_size": 14,
+  "buffer_font_size": 16,
+  "terminal": {
+    "font_family": "BerkeleyMono Nerd Font",
+    "font_size": 13,
+  },
+  "theme": {
+    "mode": "system",
+    "light": "DankShell Light",
+    "dark": "Pure Black High Contrast",
+  },
+  "buffer_font_family": "BerkeleyMono Nerd Font",
+  //"buffer_font_family": "HE_TERMINAL Nerd Font",
+  "buffer_font_fallbacks": ["JetBrainsMono Nerd Font", "BerkeleyMono Nerd Font"],
+  //"buffer_font_weight": 400,
+  "disable_ai": false,
+  //"buffer_line_height": "standard",
+  "auto_indent": "syntax_aware",
+  "auto_install_extensions": {
+    "kitty": true,
+    "perl": true,
+    "kdl": true,
+  },
+  "file_types": {
+    "Kitty": ["kitty.conf", "**/kitty/**/*.conf"],
+    // Perl + Raku approximation (no real Raku language in Zed yet).
+    // Raku files get Perl highlighting until ~/Projects/zed-raku lands.
+    "Perl": [
+      "**/*.pl", "**/*.pm", "**/*.t", "**/*.PL", "**/*.pod",
+      //"**/*.raku", "**/*.rakumod", "**/*.rakutest", "**/*.rakudoc",
+      //"**/*.p6", "**/*.pl6", "**/*.pm6", "**/*.t6", "**/*.pod6", "**/*.nqp",
+    ],
+  },
+  "languages": {
+    "Perl": {
+      // Prefer the installed perl-lsp (perllsp) over Perl Navigator.
+      "language_servers": ["perl-lsp", "!perlnavigator-server", "..."],
+      "tab_size": 4,
+    },
+    "Raku": {
+      "language_servers": ["raku-navigator", "..."],
+      "tab_size": 4,
+    },
+  },
+  // Mirror the VS Code perl-lsp.* settings (server receives these as its
+  // workspace configuration).
+  "lsp": {
+    "perl-lsp": {
+      "settings": {
+        "enableSemanticTokens": false,
+        "enableFormatting": true,
+        "enableTestIntegration": true,
+        "diagnostics": true,
+        "featureProfile": "auto",
+        "autoPopulateNewFiles": true,
+        "includePaths": ["lib", ".", "local/lib/perl5"],
+        "perltidyConfig": "/home/johnm/.perltidyrc",
+        "perlcritic": {
+          "enabled": false,
+          "severity": 1,
+        },
+      },
+    },
+    // RakuNavigator: the extension finds `raku-navigator` on PATH (a wrapper
+    // around server/out/server.js). `includePaths` is passed through to the
+    // server as workspace configuration.
+    "raku-navigator": {
+      "settings": {
+        "includePaths": ["lib", "."],
+      },
+    },
+  },
+  "preview_tabs": {
+    "enable_preview_from_project_panel": false,
+    "enabled": false,
+  },
+  "git": {
+    "inline_blame": {
+      "enabled": false,
+    },
+  },
+}

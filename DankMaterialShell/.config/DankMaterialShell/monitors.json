@@ -27,7 +27,9 @@
           "transform": "Normal",
           "vrr": false,
           "disabled": false,
-          "niri": {}
+          "niri": {
+            "focusAtStartup": true
+          }
         }
       }
     }

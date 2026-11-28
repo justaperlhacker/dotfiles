@@ -61,5 +61,27 @@
         "C_Cpp.SwitchHeaderSource"
       ]
     }
+  },
+
+  // llama.cpp FIM completion server (systemd user unit)
+  {
+    "key": "ctrl+alt+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "llama-completion: start"
+  },
+  {
+    "key": "ctrl+alt+shift+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "llama-completion: stop"
+  },
+  {
+    "key": "ctrl+alt+shift+r",
+    "command": "workbench.action.tasks.runTask",
+    "args": "llama-completion: restart"
+  },
+  {
+    "key": "ctrl+alt+shift+h",
+    "command": "workbench.action.tasks.runTask",
+    "args": "llama-completion: status"
   }
 ]

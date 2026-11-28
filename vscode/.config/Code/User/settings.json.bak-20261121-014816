@@ -1,0 +1,274 @@
+{
+    // General / UI
+    // disable all telemetry / online experiments / update checks
+    "update.mode": "none",
+    "telemetry.telemetryLevel": "off",
+    "telemetry.feedback.enabled": false,
+    "telemetry.editStats.enabled": false,
+    "telemetry.sendUsageData": false,
+    "telemetry.crashReporter.enabled": false,
+    "redhat.telemetry.enabled": false,
+    "dotnet.telemetry.optout": true,
+    "powershell.telemetry.enabled": false,
+    "workbench.enableExperiments": false,
+    "workbench.settings.enableNaturalLanguageSearch": false,
+    "extensions.autoCheckUpdates": false,
+    "extensions.autoUpdate": "off",
+    "npm.fetchOnlinePackageInfo": false,
+    "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
+    "extensions.ignoreRecommendations": true,
+    "workbench.list.openMode": "doubleClick",
+    "workbench.iconTheme": "file-icons-colourless",
+    "workbench.startupEditor": "none",
+    "workbench.tips.enabled": false,
+    "workbench.activityBar.location": "top",
+    "git.enabled": false,
+    "makefile.configureOnOpen": true,
+    "chat.viewSessions.orientation": "stacked",
+    "chat.titleBar.openInAgentsWindow.enabled": false,
+    "github.copilot.enable": {
+        "*": false
+    },
+    "vim.handleKeys": {
+        "<C-b>": false,
+        "<C-j>": false,
+        "<C-l>": false,
+    },
+    // zoom level
+    //"window.zoomLevel": -1,
+
+    // trusted domains
+    "json.schemaDownload.trustedDomains": {
+        "https://developer.microsoft.com/json-schemas/": true,
+        "https://json-schema.org/": true,
+        "https://json.schemastore.org/": true,
+        "https://raw.githubusercontent.com": true,
+        "https://raw.githubusercontent.com/devcontainers/spec/": true,
+        "https://raw.githubusercontent.com/microsoft/vscode/": true,
+        "https://schemastore.azurewebsites.net/": true,
+        "https://www.schemastore.org/": true
+    },
+
+    // Theme customization
+    "workbench.colorCustomizations": {
+        // works on all dark themes
+        "[*]": {
+            "editor.lineHighlightBackground": "#ffffff10",
+            "editor.lineHighlightBorder": "#ffffff40"
+        },
+        // works on all light themes (uncomment to use)
+        // "[*]": {
+        //     "editor.lineHighlightBackground": "#00000008",
+        //     "editor.lineHighlightBorder": "#00000040"
+        // },
+        // light counterpart for the auto light/dark switch
+        "[Tokyo Night Light]": {
+            "editor.lineHighlightBackground": "#00000008",
+            "editor.lineHighlightBorder": "#00000040"
+        },
+        "[Fleury Theme]": {
+            "sideBar.border": "#7a6b5a",
+            "sideBar.background": "#020202",
+            "activityBar.background": "#020202",
+            "panel.background": "#020202",
+            "statusBar.background": "#020202",
+            "editorGroup.border": "#7a6b5a",
+            "statusBar.border": "#7a6b5a",
+            "titleBar.activeBackground": "#020202",
+            "titleBar.inactiveBackground": "#020202",
+            "titleBar.border": "#7a6b5a",
+            "editorGroupHeader.tabsBackground": "#020202",
+            "editorGroupHeader.noTabsBackground": "#020202",
+            "tab.activeBackground": "#1E1E1E",
+            "tab.inactiveBackground": "#020202",
+        },
+        "[Rouge]": {
+            "tab.activeBackground": "#1b1b1b",
+            "tab.activeForeground": "#f3e9da",
+            "tab.unfocusedActiveBackground": "#171717",
+            "editorGroup.border": "#7a6b5a",
+            "sideBar.border": "#7a6b5a",
+        },
+        // Nord Darker with more contrast.
+        "[Nord]": {
+            "editor.background": "#242A36",
+            "editorGutter.background": "#242A36",
+            "editorLineNumber.foreground": "#5E6A7A",
+            "editorLineNumber.activeForeground": "#D8DEE9",
+            "sideBar.background": "#242A36",
+            "sideBar.border": "#4C566A",
+            "panel.background": "#242A36",
+            "panel.border": "#4C566A",
+            "activityBar.background": "#242A36",
+            "activityBar.border": "#4C566A",
+            "terminal.background": "#242A36",
+            "terminal.foreground": "#D8DEE9",
+            "tab.inactiveBackground": "#242A36",
+            "editorGroupHeader.tabsBackground": "#242A36",
+            "editorGroupHeader.noTabsBackground": "#242A36",
+            "editorGroup.border": "#4C566A",
+            "titleBar.activeBackground": "#242A36",
+            "titleBar.border": "#4C566A",
+            "statusBar.background": "#242A36",
+            "statusBar.border": "#4C566A",
+        },
+    },
+
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "comment",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "keyword",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            // {
+            //     "scope": "string",
+            //     "settings": {
+            //         "fontStyle": "italic"
+            //     }
+            // },
+        ]
+    },
+
+    // Editor
+    "editor.fontFamily": "BerkeleyMono Nerd Font",
+    //"editor.fontFamily": "HE_TERMINAL Nerd Font",
+    // "editor.fontFamily": "Terminess Nerd Font",
+    // "editor.fontFamily": "'Droid Sans Mono', monospace",
+    //"editor.fontFamily": "JetBrainsMono Nerd Font",
+    // "editor.fontFamily": "Liberation Mono",
+    // "editor.fontFamily": "IoskeleyMono Nerd Font",
+    // "editor.fontFamily": "IoskeleyMonoTerm Nerd Font",
+    // "editor.fontFamily": "Iosevka Nerd Font",
+    // "editor.fontFamily": "Hack Nerd Font",
+    // "editor.fontFamily": "Monaspace Neon NF",
+    // "editor.fontFamily": "Monaspace Argon NF",
+    // "editor.fontFamily": "Monaspace Xeon NF",
+    // "editor.fontFamily": "Monaspace Radon NF",
+    // "editor.fontFamily": "Monaspace Krypton NF",
+    // "editor.fontFamily": "CommitMono Nerd Font",
+    // "editor.fontFamily": "ComicShanns Nerd Font",
+    // "editor.fontFamily": "CaskaydiaCove Nerd Font",
+    // "editor.fontFamily": "FiraCode Nerd Font Mono",
+    // "editor.fontFamily": "MesloLGL Nerd Font",
+    // sometimes I like it a bit bolder
+    //"editor.fontWeight": "600",
+    //"editor.fontWeight": "500",
+    //"editor.fontWeight": "100",
+    // HE_TERMINAL's default face is heavy; "300" selects its lighter "Roman" face
+    //"editor.fontWeight": "300",
+    // at zoom -1 fontsize 17 approx matches 14 (default)
+    "editor.fontSize": 16,
+    //"editor.fontSize": 18,
+    //"editor.lineHeight": 1.3,
+    //"editor.lineHeight": 1.4,
+    "editor.fontLigatures": true,
+    "editor.glyphMargin": true,
+    "editor.lineNumbers": "on",
+    "editor.renderLineHighlight": "line",
+    "editor.minimap.enabled": false,
+
+    // Terminal
+    "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+    "terminal.integrated.fontLigatures.enabled": false,
+    "terminal.integrated.stickyScroll.enabled": false,
+
+    // File / search behavior
+    "files.watcherExclude": {
+        ".git/objects/**": true,
+        ".git/subtree-cache/**": true,
+        ".hg/store/**": true,
+        "*/.git/objects/**": true,
+        "*/.git/subtree-cache/**": true,
+        "*/.hg/store/**": true,
+        "**/__pycache__/**": true,
+        "**/*.py[cod]": true,
+        "**/blib": true,
+        "**/inc": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__/**": true,
+        "**/*.py[cod]": true,
+        "**/blib": true,
+        "**/inc": true
+    },
+    "files.associations": {
+        "**/.bashrc": "shellscript",
+        "**/.bash_aliases": "shellscript",
+        "**/.inputrc": "properties",
+        "**/.Xresources": "properties",
+        "**/.Xresources.d/*": "properties",
+        "config": "properties",
+        "*.toml": "properties",
+        "*.pod": "perl"
+    },
+
+    // Perl / LSP
+    "perl-lsp.serverPath": "/home/johnm/.cargo/bin/perllsp",
+    "perl-lsp.autoDownload": true,
+    "perl-lsp.trace.server": "off",
+    "perl-lsp.enableSemanticTokens": false,
+    "perl-lsp.enableFormatting": true,
+    "perl-lsp.formatOnSave": false,
+    "perl-lsp.enableTestIntegration": true,
+    "perl-lsp.perlcritic.enabled" : false,
+    "perl-lsp.perlcritic.severity": 1,
+    "perl-lsp.diagnostics": true,
+    "perl-lsp.includePaths": [
+        "lib",
+        ".",
+        "local/lib/perl5"
+    ],
+    "perl-lsp.perltidyConfig": "/home/johnm/.perltidyrc",
+    "perl-lsp.autoPopulateNewFiles": true,
+    "perl-lsp.featureProfile": "auto",
+    "[perl]": {
+        "editor.defaultFormatter": "tree-sitter-perl.vscode-perl-lsp",
+        //"editor.defaultFormatter": "richterger.perl"
+        "editor.formatOnSave": false,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.inlayHints.enabled": "off",
+    },
+    "files.trimTrailingWhitespace": true,
+
+    // Perl / Perl::LanguageServer
+    // "perl.lsp.trace.server": "off",
+    // "perl.enable": false,
+    // "perl.showLocalVars": true,
+    "raku.rakuPath": "raku",
+    "raku.logging": false,
+    "raku.formatting.enable": true,
+    "raku.formatting.indentSize": 4,
+
+    "[raku]": {
+        "editor.wordSeparators": "`~!#^&*()=+[{]}\\|;:'\",.<>/?",
+        "editor.formatOnSave": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+    },
+
+    "vsicons.dontShowNewVersionMessage": true,
+    "workbench.colorTheme": "Tokyo Night",
+    // Follow the desktop's light/dark scheme. KDE Plasma exposes its
+    // day/night switch through the XDG desktop portal, so this tracks it.
+    "window.autoDetectColorScheme": true,
+    "workbench.preferredDarkColorTheme": "Black Metal",
+    "workbench.preferredLightColorTheme": "DankShell Light",
+    "window.density.layout": "compact",
+    "pendant.subagents.delegation": "automatic",
+    "pendant.sessionRailPosition": "right",
+
+}

@@ -1,5 +1,8 @@
 local colorscheme = {}
 
+-- Local ports
+-- colorscheme.name = "nightjar" -- shared Nightjar palette (dark-only)
+
 -- Earthy / warm / forest vibes
 -- colorscheme.name = "everforest"
 -- colorscheme.name = "gruvbox"
@@ -76,6 +79,32 @@ local colorscheme = {}
 -- colorscheme.name = "10x-icing"
 -- colorscheme.name = "10x-vs-plus-vax"
 
+-- NvChad base46 themes (duxlabs-dev/base46, plugin in lua/plugins/colorscheme.lua).
+-- 98 themes, all prefixed "base46-"; see the plugin's colors/ dir for the
+-- full list, or `:colorscheme <Tab>`. Many ship dark/light pairings:
+-- colorscheme.dark = "base46-gruvchad"
+-- colorscheme.light = "base46-gruvbox_light"
+-- colorscheme.dark = "base46-chadracula"
+-- colorscheme.dark = "base46-kanagawa"
+-- colorscheme.dark = "base46-catppuccin"
+-- colorscheme.light = "base46-catppuccin-latte"
+-- colorscheme.dark = "base46-tokyonight"
+-- colorscheme.light = "base46-one_light"
+-- colorscheme.dark = "base46-everforest"
+-- colorscheme.light = "base46-everforest_light"
+-- colorscheme.dark = "base46-gruvbox"
+-- colorscheme.dark = "base46-onedark"
+-- colorscheme.dark = "base46-nightfox"
+-- colorscheme.dark = "base46-nord"
+-- colorscheme.dark = "base46-rosepine"
+-- colorscheme.light = "base46-rosepine-dawn"
+-- colorscheme.dark = "base46-material-darker"
+-- colorscheme.dark = "base46-github_dark"
+-- colorscheme.light = "base46-github_light"
+-- colorscheme.dark = "base46-monochrome"
+-- colorscheme.dark = "base46-default-dark"
+-- colorscheme.light = "base46-default-light"
+
 -- Solarized (plugins in lua/plugins/colorscheme.lua)
 -- colorscheme.dark = "solarized-osaka"
 -- colorscheme.light = "solarized-osaka-light"
@@ -91,8 +120,11 @@ local colorscheme = {}
 -- from kraihnight, and takes the palette from the matching kitty theme
 -- (colors/kitty.lua + lua/config/kitty-palette.lua), so terminal and editor
 -- match. It picks the palette by 'background', hence the same name both sides.
---colorscheme.dark = "kitty"
---colorscheme.light = "kitty"
+--
+-- Nightjar is dark-only, so it is used for the dark half of the day/night
+-- cycle; the light half keeps kitty. Set both to "nightjar" to use it always.
+colorscheme.dark = "nightjar"
+colorscheme.light = "kitty"
 -- colorscheme.dark = "vague"
 -- colorscheme.dark = "sequoia-monochrome-dark"
 -- colorscheme.light = "modus_operandi"
@@ -104,8 +136,16 @@ local colorscheme = {}
 -- colorscheme.dark = "fleury"
 --colorscheme.dark = "nord"
 --colorscheme.dark = "onedark"
-colorscheme.dark = "github_dark_default"
-colorscheme.light = "github_light_default"
+--colorscheme.dark = "github_dark_default"
+--colorscheme.light = "github_light_default"
+--colorscheme.dark = "base46-github_dark"
+--colorscheme.light = "base46-github_light"
+--colorscheme.dark = "base46-gruvbox"
+--colorscheme.light = "base46-gruvbox_light"
+--colorscheme.dark = "dms"
+--colorscheme.light = "dms"
+--colorscheme.dark = "base46-ayu_dark"
+--colorscheme.light = "base46-ayu_light"
 
 colorscheme.fallback = "default"
 
@@ -165,7 +205,9 @@ local function apply()
   applying = true
 
   local background = vim.o.background == "light" and "light" or "dark"
-  local name = background == "light" and colorscheme.light or colorscheme.dark
+  -- `dark`/`light` win per background; `name` is one theme for both, so the
+  -- menu above can be uncommented either way.
+  local name = colorscheme[background] or colorscheme.name
 
   if vim.o.background ~= background then
     auto.internal = true

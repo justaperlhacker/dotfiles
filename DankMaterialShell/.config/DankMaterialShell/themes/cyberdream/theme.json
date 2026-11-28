@@ -1,0 +1,401 @@
+{
+  "id": "cyberdream",
+  "name": "Cyberdream",
+  "version": "1.0.0",
+  "author": "Frostspanner",
+  "description": "Theme based on https://github.com/scottmckendry/cyberdream.nvim",
+  "dark": {},
+  "light": {},
+  "variants": {
+    "type": "multi",
+    "defaults": {
+      "dark": {
+        "accent": "green",
+        "flavor": "cyberdream"
+      },
+      "light": {
+        "accent": "green",
+        "flavor": "cyberdream-light"
+      }
+    },
+    "flavors": [
+      {
+        "id": "cyberdream",
+        "name": "Cyberdream",
+        "dark": {
+          "surface": "#16181a",
+          "surfaceText": "#ffffff",
+          "surfaceVariant": "#1e2124",
+          "surfaceVariantText": "#ffffff",
+          "background": "#16181a",
+          "backgroundText": "#ffffff",
+          "outline": "#3c4048",
+          "surfaceContainer": "#16181a",
+          "surfaceContainerHigh": "#1e2124",
+          "error": "#ff6e5e",
+          "warning": "#ffbd5e",
+          "info": "#5eff6c"
+        },
+        "light": {}
+      },
+      {
+        "id": "cyberdream-muted",
+        "name": "Cyberdream Muted",
+        "dark": {
+          "surface": "#16181a",
+          "surfaceText": "#ffffff",
+          "surfaceVariant": "#1e2124",
+          "surfaceVariantText": "#ffffff",
+          "background": "#16181a",
+          "backgroundText": "#ffffff",
+          "outline": "#3c4048",
+          "surfaceContainer": "#16181a",
+          "surfaceContainerHigh": "#1e2124",
+          "error": "#e8796f",
+          "warning": "#e3a875",
+          "info": "#7ee088"
+        },
+        "light": {}
+      },
+      {
+        "id": "cyberdream-light",
+        "name": "Cyberdream Light",
+        "dark": {},
+        "light": {
+          "surface": "#ffffff",
+          "surfaceText": "#16181a",
+          "surfaceVariant": "#eaeaea",
+          "surfaceVariantText": "#16181a",
+          "background": "#ffffff",
+          "backgroundText": "#16181a",
+          "outline": "#acacac",
+          "surfaceContainer": "#ffffff",
+          "surfaceContainerHigh": "#eaeaea",
+          "error": "#d11500",
+          "warning": "#d17c00",
+          "info": "#008b0c"
+        }
+      }
+    ],
+    "accents": [
+      {
+        "cyberdream": {
+          "primary": "#7b8496",
+          "primaryText": "#16181a",
+          "primaryContainer": "#444b54",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#3c4048"
+        },
+        "cyberdream-light": {
+          "primary": "#7b8496",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#bbc0c9",
+          "secondary": "#a018ff",
+          "surfaceTint": "#dddfe4"
+        },
+        "cyberdream-muted": {
+          "primary": "#7b8496",
+          "primaryText": "#16181a",
+          "primaryContainer": "#444b54",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#3c4048"
+        },
+        "id": "gray",
+        "name": "Gray"
+      },
+      {
+        "cyberdream": {
+          "primary": "#5ea1ff",
+          "primaryText": "#16181a",
+          "primaryContainer": "#2c4c6b",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#213140"
+        },
+        "cyberdream-light": {
+          "primary": "#0057d1",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#9fa6ea",
+          "secondary": "#a018ff",
+          "surfaceTint": "#d0d2f5"
+        },
+        "cyberdream-muted": {
+          "primary": "#78a8e8",
+          "primaryText": "#16181a",
+          "primaryContainer": "#3d4d64",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#26323d"
+        },
+        "id": "blue",
+        "name": "Blue"
+      },
+      {
+        "cyberdream": {
+          "primary": "#5eff6c",
+          "primaryText": "#16181a",
+          "primaryContainer": "#004b5b",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#173542"
+        },
+        "cyberdream-light": {
+          "primary": "#008b0c",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#95c589",
+          "secondary": "#a018ff",
+          "surfaceTint": "#cae2c3"
+        },
+        "cyberdream-muted": {
+          "primary": "#7ee088",
+          "primaryText": "#16181a",
+          "primaryContainer": "#20444e",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#1f313a"
+        },
+        "id": "green",
+        "name": "Green"
+      },
+      {
+        "cyberdream": {
+          "primary": "#5ef1ff",
+          "primaryText": "#16181a",
+          "primaryContainer": "#3c6475",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#2b3c46"
+        },
+        "cyberdream-light": {
+          "primary": "#008c99",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#97c5cb",
+          "secondary": "#a018ff",
+          "surfaceTint": "#cbe2e5"
+        },
+        "cyberdream-muted": {
+          "primary": "#7ed8e8",
+          "primaryText": "#16181a",
+          "primaryContainer": "#425c69",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#32414a"
+        },
+        "id": "cyan",
+        "name": "Cyan"
+      },
+      {
+        "cyberdream": {
+          "primary": "#f1ff5e",
+          "primaryText": "#16181a",
+          "primaryContainer": "#554529",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#32291e"
+        },
+        "cyberdream-light": {
+          "primary": "#997b00",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#d0bb87",
+          "secondary": "#a018ff",
+          "surfaceTint": "#e8dcc2"
+        },
+        "cyberdream-muted": {
+          "primary": "#e3c875",
+          "primaryText": "#16181a",
+          "primaryContainer": "#493d2d",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#2c261f"
+        },
+        "id": "yellow",
+        "name": "Yellow"
+      },
+      {
+        "cyberdream": {
+          "primary": "#ff5ef1",
+          "primaryText": "#16181a",
+          "primaryContainer": "#502841",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#2f1d27"
+        },
+        "cyberdream-light": {
+          "primary": "#d100bf",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#ef9be0",
+          "secondary": "#a018ff",
+          "surfaceTint": "#f9cef0"
+        },
+        "cyberdream-muted": {
+          "primary": "#e878d8",
+          "primaryText": "#16181a",
+          "primaryContainer": "#4a2c3e",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#2d1f26"
+        },
+        "id": "magenta",
+        "name": "Magenta"
+      },
+      {
+        "cyberdream": {
+          "primary": "#ff5ea0",
+          "primaryText": "#16181a",
+          "primaryContainer": "#4b293a",
+          "secondary": "#bd5eff",
+          "surfaceTint": "#2d1e25"
+        },
+        "cyberdream-light": {
+          "primary": "#f40064",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#ffb2bd",
+          "secondary": "#a018ff",
+          "surfaceTint": "#ffd0d5"
+        },
+        "cyberdream-muted": {
+          "primary": "#e878a8",
+          "primaryText": "#16181a",
+          "primaryContainer": "#462d3a",
+          "secondary": "#b07ee8",
+          "surfaceTint": "#2b1f25"
+        },
+        "id": "pink",
+        "name": "Pink"
+      },
+      {
+        "cyberdream": {
+          "primary": "#bd5eff",
+          "primaryText": "#16181a",
+          "primaryContainer": "#51346e",
+          "secondary": "#5ea1ff",
+          "surfaceTint": "#3b294d"
+        },
+        "cyberdream-light": {
+          "primary": "#a018ff",
+          "primaryText": "#ffffff",
+          "primaryContainer": "#d899ff",
+          "secondary": "#0057d1",
+          "surfaceTint": "#edccff"
+        },
+        "cyberdream-muted": {
+          "primary": "#b07ee8",
+          "primaryText": "#16181a",
+          "primaryContainer": "#4f3d64",
+          "secondary": "#78a8e8",
+          "surfaceTint": "#3a2e47"
+        },
+        "id": "purple",
+        "name": "Purple"
+      }
+    ]
+  },
+  "wcag": {
+    "level": "fail",
+    "dark": {
+      "level": "AAA",
+      "minRatio": 13.56,
+      "worstPair": [
+        "primaryText",
+        "primary"
+      ],
+      "body": {
+        "level": "AAA",
+        "minRatio": 16.18,
+        "worstPair": [
+          "surfaceText",
+          "surfaceContainerHigh"
+        ]
+      },
+      "accent": {
+        "level": "AAA",
+        "minRatio": 13.56,
+        "worstPair": [
+          "primaryText",
+          "primary"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 6.48,
+        "worstPair": [
+          "error",
+          "surfaceContainer"
+        ]
+      },
+      "variants": {
+        "cyberdream-blue": "AA",
+        "cyberdream-cyan": "AAA",
+        "cyberdream-gray": "AA",
+        "cyberdream-green": "AAA",
+        "cyberdream-magenta": "AA",
+        "cyberdream-muted-blue": "AAA",
+        "cyberdream-muted-cyan": "AAA",
+        "cyberdream-muted-gray": "AA",
+        "cyberdream-muted-green": "AAA",
+        "cyberdream-muted-magenta": "AA",
+        "cyberdream-muted-pink": "AA",
+        "cyberdream-muted-purple": "AA",
+        "cyberdream-muted-yellow": "AAA",
+        "cyberdream-pink": "AA",
+        "cyberdream-purple": "AA",
+        "cyberdream-yellow": "AAA"
+      },
+      "breakdown": [
+        {
+          "name": "Cyberdream",
+          "mode": "dark",
+          "level": "AA",
+          "bodyLevel": "AAA"
+        },
+        {
+          "name": "Cyberdream Muted",
+          "mode": "dark",
+          "level": "AA",
+          "bodyLevel": "AAA"
+        }
+      ]
+    },
+    "light": {
+      "level": "fail",
+      "minRatio": 4.47,
+      "worstPair": [
+        "primaryText",
+        "primary"
+      ],
+      "body": {
+        "level": "AAA",
+        "minRatio": 14.8,
+        "worstPair": [
+          "surfaceText",
+          "surfaceContainerHigh"
+        ]
+      },
+      "accent": {
+        "level": "fail",
+        "minRatio": 4.47,
+        "worstPair": [
+          "primaryText",
+          "primary"
+        ]
+      },
+      "nonText": {
+        "level": "AA",
+        "minRatio": 3.18,
+        "worstPair": [
+          "warning",
+          "surfaceContainer"
+        ]
+      },
+      "variants": {
+        "cyberdream-light-blue": "AA",
+        "cyberdream-light-cyan": "fail",
+        "cyberdream-light-gray": "fail",
+        "cyberdream-light-green": "fail",
+        "cyberdream-light-magenta": "AA",
+        "cyberdream-light-pink": "fail",
+        "cyberdream-light-purple": "AA",
+        "cyberdream-light-yellow": "fail"
+      },
+      "breakdown": [
+        {
+          "name": "Cyberdream Light",
+          "mode": "light",
+          "level": "fail",
+          "bodyLevel": "AAA"
+        }
+      ]
+    }
+  },
+  "sourceDir": "cyberdream"
+}

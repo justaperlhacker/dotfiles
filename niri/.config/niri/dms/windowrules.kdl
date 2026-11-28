@@ -1,4 +1,4 @@
-// DMS Window Rules - Managed by Dux Shell
+// DMS Window Rules - Managed by Dux Modular Shell
 // Do not edit manually - changes may be overwritten
 
 // @id=dms-floating-windows @name=DMS Floating Windows
@@ -16,6 +16,65 @@ window-rule {
 // @id=wr_1793461509009771109 @name=discord
 window-rule {
     match app-id="^discord$"
+    open-maximized true
+}
+
+// @id=wr_1795364879446981656 @name=brave-comkdlimbkhemidbbpchhepidbmjpnhh-Default
+window-rule {
+    match app-id="^brave-comkdlimbkhemidbbpchhepidbmjpnhh-Default$"
+    open-floating false
+    open-maximized true
+}
+
+// @id=wr_1795364941917788825 @name=com.ktechpit.whatsie
+window-rule {
+    match app-id="^com.ktechpit.whatsie$"
+    open-floating false
+    open-maximized true
+}
+
+// @id=wr_1795364979430713037 @name=heroic
+window-rule {
+    match app-id="^heroic$"
+    open-maximized true
+}
+
+// @id=wr_1795365038149200091 @name=kitty
+window-rule {
+    match app-id="^kitty$"
+    open-maximized true
+}
+
+// @id=wr_1795365069806318095 @name=doom-emacs
+window-rule {
+    match app-id="^doom-emacs$"
+    open-maximized true
+}
+
+// @id=wr_1795402955358426757 @name=org.kde.konsole
+window-rule {
+    match app-id="^org.kde.konsole$" title=".*cb_console_runn.*"
+    open-floating true
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.5; }
+}
+
+// @id=wr_1795458016896777864 @name=Komodo ide
+window-rule {
+    match app-id="^Komodo ide$" title="Komodo IDE"
+    open-maximized true
+    open-maximized-to-edges true
+}
+
+// @id=wr_1795579499339239738 @name=XTerm
+window-rule {
+    match app-id="^XTerm$"
+    open-floating true
+}
+
+// @id=wr_1795738602529789169 @name=Vmware
+window-rule {
+    match app-id="^Vmware$"
     open-maximized true
 }
 

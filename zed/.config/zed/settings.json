@@ -7,7 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
   "agent": {
+    "dock": "right",
     "default_model": {
       "provider": "opencode",
       "model": "go/deepseek-v4.1-flash",
@@ -15,6 +28,7 @@
       "effort": "high"
     },
     "threads_sidebar": {
+      "position": "right",
       "auto_open": false
     },
     "favorite_models": [
@@ -60,30 +74,16 @@
       "auto_discover": false,
       "available_models": [
         {
-          "name": "glm47",
-          "display_name": "GLM-4.7-Flash 30B-A3B (no-think, 64k ctx)",
-          "max_tokens": 65536,
+          "name": "qwen38",
+          "display_name": "Qwen 3.8 27B (no-think, 90k ctx)",
+          "max_tokens": 90112,
           "supports_tools": true,
           "supports_images": false
         },
         {
-          "name": "glm47:think",
-          "display_name": "GLM-4.7-Flash 30B-A3B (thinking, 64k ctx)",
-          "max_tokens": 65536,
-          "supports_tools": true,
-          "supports_images": false
-        },
-        {
-          "name": "glm47-reap",
-          "display_name": "GLM-4.7-Flash REAP 23B-A3B (no-think, 32k ctx)",
-          "max_tokens": 32768,
-          "supports_tools": true,
-          "supports_images": false
-        },
-        {
-          "name": "glm47-reap:think",
-          "display_name": "GLM-4.7-Flash REAP 23B-A3B (thinking, 32k ctx)",
-          "max_tokens": 32768,
+          "name": "qwen38:think",
+          "display_name": "Qwen 3.8 27B (thinking, 90k ctx)",
+          "max_tokens": 90112,
           "supports_tools": true,
           "supports_images": false
         },
@@ -102,6 +102,21 @@
           "supports_images": true
         }
       ]
+    }
+  },
+  // Inline completions come from the small FIM server on the AMD card (port
+  // 8082, see llama-completion.service), not from llama-swap. Zed formats the
+  // context with Qwen's <|fim_prefix|>/<|fim_suffix|>/<|fim_middle|> markers
+  // and posts it to llama.cpp's OpenAI-compatible /v1/completions endpoint.
+  // That server is loopback-only and runs without an API key.
+  "edit_predictions": {
+    "provider": "open_ai_compatible_api",
+    "open_ai_compatible_api": {
+      "api_url": "http://127.0.0.1:8082/v1/completions",
+      "model": "qwen2.5-coder-7b",
+      "prompt_format": "qwen",
+      "max_output_tokens": 256,
+      "prediction_debounce": 150
     }
   },
   "cli_default_open_behavior": "existing_window",

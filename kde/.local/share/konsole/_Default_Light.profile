@@ -1,11 +1,11 @@
 [Appearance]
 AntiAliasFonts=true
-BoldIntense=false
+BoldIntense=true
 BorderWhenActive=true
-ColorScheme=Github Light
+ColorScheme=Nvim Light
 DimmValue=29
 FocusBorderColor=108,108,111
-Font=BerkeleyMono Nerd Font,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
+Font=BerkeleyMono Nerd Font,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
 FontHinting=true
 IgnoreWcWidth=false
 LineSpacing=0

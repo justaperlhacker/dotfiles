@@ -20,6 +20,7 @@ sub emit_workspaces {
         sub {
             my ($cv) = @_;
             my $workspaces = $cv->recv;
+
             # NOTE: names are passed through unmodified. A previous version
             # stripped the per-monitor suffix (1a -> 1) for display, but
             # i3bar activates buttons by the displayed name, so clicking "1"

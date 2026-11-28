@@ -1,0 +1,11 @@
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-alt-l": ["task::Spawn", { "task_name": "llama-completion: start" }],
+      "ctrl-alt-shift-l": ["task::Spawn", { "task_name": "llama-completion: stop" }],
+      "ctrl-alt-shift-r": ["task::Spawn", { "task_name": "llama-completion: restart" }],
+      "ctrl-alt-shift-h": ["task::Spawn", { "task_name": "llama-completion: status" }]
+    }
+  }
+]

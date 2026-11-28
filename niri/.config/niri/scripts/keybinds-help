@@ -1,0 +1,50 @@
+#!/bin/sh
+# Fuzzy-searchable cheatsheet of every active niri keybinding.
+#
+# Reads the parsed bind list from DMS (which includes dms/binds.kdl and
+# custom-binds.kdl), formats it as "Super+Key — description", and hands it to
+# the DMS launcher, which does fzf-style fuzzy matching. Bound to
+# Mod+Shift+Slash (Super+Shift+/).
+set -u
+
+items=$(
+    dms keybinds show niri 2>/dev/null | jq -r '
+        .binds | to_entries[] as $category
+        | $category.value[]
+        | . as $bind
+        | "\($bind.key | gsub("Mod\\+"; "Super+"))  —  "
+          + (if (($bind.desc // "") | length) > 0
+             then $bind.desc
+             else ($bind.action // "(no description)")
+             end)
+    '
+)
+
+if [ -z "$items" ]; then
+    echo "keybinds-help: could not read keybindings from DMS" >&2
+    exit 1
+fi
+
+# Handy for debugging the list without opening the popup.
+if [ "${1:-}" = "--list" ]; then
+    printf '%s\n' "$items"
+    exit 0
+fi
+
+printf '%s\n' "$items" | dms dmenu \
+    --prompt "Keybinds" \
+    --placeholder "Type to filter keybindings…" \
+    --no-custom \
+    --disable-history \
+    --sync \
+    --lines 30 >/dev/null
+status=$?
+
+# Exit code 2 means the DMS shell could not be reached; fall back to rofi.
+# (1 is the normal "user pressed Escape" case.)
+if [ "$status" -eq 2 ]; then
+    printf '%s\n' "$items" |
+        rofi -dmenu -i -matching fuzzy -p "Keybinds" >/dev/null
+fi
+
+exit 0

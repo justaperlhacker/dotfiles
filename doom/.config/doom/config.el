@@ -67,7 +67,7 @@
 ;; doom-10x-monokai, doom-10x-gruvbox-dark, doom-10x-solarized-dark.
 ;; Regenerate with:
 ;;   python3 $DOOMDIR/scripts/gen_doom_themes.py
-(setq doom-theme 'doom-kanso)
+(setq doom-theme 'doom-nightjar)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.

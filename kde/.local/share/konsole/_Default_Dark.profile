@@ -2,10 +2,10 @@
 AntiAliasFonts=true
 BoldIntense=false
 BorderWhenActive=true
-ColorScheme=Github Dark
+ColorScheme=Nord
 DimmValue=29
 FocusBorderColor=108,108,111
-Font=BerkeleyMono Nerd Font,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
+Font=BerkeleyMono Nerd Font,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
 FontHinting=true
 IgnoreWcWidth=false
 LineSpacing=0

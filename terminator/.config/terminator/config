@@ -1,18 +1,21 @@
 [global_config]
-  enabled_plugins = LaunchpadBugURLHandler, LaunchpadCodeURLHandler, APTURLHandler, TerminatorThemes
+  enabled_plugins = AutoTheme, LaunchpadBugURLHandler, LaunchpadCodeURLHandler, APTURLHandler, TerminatorThemes
 [keybindings]
 [profiles]
   [[default]]
+    background_color = ""
+    foreground_color = ""
+    palette = ":::::::::::::::"
     icon_bell = False
     background_darkness = 0.85
     background_type = transparent
     cursor_shape = ibeam
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     show_titlebar = False
     scrollbar_position = hidden
     scrollback_lines = 10000
     use_system_font = False
-    use_theme_colors = True
+    use_theme_colors = False
   [[Batman]]
     icon_bell = False
     background_color = "#1b1d1e"
@@ -20,7 +23,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#fcef0c"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#6f6f6f"
     show_titlebar = False
     scrollbar_position = hidden
@@ -34,7 +37,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#D8DEE9"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#D8DEE9"
     show_titlebar = False
     scrollbar_position = hidden
@@ -48,7 +51,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#f34b00"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#9cc2c3"
     show_titlebar = False
     scrollbar_position = hidden
@@ -62,7 +65,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#dc8a78"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#4c4f69"
     show_titlebar = False
     scrollbar_position = hidden
@@ -76,7 +79,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#f5e0dc"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#cdd6f4"
     show_titlebar = False
     scrollbar_position = hidden
@@ -90,7 +93,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#b9b9b9"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#d6dbe5"
     show_titlebar = False
     scrollbar_position = hidden
@@ -104,7 +107,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#20bbfc"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#424242"
     show_titlebar = False
     scrollbar_position = hidden
@@ -118,7 +121,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#20bbfc"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#f1f1f1"
     show_titlebar = False
     scrollbar_position = hidden
@@ -132,7 +135,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#fc531d"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#ffcb83"
     show_titlebar = False
     scrollbar_position = hidden
@@ -146,7 +149,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#c7c7c7"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#d5a200"
     show_titlebar = False
     scrollbar_position = hidden
@@ -160,7 +163,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#f29718"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#e6e1cf"
     show_titlebar = False
     scrollbar_position = hidden
@@ -174,7 +177,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#f0cc09"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#ffffff"
     show_titlebar = False
     scrollbar_position = hidden
@@ -187,7 +190,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#bbbbbb"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#00a595"
     show_titlebar = False
     scrollbar_position = hidden
@@ -200,7 +203,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#13a10e"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#13a10e"
     show_titlebar = False
     scrollbar_position = hidden
@@ -214,7 +217,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#23ff18"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#84c138"
     show_titlebar = False
     scrollbar_position = hidden
@@ -228,7 +231,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#657B83"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#C3C7D1"
     show_titlebar = False
     scrollbar_position = hidden
@@ -242,7 +245,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#16afca"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#232322"
     show_titlebar = False
     scrollbar_position = hidden
@@ -256,7 +259,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#bbbbbb"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#dedacf"
     show_titlebar = False
     scrollbar_position = hidden
@@ -270,7 +273,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#16b61b"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#b5b5b5"
     show_titlebar = False
     scrollbar_position = hidden
@@ -284,7 +287,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#bbbbbb"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#e6d4a3"
     show_titlebar = False
     scrollbar_position = hidden
@@ -298,7 +301,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#facb80"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#807a74"
     show_titlebar = False
     scrollbar_position = hidden
@@ -312,7 +315,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#aaaaaa"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#f8f8f2"
     show_titlebar = False
     scrollbar_position = hidden
@@ -326,7 +329,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#a3b3cc"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#dcdfe4"
     show_titlebar = False
     scrollbar_position = hidden
@@ -340,7 +343,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#676c76"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#5c6370"
     show_titlebar = False
     scrollbar_position = hidden
@@ -354,7 +357,7 @@
     background_type = transparent
     cursor_shape = ibeam
     cursor_bg_color = "#bfceff"
-    font = IoskeleyMonoTerm Nerd Font 11
+    font = JetBrainsMono Nerd Font 11
     foreground_color = "#383a42"
     show_titlebar = False
     scrollbar_position = hidden
@@ -371,3 +374,8 @@
       parent = window0
       profile = OneHalfDark
 [plugins]
+  [[AutoTheme]]
+    light = OneHalfLight
+    dark = OneHalfDark
+    mode = Auto
+    variant = auto
